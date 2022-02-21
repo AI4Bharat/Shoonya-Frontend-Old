@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { Login } from "../src/pages/Auth/Login";
+import { Login } from "./pages/Auth/Login";
 import App from "./App";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 
