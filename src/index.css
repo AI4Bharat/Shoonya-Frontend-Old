@@ -12,10 +12,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-.cb {
+.ant-input-affix-wrapper {
   border-radius: 1rem;
 }
 .ant-card {
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.ant-btn {
+  border-radius: 1rem;
 }
