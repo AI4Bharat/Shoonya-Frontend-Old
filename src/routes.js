@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Login } from "../src/pages/Auth/Login";
 import App from "./App";
+import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 
 function GlobalRoutes() {
   return (
@@ -9,6 +10,7 @@ function GlobalRoutes() {
       <Route path="/">
         <Route index element={<App />} />
         <Route path="login" element={<Login />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
       </Route>
     </Routes>
   );

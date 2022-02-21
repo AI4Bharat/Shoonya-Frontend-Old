@@ -1,8 +1,8 @@
 import Layout, { Content } from "antd/lib/layout/layout";
 import React from "react";
-import { Row, Col, Form, Input, Card, Divider, Button } from "antd";
+import { Form, Input, Card, Divider, Button } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
-
+import { Link } from "react-router-dom";
 export const Login = () => {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -18,7 +18,6 @@ export const Login = () => {
         }}
       >
         <Card
-          className="bs"
           bordered={false}
           style={{ width: "30%", marginBottom: "3%" }}
         >
@@ -78,6 +77,7 @@ export const Login = () => {
               </Button>
             </Form.Item>
           </Form>
+          <Link to="/forget-password">Forgot Password?</Link>{" "}
         </Card>
       </Content>
     </Layout>
