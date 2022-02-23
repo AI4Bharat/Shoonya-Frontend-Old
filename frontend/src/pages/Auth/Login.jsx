@@ -3,7 +3,30 @@ import React from "react";
 import { Form, Input, Card, Divider, Button } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../utils/apiInstance";
+import { login } from "../../utils/auth";
+
 export const Login = () => {
+  const [loginData, setLoginData] = React.useState({
+    username: '',
+    password: ''
+  });
+  const submit = (e) => {
+    e.preventDefault();
+
+    axiosInstance
+      .post('users/auth/jwt/create', {
+        username: loginData.username,
+        password: loginData.password,
+      })
+      .then((res) => {
+        login(res);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
@@ -55,6 +78,7 @@ export const Login = () => {
                 prefix={<UserOutlined />}
                 className="cb"
                 placeholder={"Enter your Email ID."}
+                onChange={(e) => setLoginData({...loginData, username: e.target.value})}
               />
             </Form.Item>
             <Form.Item name="password">
@@ -63,6 +87,7 @@ export const Login = () => {
                 className="cb"
                 prefix={<KeyOutlined />}
                 placeholder={"Enter your Password."}
+                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
               />
             </Form.Item>
             <Form.Item>
@@ -72,6 +97,7 @@ export const Login = () => {
                 size="large"
                 style={{ width: "100%", margin: "auto" }}
                 className="cb"
+                onClick={submit}
               >
                 LOGIN
               </Button>
