@@ -1,0 +1,16 @@
+version: "3"
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/usr/app
+      - /usr/frontend/node_modules
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.dev
+    command: >
+      sh -c "npm install &&
+             npm start"
