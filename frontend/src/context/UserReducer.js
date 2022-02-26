@@ -11,6 +11,8 @@ import {
 
 const ACCESS_TOKEN = "shoonya_access_token";
 const REFRESH_TOKEN = "shoonya_refresh_token";
+
+// eslint-disable-next-line
 export default (state, action) => {
   switch (action.type) {
     case USER_LOADED:
@@ -18,7 +20,7 @@ export default (state, action) => {
         ...state,
         ...action.payload,
         isAuth: true,
-        user: action.payload.user,
+        user: action.payload,
         isError: null,
       };
     case LOGIN_SUCCESS:
@@ -27,13 +29,15 @@ export default (state, action) => {
       return {
         ...state,
         ...action.payload,
+        access: action.payload.access,
+        refresh: action.payload.refresh,
         isAuth: true,
         isError: null,
       };
     case LOGIN_FAIL:
       return {
         ...state,
-        isError: "asdas",
+        isError: true,
       };
     case AUTH_ERROR:
       return {
@@ -41,7 +45,7 @@ export default (state, action) => {
         token: null,
         user: null,
         isAuth: false,
-        isError: "asda",
+        isError: true,
       };
 
     case LOGOUT:

@@ -1,6 +1,11 @@
-
 import { createContext } from "react";
 
-const UserContext = createContext<any>({ user: null, token: null, isAuth: false ,isError:null});
+const UserContext = createContext({
+  user: null,
+  refresh: null,
+  access: null,
+  isAuth: false,
+  isError: null,
+});
 
 export default UserContext;
