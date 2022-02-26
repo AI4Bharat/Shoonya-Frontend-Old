@@ -1,3 +1,4 @@
+import { message } from "antd";
 import {
   AUTH_ERROR,
   LOGIN_FAIL,
@@ -66,10 +67,14 @@ export default (state, action) => {
     case PASSWORD_CHANGED:
       return {
         ...state,
+        isError: null,
+        isAuth: false,
       };
     case PASSWORD_CHANGED_FAIL:
       return {
         ...state,
+        isError: true,
+        isAuth: false
       };
     default:
       return state;

@@ -2,8 +2,14 @@ import { useReducer } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
 import axiosInstance from "../utils/apiInstance";
-import { LOGIN_FAIL, LOGIN_SUCCESS, USER_LOADED } from "./type";
-import {  message } from "antd";
+import {
+  LOGIN_FAIL,
+  LOGIN_SUCCESS,
+  PASSWORD_CHANGED,
+  PASSWORD_CHANGED_FAIL,
+  USER_LOADED,
+} from "./type";
+import { message } from "antd";
 const UserState = (props) => {
   const initialState = {
     token: null,
@@ -30,7 +36,27 @@ const UserState = (props) => {
   };
   const register = async (formData) => {};
   const logout = async () => {};
-  const forgetPassword = async (formData) => {};
+  const forgetPassword = ({ email }) => {
+    axiosInstance
+      .post("users/auth/users/reset_password/", {
+        email: email,
+      })
+      .then((res) => {
+        if (res.status === 204) {
+          dispatch({ type: PASSWORD_CHANGED });
+          console.log(res);
+        } else {
+          dispatch({ type: PASSWORD_CHANGED_FAIL });
+          message.error("Wrong Email!");
+        }
+      })
+      .catch((err) => {
+        dispatch({ type: PASSWORD_CHANGED_FAIL });
+        message.error("Server Error");
+      });
+
+      return "Result";
+  };
   const loadUser = async () => {
     axiosInstance
       .get("users/auth/users/me/")
