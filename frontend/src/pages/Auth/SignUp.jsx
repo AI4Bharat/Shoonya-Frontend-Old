@@ -1,5 +1,5 @@
 import Layout, { Content } from "antd/lib/layout/layout";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -14,23 +14,26 @@ import {
   KeyOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 
 export const SignUp = () => {
+  const { inviteCode } = useParams();
   const [sentMail, setSentMail] = useState(false);
   const userContext = useContext(UserContext);
   const onFinish = (values) => {
     delete values.confirmPassword;
     userContext
-      .register(values)
-      .then(() => {
+      .register({ formData: values, inviteCode: inviteCode })
+      .then((res) => {
         setSentMail(true);
+        message.success(res.message);
       })
-      .catch(() => {
-        message.error("Error while registering. Please try again in sometime.");
+      .catch((err) => {
+        message.error("Error while registering. Have you registered before?");
       });
   };
+
   return (
     <Layout>
       <Content
@@ -80,15 +83,15 @@ export const SignUp = () => {
                     size="large"
                     prefix={<MailOutlined />}
                     placeholder={"Enter your Email ID."}
-                    disabled={true}
+                    // disabled={true}
                     defaultValue="test@test.com"
                   />
                 </Form.Item>
-                <Form.Item name="name">
+                <Form.Item name="username">
                   <Input
                     size="large"
                     prefix={<UserOutlined />}
-                    placeholder={"Enter your name."}
+                    placeholder={"Enter your Username."}
                   />
                 </Form.Item>
 

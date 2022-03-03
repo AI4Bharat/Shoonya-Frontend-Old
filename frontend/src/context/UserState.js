@@ -7,6 +7,7 @@ import {
   LOGIN_SUCCESS,
   PASSWORD_CHANGED,
   PASSWORD_CHANGED_FAIL,
+  REGISTER_FAIL,
   USER_LOADED,
 } from "./type";
 import { message } from "antd";
@@ -34,7 +35,17 @@ const UserState = (props) => {
         message.error("Error logging in");
       });
   };
-  const register = async (formData) => {};
+  const register = async ({ formData, inviteCode }) => {
+    await axiosInstance
+      .patch(`users/invite/${inviteCode}/accept/`, formData)
+      .then(res => {
+        return res;
+      })
+      .catch(err => {
+        dispatch({ type: REGISTER_FAIL, payload: err.response.data });
+        return err;
+      });
+  };
   const logout = async () => {};
   const forgetPassword = ({ email }) => {
     axiosInstance
@@ -56,6 +67,20 @@ const UserState = (props) => {
       });
 
       return "Result";
+  };
+  const confirmForgetPassword = async ({ formData, key, token }) => {
+    axiosInstance
+      .post(`users/auth/users/reset_password_confirm`, {
+        uid: key,
+        token: token,
+        new_password: formData.password
+      })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   const loadUser = async () => {
     axiosInstance
@@ -81,6 +106,7 @@ const UserState = (props) => {
         loadUser,
         register,
         forgetPassword,
+        confirmForgetPassword,
       }}
     >
       {props.children}
