@@ -1,4 +1,3 @@
-import { message } from "antd";
 import {
   AUTH_ERROR,
   LOGIN_FAIL,

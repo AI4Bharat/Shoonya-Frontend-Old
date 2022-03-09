@@ -1,12 +1,33 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { Login } from "./pages/Auth/Login";
 import App from "./App";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
-import {SignUp} from "./pages/Auth/SignUp";
+import { SignUp } from "./pages/Auth/SignUp";
 import UserProfile from "./pages/Profile/UserProfile";
+import UserContext from "./context/UserContext";
 
+function RequireAuth({ children }) {
+  let location = useLocation();
+  let userContext = useContext(UserContext);
+  if (!userContext.access) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  return children;
+}
 function GlobalRoutes() {
+  let userContext = useContext(UserContext);
+  useEffect(() => {
+    if (userContext.access) {
+      userContext.loadUser();
+    }
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <Routes>
       <Route path="/">
@@ -14,7 +35,14 @@ function GlobalRoutes() {
         <Route path="login" element={<Login />} />
         <Route path="sign-up" element={<SignUp />} />
         <Route path="forget-password" element={<ForgetPassword />} />
-        <Route path="profile" element={<UserProfile />} />
+        <Route
+          path="profile"
+          element={
+            <RequireAuth>
+              <UserProfile />
+            </RequireAuth>
+          }
+        />
       </Route>
     </Routes>
   );

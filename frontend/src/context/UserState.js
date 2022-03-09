@@ -10,9 +10,14 @@ import {
   USER_LOADED,
 } from "./type";
 import { message } from "antd";
+
+const ACCESS_TOKEN = "shoonya_access_token";
+const REFRESH_TOKEN = "shoonya_refresh_token";
+
 const UserState = (props) => {
   const initialState = {
-    token: null,
+    access: localStorage.getItem(ACCESS_TOKEN) || null,
+    refresh: localStorage.getItem(REFRESH_TOKEN) || null,
     user: null,
     isAuth: false,
     isError: null,
@@ -26,7 +31,6 @@ const UserState = (props) => {
       })
       .then((res) => {
         dispatch({ type: LOGIN_SUCCESS, payload: res.data });
-        console.log(res);
         loadUser();
       })
       .catch((err) => {
@@ -44,7 +48,6 @@ const UserState = (props) => {
       .then((res) => {
         if (res.status === 204) {
           dispatch({ type: PASSWORD_CHANGED });
-          console.log(res);
         } else {
           dispatch({ type: PASSWORD_CHANGED_FAIL });
           message.error("Wrong Email!");
@@ -55,14 +58,13 @@ const UserState = (props) => {
         message.error("Server Error");
       });
 
-      return "Result";
+    return "Result";
   };
   const loadUser = async () => {
     axiosInstance
-      .get("users/auth/users/me/")
+      .get("users/account/me/fetch")
       .then((res) => {
         dispatch({ type: USER_LOADED, payload: res.data });
-        console.log(res);
       })
       .catch((err) => {
         message.error("Error fetching user data");

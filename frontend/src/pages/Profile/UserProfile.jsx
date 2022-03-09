@@ -1,9 +1,15 @@
-import { Avatar, Col, Row, Typography, Layout, Divider } from "antd";
-import React from "react";
+import { Avatar, Col, Row, Layout, Divider } from "antd";
+import React, { useContext, useEffect } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
+import UserContext from "../../context/UserContext";
 function UserProfile() {
+  let userContext = useContext(UserContext);
+  useEffect(() => {
+    console.log(userContext.user);
+  }, [userContext]);
+
   return (
     <Layout>
       <Content
@@ -28,8 +34,12 @@ function UserProfile() {
               flexDirection: "column",
             }}
           >
-            <Avatar size={80} icon={<UserOutlined />}  style={{marginBottom:'1%'}}/>
-            <Title>User Name</Title>
+            <Avatar
+              size={80}
+              icon={<UserOutlined />}
+              style={{ marginBottom: "1%" }}
+            />
+            <Title>{userContext.user && userContext.user.username}</Title>
             <Divider />
           </Col>
           <Col span={2} />
