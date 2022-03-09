@@ -1,0 +1,16 @@
+name: run-eslint
+on: [push]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: actions/setup-node@v1
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./frontend
+      - name: Run eslint
+        working-directory: ./frontend
+        run: npx eslint .
