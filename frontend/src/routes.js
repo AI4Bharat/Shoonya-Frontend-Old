@@ -6,6 +6,7 @@ import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 import { SignUp } from "./pages/Auth/SignUp";
 import UserProfile from "./pages/Profile/UserProfile";
 import UserContext from "./context/UserContext";
+import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -33,7 +34,7 @@ function GlobalRoutes() {
       <Route path="/">
         <Route index element={<App />} />
         <Route path="login" element={<Login />} />
-        <Route path="sign-up" element={<SignUp />} />
+        <Route path="sign-up/:inviteCode" element={<SignUp />} />
         <Route path="forget-password" element={<ForgetPassword />} />
         <Route
           path="profile"
@@ -43,6 +44,7 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
+        <Route path="forget-password/confirm/:key/:token" element={<ConfirmForgetPassword />} />
       </Route>
     </Routes>
   );
