@@ -4,11 +4,14 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import GlobalRoutes from "./routes";
+import UserState from "./context/UserState";
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <GlobalRoutes />
-    </BrowserRouter>
+    <UserState>
+      <BrowserRouter>
+        <GlobalRoutes />
+      </BrowserRouter>
+    </UserState>
   </React.StrictMode>,
   document.getElementById("root")
 );

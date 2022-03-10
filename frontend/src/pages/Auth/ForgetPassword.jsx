@@ -1,11 +1,19 @@
 import Layout, { Content } from "antd/lib/layout/layout";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Input, Card, Divider, Button, Result } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import UserContext from "../../context/UserContext";
+
 export const ForgetPassword = () => {
+  const userContext = useContext(UserContext);
   const [sentMail, setSentMail] = useState(false);
   const onFinish = (values) => {
-    setSentMail(true);
+    try {
+      userContext.forgetPassword(values)
+      setSentMail(true);
+    } catch {
+      setSentMail(false);
+    }
   };
   return (
     <Layout>
