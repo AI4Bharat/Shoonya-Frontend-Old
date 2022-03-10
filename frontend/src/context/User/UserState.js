@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
-import axiosInstance from "../utils/apiInstance";
+import axiosInstance from "../../utils/apiInstance";
 import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
@@ -9,7 +9,7 @@ import {
   PASSWORD_CHANGED_FAIL,
   REGISTER_FAIL,
   USER_LOADED,
-} from "./type";
+} from "../type";
 import { message } from "antd";
 
 const ACCESS_TOKEN = "shoonya_access_token";
@@ -92,7 +92,7 @@ const UserState = (props) => {
         dispatch({ type: USER_LOADED, payload: res.data });
       })
       .catch((err) => {
-        message.error("Error fetching user data");
+        message.error("Error fetching user data.");
       });
   };
   return (

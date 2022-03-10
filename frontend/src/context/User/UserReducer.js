@@ -7,7 +7,7 @@ import {
   PASSWORD_CHANGED_FAIL,
   REGISTER_FAIL,
   USER_LOADED,
-} from "./type";
+} from "../type";
 
 const ACCESS_TOKEN = "shoonya_access_token";
 const REFRESH_TOKEN = "shoonya_refresh_token";

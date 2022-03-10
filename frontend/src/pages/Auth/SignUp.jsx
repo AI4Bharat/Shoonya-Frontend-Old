@@ -15,7 +15,7 @@ import {
   MailOutlined,
 } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
-import UserContext from "../../context/UserContext";
+import UserContext from "../../context/User/UserContext";
 
 export const SignUp = () => {
   const { inviteCode } = useParams();

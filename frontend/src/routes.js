@@ -5,7 +5,7 @@ import App from "./App";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 import { SignUp } from "./pages/Auth/SignUp";
 import UserProfile from "./pages/Profile/UserProfile";
-import UserContext from "./context/UserContext";
+import UserContext from "./context/User/UserContext";
 import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 
 function RequireAuth({ children }) {

@@ -4,7 +4,7 @@ import { Form, Input, Card, Divider, Button } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import UserContext from "../../context/UserContext";
+import UserContext from "../../context/User/UserContext";
 
 export const Login = () => {
   const userContext = useContext(UserContext);

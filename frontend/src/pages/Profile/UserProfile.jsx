@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
-import UserContext from "../../context/UserContext";
+import UserContext from "../../context/User/UserContext";
 function UserProfile() {
   let userContext = useContext(UserContext);
   useEffect(() => {
