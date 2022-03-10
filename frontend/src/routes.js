@@ -6,6 +6,7 @@ import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 import { SignUp } from "./pages/Auth/SignUp";
 import UserProfile from "./pages/Profile/UserProfile";
 import UserContext from "./context/User/UserContext";
+import LSF from "./pages/Label-Studio/LSF";
 import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 
 function RequireAuth({ children }) {
@@ -33,6 +34,7 @@ function GlobalRoutes() {
     <Routes>
       <Route path="/">
         <Route index element={<App />} />
+        <Route path="lsf-test" element={<LSF />} />
         <Route path="login" element={<Login />} />
         <Route path="sign-up/:inviteCode" element={<SignUp />} />
         <Route path="forget-password" element={<ForgetPassword />} />
