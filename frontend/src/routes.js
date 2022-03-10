@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Login } from "./pages/Auth/Login";
 import App from "./App";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
+import LSF from "./pages/Label-Studio/LSF";
 import {SignUp} from "./pages/Auth/SignUp";
 import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 
@@ -11,6 +12,7 @@ function GlobalRoutes() {
     <Routes>
       <Route path="/">
         <Route index element={<App />} />
+        <Route path="lsf-test" element={<LSF />} />
         <Route path="login" element={<Login />} />
         <Route path="sign-up/:inviteCode" element={<SignUp />} />
         <Route path="forget-password" element={<ForgetPassword />} />
