@@ -39,7 +39,7 @@ function GlobalRoutes() {
         <Route path="sign-up/:inviteCode" element={<SignUp />} />
         <Route path="forget-password" element={<ForgetPassword />} />
         <Route
-          path="profile"
+          path="profile/*"
           element={
             <RequireAuth>
               <UserProfile />
