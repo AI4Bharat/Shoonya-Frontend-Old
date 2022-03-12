@@ -1,13 +1,15 @@
 import React, { useContext, useEffect } from "react";
+import App from "./App";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { Login } from "./pages/Auth/Login";
-import App from "./App";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 import { SignUp } from "./pages/Auth/SignUp";
+import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
+import Organization from "./pages/Organization/Organization";
 import UserProfile from "./pages/Profile/UserProfile";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
-import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
+import { Result, Button } from "antd";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -24,7 +26,7 @@ function RequireAuth({ children }) {
 function GlobalRoutes() {
   let userContext = useContext(UserContext);
   useEffect(() => {
-    if (userContext.access) {
+    if (userContext.refresh) {
       userContext.loadUser();
     }
     // eslint-disable-next-line
@@ -46,7 +48,29 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
-        <Route path="forget-password/confirm/:key/:token" element={<ConfirmForgetPassword />} />
+        <Route
+          path="forget-password/confirm/:key/:token"
+          element={<ConfirmForgetPassword />}
+        />
+        <Route
+          path="organization/:id"
+          element={
+            <RequireAuth>
+              <Organization />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Result
+              status={"404"}
+              title="404"
+              subTitle="Sorry, the page you visited does not exist."
+              extra={<Button type="primary">Back Home</Button>}
+            />
+          }
+        />
       </Route>
     </Routes>
   );

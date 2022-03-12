@@ -17,8 +17,14 @@ const REFRESH_TOKEN = "shoonya_refresh_token";
 
 const UserState = (props) => {
   const initialState = {
-    access: localStorage.getItem(ACCESS_TOKEN) || null,
-    refresh: localStorage.getItem(REFRESH_TOKEN) || null,
+    access:
+      localStorage.getItem(ACCESS_TOKEN) !== "undefined"
+        ? localStorage.getItem(ACCESS_TOKEN)
+        : undefined,
+    refresh:
+      localStorage.getItem(REFRESH_TOKEN) !== "undefined"
+        ? localStorage.getItem(REFRESH_TOKEN)
+        : undefined,
     user: null,
     isAuth: false,
     isError: null,
@@ -42,10 +48,10 @@ const UserState = (props) => {
   const register = async ({ formData, inviteCode }) => {
     await axiosInstance
       .patch(`users/invite/${inviteCode}/accept/`, formData)
-      .then(res => {
+      .then((res) => {
         return res;
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch({ type: REGISTER_FAIL, payload: err.response.data });
         return err;
       });
@@ -76,12 +82,12 @@ const UserState = (props) => {
       .post(`users/auth/users/reset_password_confirm`, {
         uid: key,
         token: token,
-        new_password: formData.password
+        new_password: formData.password,
       })
-      .then(res => {
+      .then((res) => {
         console.log(res);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };

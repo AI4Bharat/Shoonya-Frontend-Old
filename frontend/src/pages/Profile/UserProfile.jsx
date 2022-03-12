@@ -41,7 +41,7 @@ function UserProfile() {
       >
         {user && (
           <Row style={{ width: "100%" }}>
-            <Col span={2} />
+            <Col span={1} />
 
             <Col
               span={4}
@@ -78,7 +78,7 @@ function UserProfile() {
               </Card>
             </Col>
             <Col span={1} />
-            <Col span={15}>
+            <Col span={16}>
               <Card>
                 <Divider
                   style={{ marginTop: "0", color: "gray" }}
@@ -103,7 +103,7 @@ function UserProfile() {
                 </Divider>
               </Card>
             </Col>
-            <Col span={2} />
+            <Col span={1} />
           </Row>
         )}
       </Content>
