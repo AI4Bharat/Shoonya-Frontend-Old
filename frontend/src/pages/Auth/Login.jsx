@@ -9,10 +9,11 @@ import UserContext from "../../context/User/UserContext";
 export const Login = () => {
   const userContext = useContext(UserContext);
   const onFinish = (values) => {
-    userContext
-      .login(values)
-      .then((res) => {console.log(userContext.user)})
-      .catch((err) => {});
+    try {
+      userContext.login(values)
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <Layout>

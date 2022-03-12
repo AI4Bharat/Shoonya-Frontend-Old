@@ -7,6 +7,8 @@ import {
   SelectOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import axiosInstance from "../../utils/apiInstance";
+import { roles } from "../../utils/commonData";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import UserContext from "../../context/User/UserContext";
@@ -16,6 +18,7 @@ function UserProfile() {
   let userContext = useContext(UserContext);
   const [isUser, setIsUser] = useState(false);
   const [user, setUser] = useState(undefined);
+  const [organization, setOrganization] = useState({});
   useEffect(() => {
     if (window.location.href.split("/")[4] === "me") {
       setIsUser(true);
@@ -26,6 +29,19 @@ function UserProfile() {
       });
     }
   }, [userContext]);
+
+  useEffect(() => {
+    if (user) {
+      axiosInstance.get('/organizations/' + user.organization_id)
+      .then((res) => {
+        setOrganization(res.data);
+      })
+      .catch((err) => {
+        setOrganization({"message": "Error whule fetching data!"});
+        console.log(err);
+      });
+    }
+  }, [setOrganization, user]);
 
   return (
     <Layout>
@@ -88,16 +104,19 @@ function UserProfile() {
                   Organization
                 </Divider>
                 <Title level={2}>
-                  Organization Name
+                  {organization && organization.title}
                   <Button
                     style={{ float: "right", color: "gray" }}
                     icon={<SelectOutlined />}
                     type="link"
                   />
                 </Title>
-                <Tag color="red">Admin</Tag>
+                {user.role && (
+                  <Tag color={roles[user.role].color}>{roles[user.role].name}</Tag>
+                )}
+                {/* <Tag color="red">Admin</Tag>
                 <Tag color="blue">Manager</Tag>
-                <Tag color="green">Annotator</Tag>
+                <Tag color="green">Annotator</Tag> */}
                 <Divider style={{ color: "gray" }} orientation="left" plain>
                   Performance
                 </Divider>

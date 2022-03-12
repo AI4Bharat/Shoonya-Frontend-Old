@@ -93,7 +93,7 @@ const UserState = (props) => {
   };
   const loadUser = async () => {
     axiosInstance
-      .get("users/account/me/fetch")
+      .get("users/account/fetch")
       .then((res) => {
         dispatch({ type: USER_LOADED, payload: res.data });
       })
