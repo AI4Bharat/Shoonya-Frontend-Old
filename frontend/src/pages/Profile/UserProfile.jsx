@@ -1,4 +1,4 @@
-import { Avatar, Col, Row, Layout, Divider, Card, Tag, Button } from "antd";
+import { Avatar, Col, Row,Divider, Card, Tag, Button } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
   UserOutlined,
@@ -7,7 +7,6 @@ import {
   SelectOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import UserContext from "../../context/User/UserContext";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -22,23 +21,13 @@ function UserProfile() {
       setUser(userContext.user);
     } else {
       fetchProfile(window.location.href.split("/")[4]).then((res) => {
-        setUser(res)
+        setUser(res);
       });
     }
   }, [userContext]);
-
   return (
-    <Layout>
-      <Content
-        style={{
-          height: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "wrap",
-        }}
-      >
+    <>
+      
         {user && (
           <Row style={{ width: "100%" }}>
             <Col span={1} />
@@ -88,16 +77,19 @@ function UserProfile() {
                   Organization
                 </Divider>
                 <Title level={2}>
-                  Organization Name
+                  {user.organization.title}
                   <Button
                     style={{ float: "right", color: "gray" }}
                     icon={<SelectOutlined />}
                     type="link"
                   />
                 </Title>
-                <Tag color="red">Admin</Tag>
-                <Tag color="blue">Manager</Tag>
-                <Tag color="green">Annotator</Tag>
+                {user.role === 3 && <Tag color="red">Admin</Tag>}
+                {user.role === 2 && <Tag color="blue">Manager</Tag>}
+                {user.role === 1 && <Tag color="green">Annotator</Tag>}
+                
+                
+                
                 <Divider style={{ color: "gray" }} orientation="left" plain>
                   Performance
                 </Divider>
@@ -106,8 +98,7 @@ function UserProfile() {
             <Col span={1} />
           </Row>
         )}
-      </Content>
-    </Layout>
+    </>
   );
 }
 

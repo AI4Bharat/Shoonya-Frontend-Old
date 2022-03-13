@@ -10,6 +10,7 @@ import UserProfile from "./pages/Profile/UserProfile";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
 import { Result, Button } from "antd";
+import DefinedLayout from "./components/Layout/DefinedLayout";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -34,12 +35,17 @@ function GlobalRoutes() {
 
   return (
     <Routes>
-      <Route path="/">
-        <Route index element={<App />} />
+      <Route index element={<App />} />
+      <Route path="login" element={<Login />} />
+      <Route path="sign-up/:inviteCode" element={<SignUp />} />
+      <Route path="forget-password" element={<ForgetPassword />} />
+      <Route
+        path="forget-password/confirm/:key/:token"
+        element={<ConfirmForgetPassword />}
+      />
+      <Route path="/" element={<DefinedLayout />}>
         <Route path="lsf-test" element={<LSF />} />
-        <Route path="login" element={<Login />} />
-        <Route path="sign-up/:inviteCode" element={<SignUp />} />
-        <Route path="forget-password" element={<ForgetPassword />} />
+
         <Route
           path="profile/*"
           element={
@@ -48,10 +54,7 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
-        <Route
-          path="forget-password/confirm/:key/:token"
-          element={<ConfirmForgetPassword />}
-        />
+
         <Route
           path="organization/:id"
           element={
