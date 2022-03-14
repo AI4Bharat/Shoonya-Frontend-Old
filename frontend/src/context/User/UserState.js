@@ -5,6 +5,7 @@ import axiosInstance from "../../utils/apiInstance";
 import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
+  LOGOUT,
   PASSWORD_CHANGED,
   PASSWORD_CHANGED_FAIL,
   REGISTER_FAIL,
@@ -14,6 +15,7 @@ import { message } from "antd";
 
 const ACCESS_TOKEN = "shoonya_access_token";
 const REFRESH_TOKEN = "shoonya_refresh_token";
+
 
 const UserState = (props) => {
   const initialState = {
@@ -30,7 +32,7 @@ const UserState = (props) => {
     isError: null,
   };
   const [state, dispatch] = useReducer(UserReducer, initialState);
-  const login = (formData) => {
+  const login =  (formData) => {
     axiosInstance
       .post("users/auth/jwt/create", {
         email: formData.email,
@@ -39,6 +41,7 @@ const UserState = (props) => {
       .then((res) => {
         dispatch({ type: LOGIN_SUCCESS, payload: res.data });
         loadUser();
+
       })
       .catch((err) => {
         dispatch({ type: LOGIN_FAIL, payload: err.response.data });
@@ -56,7 +59,9 @@ const UserState = (props) => {
         return err;
       });
   };
-  const logout = async () => {};
+  const logout = async () => {
+    dispatch({ type: LOGOUT });
+  };
   const forgetPassword = ({ email }) => {
     axiosInstance
       .post("users/auth/users/reset_password/", {
@@ -91,7 +96,7 @@ const UserState = (props) => {
         console.log(err);
       });
   };
-  const loadUser = async () => {
+  const loadUser = () => {
     axiosInstance
       .get("users/account/me/fetch")
       .then((res) => {

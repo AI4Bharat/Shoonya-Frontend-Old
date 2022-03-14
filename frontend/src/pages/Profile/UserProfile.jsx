@@ -16,6 +16,7 @@ function UserProfile() {
   const [isUser, setIsUser] = useState(false);
   const [user, setUser] = useState(undefined);
   useEffect(() => {
+    
     if (window.location.href.split("/")[4] === "me") {
       setIsUser(true);
       setUser(userContext.user);

@@ -1,9 +1,14 @@
 import { Header } from "antd/lib/layout/layout";
-import React from "react";
+import React, { useContext } from "react";
 import { Dropdown, Menu, Button, Avatar } from "antd";
 import Logo from "../../logo.svg";
 import { UserOutlined } from "@ant-design/icons";
+import UserContext from "../../context/User/UserContext";
+import { useNavigate } from "react-router-dom";
+
 function Navbar() {
+  const userContext = useContext(UserContext);
+  const navigate = useNavigate();
   return (
     <Header
       style={{
@@ -18,6 +23,7 @@ function Navbar() {
     >
       <img
         src={Logo}
+        alt="Logo"
         style={{ float: "left", height: "70%", verticalAlign: "middle" }}
       />
       <div
@@ -31,7 +37,7 @@ function Navbar() {
         <Menu
           theme="light"
           mode="horizontal"
-          defaultSelectedKeys={["2"]}
+          defaultSelectedKeys={["1"]}
           style={{ height: "100%", width: "90%" }}
         >
           <Menu.Item key="1">nav 1</Menu.Item>
@@ -40,10 +46,18 @@ function Navbar() {
         </Menu>
         <Dropdown
           overlay={
-            <Menu theme="light" mode="horizontal" defaultSelectedKeys={["2"]}>
-              <Menu.Item key="1">nav 1</Menu.Item>
-              <Menu.Item key="2">nav 2</Menu.Item>
-              <Menu.Item key="3">nav 3</Menu.Item>
+            <Menu theme="light" mode="horizontal">
+              <Menu.Item key="1" onClick={() => navigate(`organization/${userContext.user.organization.id}`)}>My Organization</Menu.Item>
+              <Menu.Item key="2">My Projects</Menu.Item>
+              <Menu.Item
+                key="3"
+                onClick={() => {
+                  userContext.logout();
+                  navigate("/");
+                }}
+              >
+                Logout
+              </Menu.Item>
             </Menu>
           }
         >

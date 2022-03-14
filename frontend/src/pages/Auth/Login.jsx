@@ -5,14 +5,14 @@ import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../../context/User/UserContext";
-
+import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const userContext = useContext(UserContext);
+  let navigate = useNavigate();
+
   const onFinish = (values) => {
-    userContext
-      .login(values)
-      .then((res) => {console.log(userContext.user)})
-      .catch((err) => {});
+    userContext.login(values);
+    navigate("/profile/me");
   };
   return (
     <Layout>
