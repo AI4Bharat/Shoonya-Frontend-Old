@@ -43,9 +43,8 @@ function GlobalRoutes() {
         path="forget-password/confirm/:key/:token"
         element={<ConfirmForgetPassword />}
       />
+      <Route path="lsf-test" element={<LSF />} />
       <Route path="/" element={<DefinedLayout />}>
-        <Route path="lsf-test" element={<LSF />} />
-
         <Route
           path="profile/*"
           element={
