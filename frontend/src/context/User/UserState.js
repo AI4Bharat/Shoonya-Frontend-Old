@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import React,{ useReducer } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
 import axiosInstance from "../../utils/apiInstance";
@@ -75,7 +75,7 @@ const UserState = (props) => {
           message.error("Wrong Email!");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch({ type: PASSWORD_CHANGED_FAIL });
         message.error("Server Error");
       });
@@ -102,7 +102,7 @@ const UserState = (props) => {
       .then((res) => {
         dispatch({ type: USER_LOADED, payload: res.data });
       })
-      .catch((err) => {
+      .catch(() => {
         message.error("Error fetching user data.");
       });
   };
