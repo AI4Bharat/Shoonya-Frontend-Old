@@ -11,6 +11,7 @@ import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
 import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
+import PropTypes from "prop-types";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -77,5 +78,9 @@ function GlobalRoutes() {
     </Routes>
   );
 }
+
+RequireAuth.propTypes = {
+  children: PropTypes.any,
+};
 
 export default GlobalRoutes;

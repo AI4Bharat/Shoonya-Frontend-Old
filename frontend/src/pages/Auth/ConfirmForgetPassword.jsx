@@ -14,7 +14,7 @@ export const ConfirmForgetPassword = () => {
     userContext
       .confirmForgetPassword({ formData: values, key: key, token: token })
       .then((res) => {console.log(userContext.user)})
-      .catch((err) => {});
+      .catch((err) => {console.log(err)});
   };
   return (
     <Layout>

@@ -1,7 +1,8 @@
-import React,{ useReducer } from "react";
+import React, { useReducer } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
 import axiosInstance from "../../utils/apiInstance";
+import PropTypes from "prop-types";
 import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
@@ -15,7 +16,6 @@ import { message } from "antd";
 
 const ACCESS_TOKEN = "shoonya_access_token";
 const REFRESH_TOKEN = "shoonya_refresh_token";
-
 
 const UserState = (props) => {
   const initialState = {
@@ -41,7 +41,6 @@ const UserState = (props) => {
       .then((res) => {
         dispatch({ type: LOGIN_SUCCESS, payload: res.data });
         loadUser();
-
       })
       .catch((err) => {
         dispatch({ type: LOGIN_FAIL, payload: err.response.data });
@@ -125,6 +124,10 @@ const UserState = (props) => {
       {props.children}
     </UserContext.Provider>
   );
+};
+
+UserState.propTypes = {
+  children: PropTypes.any,
 };
 
 export default UserState;
