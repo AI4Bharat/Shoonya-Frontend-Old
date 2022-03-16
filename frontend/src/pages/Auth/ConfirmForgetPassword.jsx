@@ -1,10 +1,10 @@
 import Layout, { Content } from "antd/lib/layout/layout";
 import React from "react";
 import { Form, Input, Card, Divider, Button } from "antd";
-import { UserOutlined, KeyOutlined } from "@ant-design/icons";
-import { Link, useParams } from "react-router-dom";
+import {  KeyOutlined } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
 import { useContext } from "react";
-import UserContext from "../../context/UserContext";
+import UserContext from "../../context/User/UserContext";
 
 export const ConfirmForgetPassword = () => {
   const { key, token } = useParams();

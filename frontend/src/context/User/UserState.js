@@ -1,25 +1,38 @@
-import { useReducer } from "react";
+import React,{ useReducer } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
-import axiosInstance from "../utils/apiInstance";
+import axiosInstance from "../../utils/apiInstance";
 import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
+  LOGOUT,
   PASSWORD_CHANGED,
   PASSWORD_CHANGED_FAIL,
   REGISTER_FAIL,
   USER_LOADED,
-} from "./type";
+} from "../type";
 import { message } from "antd";
+
+const ACCESS_TOKEN = "shoonya_access_token";
+const REFRESH_TOKEN = "shoonya_refresh_token";
+
+
 const UserState = (props) => {
   const initialState = {
-    token: null,
+    access:
+      localStorage.getItem(ACCESS_TOKEN) !== "undefined"
+        ? localStorage.getItem(ACCESS_TOKEN)
+        : undefined,
+    refresh:
+      localStorage.getItem(REFRESH_TOKEN) !== "undefined"
+        ? localStorage.getItem(REFRESH_TOKEN)
+        : undefined,
     user: null,
     isAuth: false,
     isError: null,
   };
   const [state, dispatch] = useReducer(UserReducer, initialState);
-  const login = (formData) => {
+  const login = async (formData) => {
     axiosInstance
       .post("users/auth/jwt/create", {
         email: formData.email,
@@ -27,8 +40,8 @@ const UserState = (props) => {
       })
       .then((res) => {
         dispatch({ type: LOGIN_SUCCESS, payload: res.data });
-        console.log(res);
         loadUser();
+
       })
       .catch((err) => {
         dispatch({ type: LOGIN_FAIL, payload: err.response.data });
@@ -38,15 +51,17 @@ const UserState = (props) => {
   const register = async ({ formData, inviteCode }) => {
     await axiosInstance
       .patch(`users/invite/${inviteCode}/accept/`, formData)
-      .then(res => {
+      .then((res) => {
         return res;
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch({ type: REGISTER_FAIL, payload: err.response.data });
         return err;
       });
   };
-  const logout = async () => {};
+  const logout = async () => {
+    dispatch({ type: LOGOUT });
+  };
   const forgetPassword = ({ email }) => {
     axiosInstance
       .post("users/auth/users/reset_password/", {
@@ -55,42 +70,40 @@ const UserState = (props) => {
       .then((res) => {
         if (res.status === 204) {
           dispatch({ type: PASSWORD_CHANGED });
-          console.log(res);
         } else {
           dispatch({ type: PASSWORD_CHANGED_FAIL });
           message.error("Wrong Email!");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch({ type: PASSWORD_CHANGED_FAIL });
         message.error("Server Error");
       });
 
-      return "Result";
+    return "Result";
   };
   const confirmForgetPassword = async ({ formData, key, token }) => {
     axiosInstance
       .post(`users/auth/users/reset_password_confirm`, {
         uid: key,
         token: token,
-        new_password: formData.password
+        new_password: formData.password,
       })
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-  const loadUser = async () => {
-    axiosInstance
-      .get("users/auth/users/me/")
       .then((res) => {
-        dispatch({ type: USER_LOADED, payload: res.data });
         console.log(res);
       })
       .catch((err) => {
-        message.error("Error fetching user data");
+        console.log(err);
+      });
+  };
+  const loadUser = () => {
+    axiosInstance
+      .get("users/account/me/fetch")
+      .then((res) => {
+        dispatch({ type: USER_LOADED, payload: res.data });
+      })
+      .catch(() => {
+        message.error("Error fetching user data.");
       });
   };
   return (
