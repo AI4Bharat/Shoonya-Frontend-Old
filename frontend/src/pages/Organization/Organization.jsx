@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Card, Tabs, Table } from "antd";
+import { Col, Row, Card, Tabs, Table, Button } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
@@ -76,6 +76,7 @@ function Organization() {
                 <Table columns={workspaceColumns} />
               </TabPane>
               <TabPane tab="Members" key="2">
+                <Button style={{width:'100%',marginBottom:'1%'}} type='primary'>Invite new members to organization</Button>
                 <Table columns={memberColumns} />
               </TabPane>
               <TabPane tab="Settings" key="3"></TabPane>

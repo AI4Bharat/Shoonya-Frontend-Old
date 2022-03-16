@@ -32,7 +32,7 @@ const UserState = (props) => {
     isError: null,
   };
   const [state, dispatch] = useReducer(UserReducer, initialState);
-  const login =  (formData) => {
+  const login = async (formData) => {
     axiosInstance
       .post("users/auth/jwt/create", {
         email: formData.email,
