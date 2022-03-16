@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Card, Tabs, Table, Button } from "antd";
+import { Col, Row, Card, Tabs, Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
 const { TabPane } = Tabs;
 function Organization() {
   const [organization, setOrganization] = useState(undefined);
+  const [inviteUsers, setInviteUsers] = useState({ visible: false, users: [] });
   const userContext = useContext(UserContext);
   const workspaceColumns = [
     {
@@ -76,7 +77,31 @@ function Organization() {
                 <Table columns={workspaceColumns} />
               </TabPane>
               <TabPane tab="Members" key="2">
-                <Button style={{width:'100%',marginBottom:'1%'}} type='primary'>Invite new members to organization</Button>
+                <Button
+                  style={{ width: "100%", marginBottom: "1%" }}
+                  onClick={() =>
+                    setInviteUsers({ ...inviteUsers, visible: true })
+                  }
+                  type="primary"
+                >
+                  Invite new members to organization
+                </Button>
+                <Modal
+                  visible={inviteUsers}
+                  onCancel={() =>
+                    setInviteUsers({ ...inviteUsers, visible: false })
+                  }
+                  onOk={(e) => console.log(e.target)}
+                >
+                  <Title level={5}>Enter emails to be invited</Title>
+                  <Select
+                    mode="tags"
+                    style={{ width: "100%", marginTop: "5%" }}
+                    onChange={(e) =>
+                      setInviteUsers({ ...inviteUsers, users: e })
+                    }
+                  />
+                </Modal>
                 <Table columns={memberColumns} />
               </TabPane>
               <TabPane tab="Settings" key="3"></TabPane>
