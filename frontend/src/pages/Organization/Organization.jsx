@@ -3,10 +3,11 @@ import { Col, Row, Card, Tabs, Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
+import { inviteUsers } from "../../api/OrganizationAPI";
 const { TabPane } = Tabs;
 function Organization() {
   const [organization, setOrganization] = useState(undefined);
-  const [inviteUsers, setInviteUsers] = useState({ visible: false, users: [] });
+  const [inviteData, setInviteData] = useState({ visible: false, users: [] });
   const userContext = useContext(UserContext);
   const workspaceColumns = [
     {
@@ -80,25 +81,25 @@ function Organization() {
                 <Button
                   style={{ width: "100%", marginBottom: "1%" }}
                   onClick={() =>
-                    setInviteUsers({ ...inviteUsers, visible: true })
+                    setInviteData({ ...inviteData, visible: true })
                   }
                   type="primary"
                 >
                   Invite new members to organization
                 </Button>
                 <Modal
-                  visible={inviteUsers}
+                  visible={inviteData.visible}
                   onCancel={() =>
-                    setInviteUsers({ ...inviteUsers, visible: false })
+                    setInviteData({ ...inviteData, visible: false })
                   }
-                  onOk={(e) => console.log(e.target)}
+                  onOk={() => inviteUsers(inviteData.users,userContext.user.organization.id)}
                 >
                   <Title level={5}>Enter emails to be invited</Title>
                   <Select
                     mode="tags"
                     style={{ width: "100%", marginTop: "5%" }}
                     onChange={(e) =>
-                      setInviteUsers({ ...inviteUsers, users: e })
+                      setInviteData({ ...inviteData, users: e })
                     }
                   />
                 </Modal>

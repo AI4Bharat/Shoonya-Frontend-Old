@@ -33,19 +33,17 @@ const UserState = (props) => {
   };
   const [state, dispatch] = useReducer(UserReducer, initialState);
   const login = async (formData) => {
-    axiosInstance
-      .post("users/auth/jwt/create", {
+    try {
+      let res = await axiosInstance.post("users/auth/jwt/create", {
         email: formData.email,
         password: formData.password,
-      })
-      .then((res) => {
-        dispatch({ type: LOGIN_SUCCESS, payload: res.data });
-        loadUser();
-      })
-      .catch((err) => {
-        dispatch({ type: LOGIN_FAIL, payload: err.response.data });
-        message.error("Error logging in");
       });
+      dispatch({ type: LOGIN_SUCCESS, payload: res.data });
+      loadUser();
+    } catch (err) {
+      dispatch({ type: LOGIN_FAIL, payload: err.response.data });
+      message.error("Error logging in");
+    }
   };
   const register = async ({ formData, inviteCode }) => {
     await axiosInstance
