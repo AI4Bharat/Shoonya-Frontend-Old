@@ -2,7 +2,7 @@ import { message } from "antd";
 import axiosInstance from "../utils/apiInstance";
 
 const inviteUsers = async (emails, id) => {
-  console.log("ID is",id)
+  console.log("ID is", id);
   try {
     let response = await axiosInstance.post(`/users/invite/generate/`, {
       emails: emails,
@@ -13,4 +13,13 @@ const inviteUsers = async (emails, id) => {
     message.error("Error inviting users");
   }
 };
-export { inviteUsers };
+
+const fetchUsers = async (id) => {
+  try {
+    let response = await axiosInstance.get(`organizations/${id}/users/`);
+    return response.data;
+  } catch {
+    message.error("Error fetching users");
+  }
+};
+export { inviteUsers, fetchUsers };

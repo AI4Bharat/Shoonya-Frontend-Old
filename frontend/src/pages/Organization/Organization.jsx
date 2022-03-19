@@ -3,57 +3,22 @@ import { Col, Row, Card, Tabs, Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
-import { inviteUsers } from "../../api/OrganizationAPI";
+import { fetchUsers, inviteUsers } from "../../api/OrganizationAPI";
+import { memberColumns, workspaceColumns } from "./TableColumns";
 const { TabPane } = Tabs;
 function Organization() {
   const [organization, setOrganization] = useState(undefined);
   const [inviteData, setInviteData] = useState({ visible: false, users: [] });
+  const [data, setData] = useState({ users: [] });
   const userContext = useContext(UserContext);
-  const workspaceColumns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Manager",
-      dataIndex: "manager",
-      key: "manager",
-    },
-    {
-      title: "Created at",
-      dataIndex: "created",
-      key: "created",
-    },
-    {
-      title: "Actions",
-    },
-  ];
-  const memberColumns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-    },
-    {
-      title: "Invited By",
-      dataIndex: "inviter",
-      key: "inviter",
-    },
-    {
-      title: "Actions",
-    },
-  ];
 
   useEffect(() => {
     if (userContext.user) {
       setOrganization(userContext.user.organization);
     }
+    fetchUsers(userContext.user.organization.id).then((res) => {
+      setData({ users: res });
+    });
   }, [userContext]);
 
   return (
@@ -92,18 +57,21 @@ function Organization() {
                   onCancel={() =>
                     setInviteData({ ...inviteData, visible: false })
                   }
-                  onOk={() => inviteUsers(inviteData.users,userContext.user.organization.id)}
+                  onOk={() =>
+                    inviteUsers(
+                      inviteData.users,
+                      userContext.user.organization.id
+                    )
+                  }
                 >
                   <Title level={5}>Enter emails to be invited</Title>
                   <Select
                     mode="tags"
                     style={{ width: "100%", marginTop: "5%" }}
-                    onChange={(e) =>
-                      setInviteData({ ...inviteData, users: e })
-                    }
+                    onChange={(e) => setInviteData({ ...inviteData, users: e })}
                   />
                 </Modal>
-                <Table columns={memberColumns} />
+                <Table columns={memberColumns} dataSource={data.users} />
               </TabPane>
               <TabPane tab="Settings" key="3"></TabPane>
             </Tabs>
