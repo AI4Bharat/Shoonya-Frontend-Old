@@ -1,24 +1,55 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Card, Tabs, Table, Button, Modal, Select } from "antd";
+import {
+  Col,
+  Row,
+  Card,
+  Tabs,
+  Table,
+  Button,
+  Modal,
+  Select,
+  Input,
+  Form,
+} from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
 import { fetchUsers, inviteUsers } from "../../api/OrganizationAPI";
 import { memberColumns, workspaceColumns } from "./TableColumns";
+import FormItem from "antd/lib/form/FormItem";
+import { createWorkspace, fetchWorkspaces } from "../../api/WorkspaceAPI";
+import { useForm } from "antd/lib/form/Form";
 const { TabPane } = Tabs;
+const { Option } = Select;
+
 function Organization() {
+  const [workspaceForm] = useForm();
   const [organization, setOrganization] = useState(undefined);
   const [inviteData, setInviteData] = useState({ visible: false, users: [] });
-  const [data, setData] = useState({ users: [] });
+  const [users, setUsers] = useState([]);
+  const [workspace, setWorkspace] = useState({
+    workspaces:[],
+    visible: false,
+  });
   const userContext = useContext(UserContext);
+
+  const onCreateWorkspace = (data) => {
+    createWorkspace({
+      organization: userContext.user.organization.id,
+      workspace_name: data.workspace_name,
+      manager: data.manager,
+      created_by: userContext.user.id,
+    }).then(() => setWorkspace({ ...workspace, visible: false }));
+  };
 
   useEffect(() => {
     if (userContext.user) {
       setOrganization(userContext.user.organization);
+      fetchUsers(userContext.user.organization.id).then((res) => {
+        setUsers(res);
+      });
+      fetchWorkspaces().then((res) => setWorkspace({ ...workspace, workspaces: res }));
     }
-    fetchUsers(userContext.user.organization.id).then((res) => {
-      setData({ users: res });
-    });
   }, [userContext]);
 
   return (
@@ -40,7 +71,52 @@ function Organization() {
             </Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Workspaces" key="1">
-                <Table columns={workspaceColumns} />
+                {userContext.user?.role === 3 && (
+                  <>
+                    <Button
+                      style={{ width: "100%", marginBottom: "1%" }}
+                      onClick={() =>
+                        setWorkspace({ ...workspace, visible: true })
+                      }
+                      type="primary"
+                    >
+                      Add new workspace
+                    </Button>
+                    <Modal
+                      visible={workspace.visible}
+                      onCancel={() =>
+                        setWorkspace({ ...workspace, visible: false })
+                      }
+                      onOk={() => workspaceForm.submit()}
+                    >
+                      <Title level={5}>Enter workspace details</Title>
+                      <Form
+                        form={workspaceForm}
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 14 }}
+                        onFinish={(data) => onCreateWorkspace(data)}
+                      >
+                        <FormItem label="Workspace Name" name="workspace_name">
+                          <Input />
+                        </FormItem>
+                        <FormItem label="Managers" name="manager">
+                          <Select mode="multiple" placeholder="Please Select">
+                            {users.map((e) => {
+                              if (e.role === 2) {
+                                return <Option key={e.id}>{e.username}</Option>;
+                              }
+                            })}
+                          </Select>
+                        </FormItem>
+                      </Form>
+                    </Modal>
+                  </>
+                )}
+
+                <Table
+                  columns={workspaceColumns}
+                  dataSource={workspace.workspaces}
+                />
               </TabPane>
               <TabPane tab="Members" key="2">
                 <Button
@@ -61,6 +137,8 @@ function Organization() {
                     inviteUsers(
                       inviteData.users,
                       userContext.user.organization.id
+                    ).then(() =>
+                      setInviteData({ ...inviteData, visible: false })
                     )
                   }
                 >
@@ -71,8 +149,23 @@ function Organization() {
                     onChange={(e) => setInviteData({ ...inviteData, users: e })}
                   />
                 </Modal>
-                <Table columns={memberColumns} dataSource={data.users} />
+                <Table
+                  columns={memberColumns}
+                  dataSource={users.filter((e) => {
+                    return e.has_accepted_invite == true;
+                  })}
+                />
               </TabPane>
+              {userContext.user?.role === 3 && (
+                <TabPane tab="Invites">
+                  <Table
+                    columns={memberColumns}
+                    dataSource={users.filter((e) => {
+                      return e.has_accepted_invite == false;
+                    })}
+                  />
+                </TabPane>
+              )}
               <TabPane tab="Settings" key="3"></TabPane>
             </Tabs>
           </Card>

@@ -1,12 +1,12 @@
 import { message } from "antd";
 import axiosInstance from "../utils/apiInstance";
 
-const inviteUsers = async (emails, id) => {
-  console.log("ID is", id);
+const inviteUsers = async (emails, organizationID) => {
+  console.log("ID is", organizationID);
   try {
     let response = await axiosInstance.post(`/users/invite/generate/`, {
       emails: emails,
-      organization_id: id,
+      organization_id: organizationID,
     });
     return response.data;
   } catch {
@@ -14,9 +14,9 @@ const inviteUsers = async (emails, id) => {
   }
 };
 
-const fetchUsers = async (id) => {
+const fetchUsers = async (organizationID) => {
   try {
-    let response = await axiosInstance.get(`organizations/${id}/users/`);
+    let response = await axiosInstance.get(`organizations/${organizationID}/users/`);
     return response.data;
   } catch {
     message.error("Error fetching users");

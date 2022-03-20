@@ -3,28 +3,42 @@ import { Button, Tag } from "antd";
 const workspaceColumns = [
   {
     title: "Name",
-    dataIndex: "name",
+    dataIndex: "workspace_name",
     key: "name",
   },
   {
     title: "Manager",
     dataIndex: "manager",
+    render: (manager) => manager.map((m) => m.username).join(", "),
     key: "manager",
   },
   {
-    title: "Created at",
-    dataIndex: "created",
+    title: "Created by",
+    dataIndex: ["created_by","username"],
     key: "created",
   },
   {
     title: "Actions",
+    render: () => (
+      <>
+        <Button type={"primary"} style={{ marginRight: "1%" }}>
+          View
+        </Button>
+        <Button type={"default"}>Edit</Button>
+      </>
+    ),
   },
 ];
 const memberColumns = [
   {
     title: "Name",
-    dataIndex: "first_name",
+    dataIndex: "username",
     key: "name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
   {
     title: "Role",
