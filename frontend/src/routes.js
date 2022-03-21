@@ -7,6 +7,7 @@ import { SignUp } from "./pages/Auth/SignUp";
 import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 import Organization from "./pages/Organization/Organization";
 import UserProfile from "./pages/Profile/UserProfile";
+import Workspace from "./pages/Workspace/Workspace";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
 import { Result, Button } from "antd";
@@ -60,6 +61,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <Organization />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="workspace/:id"
+          element={
+            <RequireAuth>
+              <Workspace />
             </RequireAuth>
           }
         />
