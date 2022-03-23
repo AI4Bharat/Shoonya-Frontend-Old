@@ -13,6 +13,7 @@ import LSF from "./pages/Label-Studio/LSF";
 import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
+import CreateProject from "./pages/CreateProject/CreateProject";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -69,6 +70,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <Workspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="createproject/:id"
+          element={
+            <RequireAuth>
+              <CreateProject />
             </RequireAuth>
           }
         />

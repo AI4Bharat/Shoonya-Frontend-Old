@@ -14,7 +14,7 @@ const projectColumns = [
   },
   {
     title: "Created by",
-    dataIndex: ["created_by","username"],
+    dataIndex: ["created_by", "username"],
     key: "created",
   },
   {
