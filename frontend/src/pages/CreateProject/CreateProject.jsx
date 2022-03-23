@@ -1,15 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  Col,
-  Row,
-  Table,
-  Button,
-  Select,
-  Input,
-} from "antd";
+import { Col, Row, Table, Button, Select, Input, InputNumber } from "antd";
 import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
+
 import UserContext from "../../context/User/UserContext";
 
 import { createProject } from "../../api/ProjectAPI";
@@ -18,19 +13,26 @@ import { getDomains } from "../../api/CreateProjectAPI";
 const { Option } = Select;
 
 function CreateProject() {
+  const userContext = useContext(UserContext);
+
   const { id } = useParams();
 
-  const [domain, setDomain] = useState(null);
+  const [domains, setDomains] = useState(null);
   const [types, setTypes] = useState(null);
 
   //Form related state variables
-  const [title,setTitle]=useState(null);
-  const [description,setDescription]=useState(null);
-  const [filterString,setFilterString]=useState(null);
-  const [samplingMode,setSamplingMode]=useState(null);
-  const [samplingParameters,setSamplingParameters]=useState(null);
-  const [projectType,setProjectType]=useState(null);
-  const [datasetId,setDatasetId]=useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedDomain, setSelectedDomain] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
+  const [filterString, setFilterString] = useState(null);
+  const [samplingMode, setSamplingMode] = useState(null);
+  const [random, setRandom] = useState(5);
+  const [batchSize, setBatchSize] = useState(null);
+  const [batchNumber, setBatchNumber] = useState(null);
+  const [samplingParameters, setSamplingParameters] = useState(null);
+  const [projectType, setProjectType] = useState(null);
+  const [datasetId, setDatasetId] = useState(null);
 
   useEffect(() => {
     const temp = {
@@ -99,7 +101,7 @@ function CreateProject() {
       }
       tempTypes[domain] = tempTypesArr;
     }
-    setDomain(tempDomains);
+    setDomains(tempDomains);
     setTypes(tempTypes);
   }, []);
 
@@ -123,14 +125,117 @@ function CreateProject() {
     });
   };
 
-  const userContext = useContext(UserContext);
+  const handleDomainChange = (value) => {
+    setSelectedDomain(value);
+  };
+
+  const handleTypeChange = (value) => {
+    setSelectedType(value);
+  };
+
+  const handleSamplingChange = (value) => {
+    setSamplingMode(value);
+  };
+
+  const handleRandomChange = (e) => {
+    setRandom(e.target.value);
+    setSamplingParameters({
+      sampling_percentage: e.target.value,
+    });
+  };
 
   return (
     <Row style={{ width: "100%" }}>
       <Col span={5} />
-      <Col span={10} style={{ height: "80vh" }}>
+      <Col span={5} style={{ height: "80vh" }}>
         <Title>Create a Project</Title>
-        
+        <h1>Title:</h1>
+        <Input
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+        />
+        <h1>Description:</h1>
+        <Input
+          value={description}
+          onChange={(e) => {
+            setDescription(e.target.value);
+          }}
+        />
+        <h1>Select a domain to work in:</h1>
+        {domains && (
+          <Select defaultValue="Select Domain" onChange={handleDomainChange}>
+            {domains.map((domain) => {
+              return (
+                <Option key={domain} value={domain}>
+                  {domain}
+                </Option>
+              );
+            })}
+          </Select>
+        )}
+        {selectedDomain && (
+          <>
+            <h1>Select a Project Type:</h1>
+            <Select
+              defaultValue="Select Project Type"
+              onChange={handleTypeChange}
+            >
+              {types[selectedDomain].map((type) => {
+                return (
+                  <Option key={type} value={type}>
+                    {type}
+                  </Option>
+                );
+              })}
+            </Select>
+          </>
+        )}
+        {selectedType && (
+          <>
+            <h1>Select Sampling Type</h1>
+            <Select
+              defaultValue="Select Sampling Type"
+              onChange={handleSamplingChange}
+            >
+              <Option value="r">Random</Option>
+              <Option value="f">Fixed</Option>
+              <Option value="b">Batch</Option>
+            </Select>
+          </>
+        )}
+
+        {samplingMode === "r" && (
+          <>
+            <h3>Input Batch size to sample</h3>
+            <InputNumber
+              value={random}
+              onChange={(e) => {
+                handleRandomChange;
+              }}
+            />
+          </>
+        )}
+        {samplingMode === "b" && (
+          <>
+            <h3>Enter Batch size and Batch Number</h3>
+            <InputNumber
+              placeholder="Batch Size"
+              value={batchSize}
+              onChange={(e) => {
+                return;
+              }}
+            />
+            <InputNumber
+            placeholder="Batch Number"
+              value={batchNumber}
+              onChange={(e) => {
+                return;
+              }}
+            />
+          </>
+        )}
       </Col>
     </Row>
   );
