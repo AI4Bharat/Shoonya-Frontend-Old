@@ -1,4 +1,15 @@
-import { Avatar, Col, Row,Divider, Card, Tag, Button } from "antd";
+import {
+  Avatar,
+  Col,
+  Row,
+  Divider,
+  Card,
+  Tag,
+  Form,
+  Input,
+  Button,
+  Checkbox,
+} from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
   UserOutlined,
@@ -11,94 +22,308 @@ import Title from "antd/lib/typography/Title";
 import UserContext from "../../context/User/UserContext";
 import Paragraph from "antd/lib/typography/Paragraph";
 import { fetchProfile } from "../../api/UserAPI";
+import ModalComponent from "../../components/ModalComponent";
+import axiosInstance from "../../utils/apiInstance";
+
 function UserProfile() {
   let userContext = useContext(UserContext);
   const [isUser, setIsUser] = useState(false);
   const [user, setUser] = useState(undefined);
+  const [isModalVisibleProfile, setIsModalVisibleProfile] = useState(false);
+  const[isModalVisibleOrganization, setIsModalVisibleOrganization] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userFirstName, setUserFirstName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [userUsername, setUserUsername] = useState("");
+  const [organizationCreateBy,setOrganizationCreateBy] = useState('');
+  const [organizationTitle,setOrganizationTitle] = useState('');
+  const [organizationEmail, setOrganizationEmail] = useState('');
+
+  const handleUserFetch = async (user) => {
+    console.log(user.organization.created_by, user.organization.email_domain_name, user.organization.title);
+    // axiosInstance.patch("users/account/update");
+    setIsModalVisibleProfile(true);
+  };
+
+  const handleOrganizationFetch = async (organization) => {
+    console.log(organization);
+    setIsModalVisibleOrganization(true);
+  }
+
   useEffect(() => {
-    
     if (window.location.href.split("/")[4] === "me") {
       setIsUser(true);
       setUser(userContext.user);
+      // console.log(userContext.user);
     } else {
       fetchProfile(window.location.href.split("/")[4]).then((res) => {
         setUser(res);
       });
     }
+
+    setUserEmail(userContext.user.email || '');
+    setUserFirstName(userContext.user.first_name || '');
+    setUserLastName(userContext.user.last_name || '');
+    setUserPhone(userContext.user.phone || '');
+    setUserUsername(userContext.user.username || '');
+    setOrganizationCreateBy(userContext.user?.organization.created_by || '');
+    setOrganizationEmail(userContext.user?.organization.email_domain_name || '');
+    setOrganizationTitle(UserContext.user?.organization.title || '');
+
   }, [userContext]);
+
   return (
     <>
-      
-        {user && (
-          <Row style={{ width: "100%" }}>
-            <Col span={1} />
-
-            <Col
-              span={4}
-              style={{
-                height: "80vh",
-              }}
+      <ModalComponent
+        isOpenModal={isModalVisibleProfile}
+        setIsOpenModal={setIsModalVisibleProfile}
+        title={"Edit User Profile"}
+      >
+        <Form
+          name="basic"
+          // labelCol={{
+          //   span: 8,
+          // }}
+          // wrapperCol={{
+          //   span: 16,
+          // }}
+          layout="vertical"
+          initialValues={{
+            firstname: userFirstName,
+            lastname: userLastName,
+            username: userUsername,
+            phone: userPhone,
+            email: userEmail,
+          }}
+          // onFinish={onFinish}
+          // onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Form.Item
+              label="First Name"
+              name="firstname"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input your first name!",
+                },
+              ]}
+              className="half-input"
             >
-              <Card>
-                <div>
-                  <Avatar
-                    size={128}
-                    icon={<UserOutlined />}
-                    style={{ marginBottom: "1%", marginRight: "3%" }}
+              <Input
+                onChange={(e) => {
+                  setUserFirstName(e.target.value);
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Last Name"
+              name="lastname"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input your last name!",
+                },
+              ]}
+              className="half-input"
+            >
+              <Input onChange={(e) => setUserLastName(e.target.value)} />
+            </Form.Item>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input your username!",
+                },
+              ]}
+              className="half-input"
+            >
+              <Input onChange={(e) => setUserUsername(e.target.value)} />
+            </Form.Item>
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input your username!",
+                },
+              ]}
+              className="half-input"
+            >
+              <Input onChange={(e) => setUserPhone(e.target.value)} />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                // required: true,
+                message: "Please input your email!",
+              },
+            ]}
+            className="full-input"
+          >
+            <Input onChange={(e) => setUserEmail(e.target.value)} />
+          </Form.Item>
+        </Form>
+      </ModalComponent>
+
+      <ModalComponent
+        isOpenModal={isModalVisibleOrganization}
+        setIsOpenModal={setIsModalVisibleOrganization}
+        title={"Edit Organization"}
+      >
+        <Form
+          name="basic"
+          // labelCol={{
+          //   span: 8,
+          // }}
+          // wrapperCol={{
+          //   span: 16,
+          // }}
+          layout="vertical"
+          initialValues={{
+            createdby : organizationCreateBy,
+            title : organizationTitle,
+            email : organizationEmail,
+          }}
+          // onFinish={onFinish}
+          // onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Form.Item
+              label="Create By"
+              name="createdby"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input organization creator!",
+                },
+              ]}
+              className="half-input"
+            >
+              <Input
+                onChange={(e) => {
+                  setOrganizationCreateBy(e.target.value);
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Title"
+              name="title"
+              rules={[
+                {
+                  // required: true,
+                  message: "Please input organization Title!",
+                },
+              ]}
+              className="half-input"
+            >
+              <Input onChange={(e) => setOrganizationTitle(e.target.value)} />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                // required: true,
+                message: "Please input your email!",
+              },
+            ]}
+            className="full-input"
+          >
+            <Input onChange={(e) => setOrganizationEmail(e.target.value)} />
+          </Form.Item>
+        </Form>
+      </ModalComponent>
+      {user && (
+        <Row style={{ width: "100%" }}>
+          <Col span={1} />
+
+          <Col
+            span={4}
+            style={{
+              height: "80vh",
+            }}
+          >
+            <Card>
+              <div>
+                <Avatar
+                  size={128}
+                  icon={<UserOutlined />}
+                  style={{ marginBottom: "1%", marginRight: "3%" }}
+                />
+                {isUser && (
+                  <EditOutlined
+                    style={{ float: "right", fontSize: "1.4rem" }}
+                    onClick={() => {
+                      handleUserFetch(user);
+                      // console.log(user);
+                    }}
                   />
-                  {isUser && (
-                    <EditOutlined
-                      style={{ float: "right", fontSize: "1.4rem" }}
-                    />
-                  )}
-                </div>
-                <Divider />
-                <Title style={{ marginBottom: "0" }} level={2}>
-                  {user.first_name + " " + user.last_name}{" "}
-                </Title>
-                <Paragraph style={{ fontSize: "1.2rem", color: "gray" }}>
-                  AKA {user.username}
-                </Paragraph>
-                <Paragraph style={{ fontSize: "1.1rem" }}>
-                  <MailOutlined /> {user.email}
-                </Paragraph>
-                <Paragraph style={{ fontSize: "1.1rem" }}>
-                  <PhoneOutlined /> {user.phone}
-                </Paragraph>
-              </Card>
-            </Col>
-            <Col span={1} />
-            <Col span={16}>
-              <Card>
-                <Divider
-                  style={{ marginTop: "0", color: "gray" }}
-                  orientation="left"
-                  plain
-                >
-                  Organization
-                </Divider>
-                <Title level={2}>
-                  {user.organization.title}
-                  <Button
-                    style={{ float: "right", color: "gray" }}
-                    icon={<SelectOutlined />}
-                    type="link"
-                  />
-                </Title>
-                {user.role === 3 && <Tag color="red">Admin</Tag>}
-                {user.role === 2 && <Tag color="blue">Manager</Tag>}
-                {user.role === 1 && <Tag color="green">Annotator</Tag>}
-                
-                
-                
-                <Divider style={{ color: "gray" }} orientation="left" plain>
-                  Performance
-                </Divider>
-              </Card>
-            </Col>
-            <Col span={1} />
-          </Row>
-        )}
+                )}
+              </div>
+              <Divider />
+              <Title style={{ marginBottom: "0" }} level={2}>
+                {user.first_name + " " + user.last_name}{" "}
+              </Title>
+              <Paragraph style={{ fontSize: "1.2rem", color: "gray" }}>
+                AKA {user.username}
+              </Paragraph>
+              <Paragraph style={{ fontSize: "1.1rem" }}>
+                <MailOutlined /> {user.email}
+              </Paragraph>
+              <Paragraph style={{ fontSize: "1.1rem" }}>
+                <PhoneOutlined /> {user.phone}
+              </Paragraph>
+            </Card>
+          </Col>
+          <Col span={1} />
+          <Col span={16}>
+            <Card>
+              <Divider
+                style={{ marginTop: "0", color: "gray" }}
+                orientation="left"
+                plain
+              >
+                Organization
+              </Divider>
+              <Title level={2}>
+                {user.organization.title}
+                <Button
+                  style={{ float: "right", color: "gray" }}
+                  icon={<SelectOutlined />}
+                  type="link"
+                  onClick={() => handleOrganizationFetch(user.organization)}
+                />
+              </Title>
+              {user.role === 3 && <Tag color="red">Admin</Tag>}
+              {user.role === 2 && <Tag color="blue">Manager</Tag>}
+              {user.role === 1 && <Tag color="green">Annotator</Tag>}
+
+              <Divider style={{ color: "gray" }} orientation="left" plain>
+                Performance
+              </Divider>
+            </Card>
+          </Col>
+          <Col span={1} />
+        </Row>
+      )}
     </>
   );
 }
