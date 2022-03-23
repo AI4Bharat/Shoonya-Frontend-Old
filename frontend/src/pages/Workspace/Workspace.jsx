@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Col, Row, Card, Tabs, Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -15,6 +15,8 @@ const { TabPane } = Tabs;
 
 function Workspace() {
   const { id } = useParams();
+  let navigate = useNavigate();
+
   const [projectForm] = useForm();
   const [workspace, setWorkspace] = useState(undefined);
   const [inviteData, setInviteData] = useState({ visible: false, users: [] });
@@ -23,6 +25,7 @@ function Workspace() {
     projects: [],
     visible: false,
   });
+
   const userContext = useContext(UserContext);
 
   useEffect(() => {
@@ -60,20 +63,13 @@ function Workspace() {
                   <>
                     <Button
                       style={{ width: "100%", marginBottom: "1%" }}
-                      onClick={() => setProject({ ...project, visible: true })}
+                      onClick={() =>
+                        navigate(`/createproject/${id}`, { replace: true })
+                      }
                       type="primary"
                     >
                       Add new Project
                     </Button>
-                    <Modal
-                      visible={project.visible}
-                      onCancel={() =>
-                        setProject({ ...project, visible: false })
-                      }
-                      onOk={() => projectForm.submit()}
-                    >
-                      <Title level={5}>Enter Project details</Title>
-                    </Modal>
                   </>
                 )}
 

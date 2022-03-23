@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Col, Row, Table, Button, Select, Input, InputNumber } from "antd";
+import { Col, Row, Button, Select, Input, InputNumber } from "antd";
 import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
 
 import UserContext from "../../context/User/UserContext";
 
@@ -105,6 +104,15 @@ function CreateProject() {
     setTypes(tempTypes);
   }, []);
 
+  useEffect(() => {
+    if (batchSize && batchNumber) {
+      setSamplingParameters({
+        batch_size: batchSize,
+        batch_number: batchNumber,
+      });
+    }
+  }, [batchSize, batchNumber]);
+
   const onCreateProject = (data) => {
     createProject({
       title: data.title,
@@ -135,13 +143,24 @@ function CreateProject() {
 
   const handleSamplingChange = (value) => {
     setSamplingMode(value);
+    if (value === "f") {
+      setSamplingParameters({});
+    }
   };
 
-  const handleRandomChange = (e) => {
-    setRandom(e.target.value);
+  const handleRandomChange = (value) => {
+    setRandom(value);
     setSamplingParameters({
-      sampling_percentage: e.target.value,
+      sampling_percentage: value,
     });
+  };
+
+  const handleBatchSizeChange = (value) => {
+    setBatchSize(value);
+  };
+
+  const handleBatchNumberChange = (value) => {
+    setBatchNumber(value);
   };
 
   return (
@@ -194,7 +213,7 @@ function CreateProject() {
         )}
         {selectedType && (
           <>
-            <h1>Select Sampling Type</h1>
+            <h1>Select Sampling Type:</h1>
             <Select
               defaultValue="Select Sampling Type"
               onChange={handleSamplingChange}
@@ -208,31 +227,23 @@ function CreateProject() {
 
         {samplingMode === "r" && (
           <>
-            <h3>Input Batch size to sample</h3>
-            <InputNumber
-              value={random}
-              onChange={(e) => {
-                handleRandomChange;
-              }}
-            />
+            <h3>Input Batch size to sample (in percentage):</h3>
+            <InputNumber value={random} onChange={handleRandomChange} />
           </>
         )}
         {samplingMode === "b" && (
           <>
-            <h3>Enter Batch size and Batch Number</h3>
+            <h3>Enter Batch size:</h3>
             <InputNumber
               placeholder="Batch Size"
               value={batchSize}
-              onChange={(e) => {
-                return;
-              }}
+              onChange={handleBatchSizeChange}
             />
+            <h3>Enter Batch Number:</h3>
             <InputNumber
-            placeholder="Batch Number"
+              placeholder="Batch Number"
               value={batchNumber}
-              onChange={(e) => {
-                return;
-              }}
+              onChange={handleBatchNumberChange}
             />
           </>
         )}
