@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 
-import { Col, Row, Button, Select, Input, InputNumber } from "antd";
+import { Col, Row, Button, Select, Input, InputNumber, message } from "antd";
 import Title from "antd/lib/typography/Title";
 
 import UserContext from "../../context/User/UserContext";
@@ -15,6 +15,7 @@ function CreateProject() {
   const userContext = useContext(UserContext);
 
   const { id } = useParams();
+  let navigate=useNavigate();
 
   const [domains, setDomains] = useState(null);
   const [types, setTypes] = useState(null);
@@ -113,26 +114,6 @@ function CreateProject() {
     }
   }, [batchSize, batchNumber]);
 
-  const onCreateProject = (data) => {
-    createProject({
-      title: data.title,
-      description: data.description,
-      created_by: userContext.user.id,
-      is_archived: false,
-      is_published: false,
-      users: [userContext.user.id],
-      workspace_id: id,
-      organization_id: useContext.user.organization_id,
-      filter_string: "string",
-      sampling_mode: "r",
-      sampling_parameters_json: {},
-      project_type: 1,
-      dataset_id: [0],
-    }).then(() => {
-      return;
-    });
-  };
-
   const handleDomainChange = (value) => {
     setSelectedDomain(value);
   };
@@ -162,6 +143,28 @@ function CreateProject() {
   const handleBatchNumberChange = (value) => {
     setBatchNumber(value);
   };
+
+  const handleCreateProject=()=>{
+    createProject({
+      title: title,
+      description: description,
+      created_by: userContext.user.id,
+      is_archived: false,
+      is_published: false,
+      users: [userContext.user.id],
+      workspace_id: id,
+      organization_id: userContext.user.organization_id,
+      filter_string: "string",
+      sampling_mode: samplingMode,
+      sampling_parameters_json: samplingParameters,
+      project_type: 1,
+      dataset_id: [1],
+    }).then((data) => {
+      navigate(`/project/${data.id}`,{replace:true})
+    }).catch(err=>{
+      message.error("Error creating project");
+    });
+  }
 
   return (
     <Row style={{ width: "100%" }}>
@@ -245,6 +248,14 @@ function CreateProject() {
               value={batchNumber}
               onChange={handleBatchNumberChange}
             />
+          </>
+        )}
+        {samplingParameters&&(
+          <>
+          <h1>Finalize Project</h1>
+          <Button onClick={handleCreateProject}>
+            Create Project
+          </Button>
           </>
         )}
       </Col>
