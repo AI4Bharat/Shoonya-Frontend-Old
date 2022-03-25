@@ -22,10 +22,12 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use((response) => {
         return response;
     },
-    async function (error) {
+    function (error) {
         const originalRequest = error.config;
 
+        console.log(error);
         if (typeof error.response === 'undefined') {
+            console.log('Here');
             alert(
                 'Unknown server error!'
             );
@@ -33,18 +35,22 @@ axiosInstance.interceptors.response.use((response) => {
         }
 
         if  (error.response.status === 401 && originalRequest.url === apiData.url + REFRESH_URL) {
+            console.log('Here');
             window.location.href = '/login';
             return Promise.reject(error);
         }
 
         if (error.response.data.code === TOKEN_NOT_VALID && error.response.status === 401 && error.response.statusText === 'Unauthorized') {
+            console.log('Here');
             const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
             if (refreshToken) {
+                console.log('Here');
                 const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
                 const now = Math.ceil(Date.now() / 1000);
 
                 if (tokenParts.exp > now) {
+                    console.log('Here');
                     return axiosInstance
                             .post(REFRESH_URL, {
                                 refresh: refreshToken,
@@ -65,12 +71,15 @@ axiosInstance.interceptors.response.use((response) => {
                                 console.log(err);
                             });
                 } else {
+                    console.log('Here');
                     window.location.href = '/';
                 }
             } else {
+                console.log('Here');
                 window.location.href = '/';
             }
 
+            console.log('Here');
             return Promise.reject(error);
         }
     }

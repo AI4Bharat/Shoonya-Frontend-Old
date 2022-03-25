@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'antd';
 import PropTypes from 'prop-types';
 
-const ModalComponent = ({isOpenModal, setIsOpenModal,title, children}) => {
+const ModalComponent = ({isOpenModal, setIsOpenModal,title,formSubmit, children}) => {
 //   const [isModalVisible, setIsModalVisible] = useState(false);
 
 //   const showModal = () => {
@@ -11,7 +11,9 @@ const ModalComponent = ({isOpenModal, setIsOpenModal,title, children}) => {
 
   const handleOk = () => {
     // setIsModalVisible(false);
-    setIsOpenModal(false);
+    // console.log('Here');
+    formSubmit();
+    // setIsOpenModal(false);
   };
 
   const handleCancel = () => {
@@ -39,6 +41,7 @@ ModalComponent.propTypes = {
     setIsOpenModal: PropTypes.func,
     children : PropTypes.element,
     title : PropTypes.string,
+    formSubmit : PropTypes.func,
 }
 
 export default ModalComponent;

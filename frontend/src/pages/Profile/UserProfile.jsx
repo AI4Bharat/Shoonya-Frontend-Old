@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   Checkbox,
+  Alert,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -30,26 +31,60 @@ function UserProfile() {
   const [isUser, setIsUser] = useState(false);
   const [user, setUser] = useState(undefined);
   const [isModalVisibleProfile, setIsModalVisibleProfile] = useState(false);
-  const[isModalVisibleOrganization, setIsModalVisibleOrganization] = useState(false);
+  const [isModalVisibleOrganization, setIsModalVisibleOrganization] =
+    useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [userUsername, setUserUsername] = useState("");
-  const [organizationCreateBy,setOrganizationCreateBy] = useState('');
-  const [organizationTitle,setOrganizationTitle] = useState('');
-  const [organizationEmail, setOrganizationEmail] = useState('');
+  const [organizationCreatedBy, setOrganizationCreatedBy] = useState("");
+  const [organizationTitle, setOrganizationTitle] = useState("");
+  const [organizationEmail, setOrganizationEmail] = useState("");
+  const [organizationId, setOrganizationId] = useState("");
 
-  const handleUserFetch = async (user) => {
-    console.log(user.organization.created_by, user.organization.email_domain_name, user.organization.title);
-    // axiosInstance.patch("users/account/update");
-    setIsModalVisibleProfile(true);
+  const handleUserProfileEdit = () => {
+    // console.log(userEmail);
+
+    if (userEmail === "") {
+      // console.log("Here");
+      return alert("Enter Current User Email");
+    }
+
+    axiosInstance
+      .patch("users/account/update/", {
+        email: userEmail,
+        first_name: userFirstName,
+        last_name: userLastName,
+        username: userUsername,
+        phone: userPhone,
+      })
+      .then((res) => {
+        return alert("User Successfully Updated");
+      })
+      .catch((err) => alert("Error : Couldn't User Information"));
+
+    setIsModalVisibleProfile(false);
   };
 
-  const handleOrganizationFetch = async (organization) => {
-    console.log(organization);
-    setIsModalVisibleOrganization(true);
-  }
+  const handleOrganizationEdit = () => {
+    console.log("Organization Edit");
+
+    if (organizationId === "") {
+      return alert("Unable To Fetch Organization");
+    }
+
+    axiosInstance
+      .patch(`organizations/${organizationId}/`, {
+        email_domain_name: organizationEmail,
+        created_by: organizationCreatedBy,
+        title: organizationTitle,
+      })
+      .then((res) => alert("Organization Successfully Updated"))
+      .catch((err) => alert("Error : Couldn't Update Organization"));
+
+    setIsModalVisibleOrganization(false);
+  };
 
   useEffect(() => {
     if (window.location.href.split("/")[4] === "me") {
@@ -62,15 +97,19 @@ function UserProfile() {
       });
     }
 
-    setUserEmail(userContext.user.email || '');
-    setUserFirstName(userContext.user.first_name || '');
-    setUserLastName(userContext.user.last_name || '');
-    setUserPhone(userContext.user.phone || '');
-    setUserUsername(userContext.user.username || '');
-    setOrganizationCreateBy(userContext.user?.organization.created_by || '');
-    setOrganizationEmail(userContext.user?.organization.email_domain_name || '');
-    setOrganizationTitle(UserContext.user?.organization.title || '');
+    console.log(userContext.user);
 
+    setUserEmail(userContext.user?.email || "");
+    setUserFirstName(userContext.user?.first_name || "");
+    setUserLastName(userContext.user?.last_name || "");
+    setUserPhone(userContext.user?.phone || "");
+    setUserUsername(userContext.user?.username || "");
+    setOrganizationCreatedBy(userContext.user?.organization.created_by || "");
+    setOrganizationEmail(
+      userContext.user?.organization.email_domain_name || ""
+    );
+    setOrganizationTitle(userContext.user?.organization.title || "");
+    setOrganizationId(userContext.user?.organization.id || "");
   }, [userContext]);
 
   return (
@@ -79,15 +118,10 @@ function UserProfile() {
         isOpenModal={isModalVisibleProfile}
         setIsOpenModal={setIsModalVisibleProfile}
         title={"Edit User Profile"}
+        formSubmit={handleUserProfileEdit}
       >
         <Form
           name="basic"
-          // labelCol={{
-          //   span: 8,
-          // }}
-          // wrapperCol={{
-          //   span: 16,
-          // }}
           layout="vertical"
           initialValues={{
             firstname: userFirstName,
@@ -106,7 +140,6 @@ function UserProfile() {
               name="firstname"
               rules={[
                 {
-                  // required: true,
                   message: "Please input your first name!",
                 },
               ]}
@@ -124,7 +157,6 @@ function UserProfile() {
               name="lastname"
               rules={[
                 {
-                  // required: true,
                   message: "Please input your last name!",
                 },
               ]}
@@ -140,7 +172,6 @@ function UserProfile() {
               name="username"
               rules={[
                 {
-                  // required: true,
                   message: "Please input your username!",
                 },
               ]}
@@ -153,7 +184,6 @@ function UserProfile() {
               name="phone"
               rules={[
                 {
-                  // required: true,
                   message: "Please input your username!",
                 },
               ]}
@@ -168,11 +198,11 @@ function UserProfile() {
             name="email"
             rules={[
               {
-                // required: true,
                 message: "Please input your email!",
               },
             ]}
             className="full-input"
+            required="true"
           >
             <Input onChange={(e) => setUserEmail(e.target.value)} />
           </Form.Item>
@@ -183,32 +213,25 @@ function UserProfile() {
         isOpenModal={isModalVisibleOrganization}
         setIsOpenModal={setIsModalVisibleOrganization}
         title={"Edit Organization"}
+        formSubmit={handleOrganizationEdit}
       >
         <Form
           name="basic"
-          // labelCol={{
-          //   span: 8,
-          // }}
-          // wrapperCol={{
-          //   span: 16,
-          // }}
           layout="vertical"
           initialValues={{
-            createdby : organizationCreateBy,
-            title : organizationTitle,
-            email : organizationEmail,
+            organizationId: organizationId,
+            createdby: organizationCreatedBy,
+            title: organizationTitle,
+            email: organizationEmail,
           }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Form.Item
-              label="Create By"
+              label="Created By"
               name="createdby"
               rules={[
                 {
-                  // required: true,
                   message: "Please input organization creator!",
                 },
               ]}
@@ -216,7 +239,7 @@ function UserProfile() {
             >
               <Input
                 onChange={(e) => {
-                  setOrganizationCreateBy(e.target.value);
+                  setOrganizationCreatedBy(e.target.value);
                 }}
               />
             </Form.Item>
@@ -226,7 +249,6 @@ function UserProfile() {
               name="title"
               rules={[
                 {
-                  // required: true,
                   message: "Please input organization Title!",
                 },
               ]}
@@ -241,8 +263,7 @@ function UserProfile() {
             name="email"
             rules={[
               {
-                // required: true,
-                message: "Please input your email!",
+                message: "Please input organization email!",
               },
             ]}
             className="full-input"
@@ -272,8 +293,7 @@ function UserProfile() {
                   <EditOutlined
                     style={{ float: "right", fontSize: "1.4rem" }}
                     onClick={() => {
-                      handleUserFetch(user);
-                      // console.log(user);
+                      setIsModalVisibleProfile(true);
                     }}
                   />
                 )}
@@ -309,7 +329,7 @@ function UserProfile() {
                   style={{ float: "right", color: "gray" }}
                   icon={<SelectOutlined />}
                   type="link"
-                  onClick={() => handleOrganizationFetch(user.organization)}
+                  onClick={() => setIsModalVisibleOrganization(true)}
                 />
               </Title>
               {user.role === 3 && <Tag color="red">Admin</Tag>}
