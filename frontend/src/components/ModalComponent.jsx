@@ -28,7 +28,7 @@ const ModalComponent = ({isOpenModal, setIsOpenModal,title,formSubmit, children}
       {/* <Button type="primary" onClick={showModal}>
         Open Modal
       </Button> */}
-      <Modal title={title} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title={title} visible={isOpenModal} onOk={handleOk} footer={null} onCancel = {handleCancel}>
        {children}
        {/* <h1>Hello</h1> */}
       </Modal>

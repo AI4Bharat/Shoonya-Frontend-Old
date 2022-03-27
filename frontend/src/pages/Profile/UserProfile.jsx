@@ -10,6 +10,7 @@ import {
   Button,
   Checkbox,
   Alert,
+  message,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -22,9 +23,12 @@ import {
 import Title from "antd/lib/typography/Title";
 import UserContext from "../../context/User/UserContext";
 import Paragraph from "antd/lib/typography/Paragraph";
-import { fetchProfile } from "../../api/UserAPI";
+import {
+  fetchProfile,
+  organizationEdit,
+  userProfileEdit,
+} from "../../api/UserAPI";
 import ModalComponent from "../../components/ModalComponent";
-import axiosInstance from "../../utils/apiInstance";
 
 function UserProfile() {
   let userContext = useContext(UserContext);
@@ -33,55 +37,48 @@ function UserProfile() {
   const [isModalVisibleProfile, setIsModalVisibleProfile] = useState(false);
   const [isModalVisibleOrganization, setIsModalVisibleOrganization] =
     useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [userFirstName, setUserFirstName] = useState("");
-  const [userLastName, setUserLastName] = useState("");
-  const [userPhone, setUserPhone] = useState("");
-  const [userUsername, setUserUsername] = useState("");
-  const [organizationCreatedBy, setOrganizationCreatedBy] = useState("");
-  const [organizationTitle, setOrganizationTitle] = useState("");
-  const [organizationEmail, setOrganizationEmail] = useState("");
-  const [organizationId, setOrganizationId] = useState("");
 
-  const handleUserProfileEdit = () => {
-    // console.log(userEmail);
+  const onFinishUserEdit = async (values) => {
+    const data = await userProfileEdit(values);
 
-    if (userEmail === "") {
-      // console.log("Here");
-      return alert("Enter Current User Email");
+    if (data) {
+      const editUser = {
+        ...user,
+        first_name: data?.first_name,
+        last_name: data?.last_name,
+        phone: data?.phone,
+        username: data?.username,
+      };
+
+      setUser(editUser);
+
+      message.success(
+        `User ${data.first_name} ${data.last_name} Successfully Updated`
+      );
     }
-
-    axiosInstance
-      .patch("users/account/update/", {
-        email: userEmail,
-        first_name: userFirstName,
-        last_name: userLastName,
-        username: userUsername,
-        phone: userPhone,
-      })
-      .then((res) => {
-        return alert("User Successfully Updated");
-      })
-      .catch((err) => alert("Error : Couldn't User Information"));
 
     setIsModalVisibleProfile(false);
   };
 
-  const handleOrganizationEdit = () => {
-    console.log("Organization Edit");
+  const onFinishOrganizationEdit = async (values) => {
+    const data = await organizationEdit({
+      id: user?.organization?.id,
+      ...values,
+    });
 
-    if (organizationId === "") {
-      return alert("Unable To Fetch Organization");
+    if (data) {
+      const editUser = {
+        ...user,
+      };
+
+      editUser.organization.created_by = data.created_by;
+      editUser.organization.title = data.title;
+      editUser.organization.email_domain_name = data.email_domain_name;
+
+      setUser(editUser);
+
+      message.success(`Organization Successfully Updated`);
     }
-
-    axiosInstance
-      .patch(`organizations/${organizationId}/`, {
-        email_domain_name: organizationEmail,
-        created_by: organizationCreatedBy,
-        title: organizationTitle,
-      })
-      .then((res) => alert("Organization Successfully Updated"))
-      .catch((err) => alert("Error : Couldn't Update Organization"));
 
     setIsModalVisibleOrganization(false);
   };
@@ -90,26 +87,11 @@ function UserProfile() {
     if (window.location.href.split("/")[4] === "me") {
       setIsUser(true);
       setUser(userContext.user);
-      // console.log(userContext.user);
     } else {
       fetchProfile(window.location.href.split("/")[4]).then((res) => {
         setUser(res);
       });
     }
-
-    console.log(userContext.user);
-
-    setUserEmail(userContext.user?.email || "");
-    setUserFirstName(userContext.user?.first_name || "");
-    setUserLastName(userContext.user?.last_name || "");
-    setUserPhone(userContext.user?.phone || "");
-    setUserUsername(userContext.user?.username || "");
-    setOrganizationCreatedBy(userContext.user?.organization.created_by || "");
-    setOrganizationEmail(
-      userContext.user?.organization.email_domain_name || ""
-    );
-    setOrganizationTitle(userContext.user?.organization.title || "");
-    setOrganizationId(userContext.user?.organization.id || "");
   }, [userContext]);
 
   return (
@@ -118,26 +100,24 @@ function UserProfile() {
         isOpenModal={isModalVisibleProfile}
         setIsOpenModal={setIsModalVisibleProfile}
         title={"Edit User Profile"}
-        formSubmit={handleUserProfileEdit}
       >
         <Form
           name="basic"
           layout="vertical"
           initialValues={{
-            firstname: userFirstName,
-            lastname: userLastName,
-            username: userUsername,
-            phone: userPhone,
-            email: userEmail,
+            first_name: user?.first_name,
+            last_name: user?.last_name,
+            username: user?.username,
+            phone: user?.phone,
+            email: user?.email,
           }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          onFinish={onFinishUserEdit}
           autoComplete="off"
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Form.Item
               label="First Name"
-              name="firstname"
+              name="first_name"
               rules={[
                 {
                   message: "Please input your first name!",
@@ -145,16 +125,12 @@ function UserProfile() {
               ]}
               className="half-input"
             >
-              <Input
-                onChange={(e) => {
-                  setUserFirstName(e.target.value);
-                }}
-              />
+              <Input />
             </Form.Item>
 
             <Form.Item
               label="Last Name"
-              name="lastname"
+              name="last_name"
               rules={[
                 {
                   message: "Please input your last name!",
@@ -162,7 +138,7 @@ function UserProfile() {
               ]}
               className="half-input"
             >
-              <Input onChange={(e) => setUserLastName(e.target.value)} />
+              <Input />
             </Form.Item>
           </div>
 
@@ -177,7 +153,7 @@ function UserProfile() {
               ]}
               className="half-input"
             >
-              <Input onChange={(e) => setUserUsername(e.target.value)} />
+              <Input />
             </Form.Item>
             <Form.Item
               label="Phone Number"
@@ -189,7 +165,7 @@ function UserProfile() {
               ]}
               className="half-input"
             >
-              <Input onChange={(e) => setUserPhone(e.target.value)} />
+              <Input />
             </Form.Item>
           </div>
 
@@ -204,7 +180,13 @@ function UserProfile() {
             className="full-input"
             required="true"
           >
-            <Input onChange={(e) => setUserEmail(e.target.value)} />
+            <Input />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
           </Form.Item>
         </Form>
       </ModalComponent>
@@ -213,35 +195,25 @@ function UserProfile() {
         isOpenModal={isModalVisibleOrganization}
         setIsOpenModal={setIsModalVisibleOrganization}
         title={"Edit Organization"}
-        formSubmit={handleOrganizationEdit}
       >
         <Form
           name="basic"
           layout="vertical"
           initialValues={{
-            organizationId: organizationId,
-            createdby: organizationCreatedBy,
-            title: organizationTitle,
-            email: organizationEmail,
+            created_by: user?.organization?.created_by,
+            title: user?.organization?.title,
+            email_domain_name: user?.organization?.email_domain_name,
           }}
+          onFinish={onFinishOrganizationEdit}
           autoComplete="off"
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Form.Item
               label="Created By"
-              name="createdby"
-              rules={[
-                {
-                  message: "Please input organization creator!",
-                },
-              ]}
+              name="created_by"
               className="half-input"
             >
-              <Input
-                onChange={(e) => {
-                  setOrganizationCreatedBy(e.target.value);
-                }}
-              />
+              <Input />
             </Form.Item>
 
             <Form.Item
@@ -254,13 +226,13 @@ function UserProfile() {
               ]}
               className="half-input"
             >
-              <Input onChange={(e) => setOrganizationTitle(e.target.value)} />
+              <Input />
             </Form.Item>
           </div>
 
           <Form.Item
             label="Email"
-            name="email"
+            name="email_domain_name"
             rules={[
               {
                 message: "Please input organization email!",
@@ -268,7 +240,12 @@ function UserProfile() {
             ]}
             className="full-input"
           >
-            <Input onChange={(e) => setOrganizationEmail(e.target.value)} />
+            <Input />
+          </Form.Item>
+          <Form.Item wrapperCol={{ span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
           </Form.Item>
         </Form>
       </ModalComponent>
