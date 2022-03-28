@@ -22,3 +22,8 @@ code {
 .ant-btn {
   border-radius: 1rem;
 }
+
+.margin-top-heading {
+  margin: 0;
+  margin-top: 20px;
+}

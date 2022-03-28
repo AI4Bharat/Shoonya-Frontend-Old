@@ -14,6 +14,7 @@ import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
+import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -74,10 +75,18 @@ function GlobalRoutes() {
           }
         />
         <Route
-          path="createproject/:id"
+          path="create-annotation-project/:id"
           element={
             <RequireAuth>
               <CreateProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="create-collection-project/:id"
+          element={
+            <RequireAuth>
+              <CreateCollectionProject />
             </RequireAuth>
           }
         />
