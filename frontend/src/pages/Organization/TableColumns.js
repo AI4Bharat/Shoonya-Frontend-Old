@@ -8,9 +8,9 @@ const workspaceColumns = [
   },
   {
     title: "Manager",
-    dataIndex: "manager",
-    render: (manager) => manager.map((m) => m.username).join(", "),
-    key: "manager",
+    dataIndex: "managers",
+    render: (managers) => managers.map((m) => m.username).join(", "),
+    key: "managers",
   },
   {
     title: "Created by",
