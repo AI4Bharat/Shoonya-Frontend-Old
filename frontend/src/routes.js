@@ -7,11 +7,13 @@ import { SignUp } from "./pages/Auth/SignUp";
 import { ConfirmForgetPassword } from "./pages/Auth/ConfirmForgetPassword";
 import Organization from "./pages/Organization/Organization";
 import UserProfile from "./pages/Profile/UserProfile";
+import Workspace from "./pages/Workspace/Workspace";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
 import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
+import CreateProject from "./pages/CreateProject/CreateProject";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -60,6 +62,22 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <Organization />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="workspace/:id"
+          element={
+            <RequireAuth>
+              <Workspace />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="createproject/:id"
+          element={
+            <RequireAuth>
+              <CreateProject />
             </RequireAuth>
           }
         />
