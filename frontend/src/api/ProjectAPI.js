@@ -11,12 +11,4 @@ const fetchProjects = async () => {
   }
 };
 
-const createProject = async (data) => {
-  try {
-    let response = await axiosInstance.post(`/projects/`, data);
-    return response.data;
-  } catch {
-    message.error("Error creating project");
-  }
-};
-export { createProject, fetchProjects };
+export { fetchProjects };
