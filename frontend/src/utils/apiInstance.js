@@ -6,6 +6,7 @@ const REFRESH_TOKEN = 'shoonya_refresh_token';
 const TOKEN_NOT_VALID = 'token_not_valid';
 
 const REFRESH_URL = 'users/auth/jwt/refresh';
+const VERIFY_URL = 'users/auth/jwt/verify';
 
 const axiosInstance = axios.create({
     baseURL: apiData.url,
@@ -41,10 +42,12 @@ axiosInstance.interceptors.response.use((response) => {
             const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
             if (refreshToken) {
-                const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
-                const now = Math.ceil(Date.now() / 1000);
+                // const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
+                // const now = Math.ceil(Date.now() / 1000);
 
-                if (tokenParts.exp > now) {
+                const data = await axiosInstance.post(VERIFY_URL, {token: refreshToken});
+
+                if (data.response.status === 200) {
                     return axiosInstance
                             .post(REFRESH_URL, {
                                 refresh: refreshToken,
@@ -63,6 +66,10 @@ axiosInstance.interceptors.response.use((response) => {
                             .catch((err) => {
                                 console.log(err);
                             });
+                } else if (data.response.status !== 200) {
+                    localStorage.removeItem(ACCESS_TOKEN);
+                    localStorage.removeItem(REFRESH_TOKEN);
+                    window.location.pathname = '/login';
                 } else {
                     window.location.href = '/';
                 }
