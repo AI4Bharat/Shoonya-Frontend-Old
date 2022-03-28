@@ -37,7 +37,7 @@ function Organization() {
     createWorkspace({
       organization: userContext.user.organization.id,
       workspace_name: data.workspace_name,
-      manager: data.manager,
+      managers: data.managers,
       created_by: userContext.user.id,
     }).then(() => setWorkspace({ ...workspace, visible: false }));
   };
@@ -99,7 +99,7 @@ function Organization() {
                         <FormItem label="Workspace Name" name="workspace_name">
                           <Input />
                         </FormItem>
-                        <FormItem label="Managers" name="manager">
+                        <FormItem label="Managers" name="managers">
                           <Select mode="multiple" placeholder="Please Select">
                             {users.map((e) => {
                               if (e.role === 2) {
