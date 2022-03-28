@@ -10,21 +10,21 @@ const getDomains = async () => {
   }
 };
 
-const getInstanceId = async (datasetType) => {
+const getInstanceIds = async (datasetType) => {
   try {
     let response = await axiosInstance.get(
       `/data/instances/?dataset_type=${datasetType}`
     );
-    return response.data[0].instance_id;
+    return response.data;
   } catch (e) {
     message.error("Error fetching Instance ID");
   }
 };
 
-const getData = async (instanceId) => {
+const getData = async (instanceIds) => {
   try {
     let response = await axiosInstance.post(`/data/dataitems/get_data_items/`, {
-      instance_id: instanceId,
+      instance_ids: instanceIds,
     });
     return response.data;
   } catch (e) {
@@ -41,4 +41,4 @@ const createProject = async (data) => {
   }
 };
 
-export { getDomains, getInstanceId, getData, createProject };
+export { getDomains, getInstanceIds, getData, createProject };

@@ -17,7 +17,7 @@ import UserContext from "../../context/User/UserContext";
 
 import {
   getDomains,
-  getInstanceId,
+  getInstanceIds,
   getData,
   createProject,
 } from "../../api/CreateProjectAPI";
@@ -34,7 +34,7 @@ function CreateProject() {
   const [types, setTypes] = useState(null);
   const [datasetType, setDatasetType] = useState(null);
   const [columnFields, setColumnFields] = useState(null);
-  const [instanceId, setInstanceId] = useState(null);
+  const [instanceIds, setInstanceIds] = useState(null);
 
   //Form related state variables
   const [title, setTitle] = useState("");
@@ -47,8 +47,8 @@ function CreateProject() {
   const [batchSize, setBatchSize] = useState(null);
   const [batchNumber, setBatchNumber] = useState(null);
   const [samplingParameters, setSamplingParameters] = useState(null);
-  const [projectType, setProjectType] = useState(null);
-  const [datasetId, setDatasetId] = useState(null);
+  const [selectedInstances, setSelectedInstances] = useState([]);
+  const [confirmed, setConfirmed] = useState(false);
 
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
@@ -96,19 +96,6 @@ function CreateProject() {
     }
   }, [batchSize, batchNumber]);
 
-  useEffect(() => {
-    if (instanceId) {
-      getData(instanceId).then((res) => {
-        let key = 1;
-        for (const data in res) {
-          res[data].key = key;
-          key++;
-        }
-        setTableData(res);
-      });
-    }
-  }, [instanceId]);
-
   const handleDomainChange = (value) => {
     setSelectedDomain(value);
     setSelectedType(null);
@@ -125,8 +112,13 @@ function CreateProject() {
       });
     }
     setColumns(tempColumns);
-    getInstanceId(datasetType[value]).then((res) => {
-      setInstanceId(res);
+    getInstanceIds(datasetType[value]).then((res) => {
+      let tempInstanceIds = {};
+      for (const instance in res) {
+        tempInstanceIds[res[instance]["instance_id"]] =
+          res[instance]["instance_name"];
+      }
+      setInstanceIds(tempInstanceIds);
     });
   };
 
@@ -140,7 +132,7 @@ function CreateProject() {
   const handleRandomChange = (value) => {
     setRandom(value);
     setSamplingParameters({
-      sampling_percentage: value,
+      fraction: parseFloat(value / 100),
     });
   };
 
@@ -150,6 +142,33 @@ function CreateProject() {
 
   const handleBatchNumberChange = (value) => {
     setBatchNumber(value);
+  };
+
+  const handleInstanceSelect = (value) => {
+    setSelectedInstances(value);
+  };
+
+  const handleGetData = () => {
+    if (selectedInstances) {
+      setConfirmed(true);
+      getData(selectedInstances).then((res) => {
+        let key = 1;
+        for (const data in res) {
+          res[data].key = key;
+          key++;
+        }
+        setTableData(res);
+      });
+    } else {
+      message.info("You haven't selected any sources");
+    }
+  };
+
+  const handleChangeInstances = () => {
+    setConfirmed(false);
+    setTableData(null);
+    setSamplingMode(null);
+    setSamplingParameters(null);
   };
 
   const handleCreateProject = () => {
@@ -200,7 +219,11 @@ function CreateProject() {
         />
         <h1>Select a domain to work in:</h1>
         {domains && (
-          <Select placeholder="Select Domain" onChange={handleDomainChange}>
+          <Select
+            style={{ width: "100%" }}
+            placeholder="Select Domain"
+            onChange={handleDomainChange}
+          >
             {domains.map((domain) => {
               return (
                 <Option key={domain} value={domain}>
@@ -214,6 +237,7 @@ function CreateProject() {
           <>
             <h1>Select a Project Type:</h1>
             <Select
+              style={{ width: "100%" }}
               placeholder="Select Project Type"
               value={selectedType}
               onChange={handleTypeChange}
@@ -228,21 +252,48 @@ function CreateProject() {
             </Select>
           </>
         )}
-        {selectedType && columns && tableData && instanceId && (
+        {instanceIds && (
+          <>
+            <h1>Select sources to fetch data from:</h1>
+            <Select
+              disabled={confirmed}
+              style={{ width: "100%" }}
+              onChange={handleInstanceSelect}
+              mode="multiple"
+              allowClear
+              placeholder="Select Sources"
+            >
+              {Object.keys(instanceIds).map((instance) => {
+                return (
+                  <Option key={instance} value={instance}>
+                    {instanceIds[instance]}
+                  </Option>
+                );
+              })}
+            </Select>
+            <Button disabled={confirmed} onClick={handleGetData}>
+              Confirm Selections
+            </Button>
+            <Button disabled={!confirmed} onClick={handleChangeInstances}>
+              Change Sources
+            </Button>
+          </>
+        )}
+        {selectedType && columns && tableData && selectedInstances && (
           <>
             <h1>Dataset Rows:</h1>
             <Table dataSource={tableData} columns={columns} />
           </>
         )}
-        {selectedType && columns && tableData && instanceId && (
+        {selectedType && columns && tableData && selectedInstances && (
           <>
             <h1>Select Sampling Type:</h1>
             <Select
-              defaultValue="Select Sampling Type"
+              placeholder="Select Sampling Type"
               onChange={handleSamplingChange}
             >
               <Option value="r">Random</Option>
-              <Option value="f">Fixed</Option>
+              <Option value="f">Full</Option>
               <Option value="b">Batch</Option>
             </Select>
           </>
@@ -250,7 +301,7 @@ function CreateProject() {
 
         {samplingMode === "r" && (
           <>
-            <h3>Input Batch size to sample (in percentage):</h3>
+            <h3>Sampling Percentage:</h3>
             <InputNumber value={random} onChange={handleRandomChange} />
           </>
         )}
