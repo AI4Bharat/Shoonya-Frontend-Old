@@ -96,19 +96,19 @@ function CreateProject() {
     }
   }, [batchSize, batchNumber]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setSelectedType(null);
     setSamplingParameters(null);
     setConfirmed(false);
     setTableData(null);
-  },[selectedDomain])
+  }, [selectedDomain]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setInstanceIds(null);
     setSamplingParameters(null);
     setConfirmed(false);
     setTableData(false);
-  },[selectedType])
+  }, [selectedType]);
 
   const handleDomainChange = (value) => {
     setSelectedDomain(value);
@@ -164,7 +164,7 @@ function CreateProject() {
   const handleGetData = () => {
     if (selectedInstances) {
       setConfirmed(true);
-      getData(selectedInstances,datasetType[selectedType]).then((res) => {
+      getData(selectedInstances, datasetType[selectedType]).then((res) => {
         let key = 1;
         for (const data in res) {
           res[data].key = key;
