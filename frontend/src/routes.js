@@ -15,6 +15,7 @@ import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
+import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -87,6 +88,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <CreateCollectionProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="project/:id"
+          element={
+            <RequireAuth>
+              <ViewCollectionProject />
             </RequireAuth>
           }
         />

@@ -27,3 +27,16 @@ code {
   margin: 0;
   margin-top: 20px;
 }
+
+textarea.ant-input {
+  max-width: 80% !important;
+}
+
+.full-textarea {
+  width: 100% !important;
+}
+
+.full-textarea .ant-form-item-label label {
+  font-size: 22px !important;
+  letter-spacing: 1.3px;
+}

@@ -33,7 +33,11 @@ function Workspace() {
       fetchUsersInWorkspace(id).then((res) => {
         setUsers(res);
       });
-      fetchProjects().then((res) => setProject({ ...project, projects: res }));
+      fetchProjects().then((res) => {
+        console.log(res);
+
+        setProject({ ...project, projects: res });
+      });
       fetchWorkspaceData(id).then((res) => setWorkspace(res));
     }
   }, [userContext]);
