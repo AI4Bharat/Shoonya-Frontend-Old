@@ -11,8 +11,7 @@ export const Login = () => {
   let navigate = useNavigate();
 
   const onFinish = (values) => {
-    userContext.login(values);
-    navigate("/profile/me");
+    userContext.login(values).then(() => navigate("/profile/me"));
   };
   return (
     <Layout>
