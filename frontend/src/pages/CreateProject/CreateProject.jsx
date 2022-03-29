@@ -188,7 +188,7 @@ function CreateProject() {
       dataset_id: [1],
       label_config: "string",
       variable_parameters: {},
-      project_mode: "Collection",
+      project_mode: "Annotation",
     })
       .then((data) => {
         navigate(`/project/${data.id}`, { replace: true });
