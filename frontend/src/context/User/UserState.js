@@ -39,7 +39,6 @@ const UserState = (props) => {
         password: formData.password,
       });
       dispatch({ type: LOGIN_SUCCESS, payload: res.data });
-      loadUser();
     } catch (err) {
       dispatch({ type: LOGIN_FAIL, payload: err.response.data });
       message.error("Error logging in");
@@ -93,15 +92,13 @@ const UserState = (props) => {
         console.log(err);
       });
   };
-  const loadUser = () => {
-    axiosInstance
-      .get("users/account/me/fetch")
-      .then((res) => {
-        dispatch({ type: USER_LOADED, payload: res.data });
-      })
-      .catch(() => {
-        message.error("Error fetching user data.");
-      });
+  const loadUser = async () => {
+    try {
+      let res = await axiosInstance.get("users/account/me/fetch");
+      dispatch({ type: USER_LOADED, payload: res.data });
+    } catch {
+      message.error("Error fetching user data.");
+    }
   };
   return (
     <UserContext.Provider
