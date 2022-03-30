@@ -56,7 +56,7 @@ function Navbar() {
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="2">My Projects</Menu.Item>
-                <Menu.Item key="3">
+                <Menu.Item key="3" onClick={() => userContext.logout()}>
                   <Link to="/">Logout</Link>
                 </Menu.Item>
               </Menu>

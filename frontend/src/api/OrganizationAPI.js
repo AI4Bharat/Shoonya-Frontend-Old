@@ -16,9 +16,11 @@ const inviteUsers = async (emails, organizationID) => {
 
 const fetchUsers = async (organizationID) => {
   try {
-    let response = await axiosInstance.get(`organizations/${organizationID}/users/`);
+    let response = await axiosInstance.get(
+      `organizations/${organizationID}/users/`
+    );
     return response.data;
-  } catch {
+  } catch (err) {
     message.error("Error fetching users");
   }
 };

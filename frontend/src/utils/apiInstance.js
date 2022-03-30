@@ -6,26 +6,36 @@ const REFRESH_TOKEN = "shoonya_refresh_token";
 const TOKEN_NOT_VALID = "token_not_valid";
 
 const REFRESH_URL = "users/auth/jwt/refresh";
+const VERIFY_URL = "users/auth/jwt/verify";
 
 const axiosInstance = axios.create({
   baseURL: apiData.url,
   timeout: 500000,
   headers: {
-    Authorization: localStorage.getItem(ACCESS_TOKEN)
-      ? "JWT " + localStorage.getItem(ACCESS_TOKEN)
-      : null,
+    Authorization: `JWT ${localStorage.getItem(ACCESS_TOKEN)}`,
     "Content-Type": "application/json",
     accept: "application/json",
   },
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    config.headers["Authorization"] = `JWT ${localStorage.getItem(
+      ACCESS_TOKEN
+    )}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  function (error) {
+  async function (error) {
     const originalRequest = error.config;
-
     if (typeof error.response === "undefined") {
       alert("Unknown server error!");
       return Promise.reject(error);
@@ -47,16 +57,19 @@ axiosInstance.interceptors.response.use(
       const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
       if (refreshToken) {
-        const tokenParts = JSON.parse(atob(refreshToken.split(".")[1]));
-        const now = Math.ceil(Date.now() / 1000);
+        // const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
+        // const now = Math.ceil(Date.now() / 1000);
 
-        if (tokenParts.exp > now) {
+        const data = await axiosInstance.post(VERIFY_URL, {
+          token: refreshToken,
+        });
+
+        if (data.response.status === 200) {
           return axiosInstance
             .post(REFRESH_URL, {
               refresh: refreshToken,
             })
             .then((response) => {
-              console.log(response.data);
               localStorage.setItem(ACCESS_TOKEN, response.data.access);
               localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
 
@@ -70,6 +83,10 @@ axiosInstance.interceptors.response.use(
             .catch((err) => {
               console.log(err);
             });
+        } else if (data.response.status !== 200) {
+          localStorage.removeItem(ACCESS_TOKEN);
+          localStorage.removeItem(REFRESH_TOKEN);
+          window.location.pathname = "/login";
         } else {
           window.location.href = "/";
         }

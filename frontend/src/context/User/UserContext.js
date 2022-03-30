@@ -2,8 +2,8 @@ import { createContext } from "react";
 
 const UserContext = createContext({
   user: null,
-  refresh: null,
-  access: null,
+  refresh: undefined,
+  access: undefined,
   isAuth: false,
   isError: null,
 });
