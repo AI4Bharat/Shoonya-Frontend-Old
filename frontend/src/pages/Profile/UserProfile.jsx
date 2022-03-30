@@ -11,6 +11,7 @@ import {
   Checkbox,
   Alert,
   message,
+  Select,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -29,6 +30,7 @@ import {
   userProfileEdit,
 } from "../../api/UserAPI";
 import ModalComponent from "../../components/ModalComponent";
+import { Option } from "antd/lib/mentions";
 
 function UserProfile() {
   let userContext = useContext(UserContext);
@@ -38,8 +40,35 @@ function UserProfile() {
   const [isModalVisibleOrganization, setIsModalVisibleOrganization] =
     useState(false);
 
-  const onFinishUserEdit = async (values) => {
-    const data = await userProfileEdit(values);
+  const languageOptions = {
+    bn: "Bengali",
+    gu: "Gujarati",
+    en: "English",
+    hi: "Hindi",
+    kn: "Kannada",
+    mr: "Marathi",
+    ne: "Nepali",
+    pa: "Punjabi",
+    sa: "Sanskrit",
+    ta: "Tamil",
+    te: "Telgu",
+  };
+
+  const onFinishUserEdit = async ({
+    lang_id,
+    first_name,
+    last_name,
+    username,
+    phone,
+  }) => {
+    const data = await userProfileEdit({
+      email: user?.email,
+      lang_id: lang_id === undefined ? user?.lang_id : lang_id,
+      first_name,
+      last_name,
+      username,
+      phone,
+    });
 
     if (data) {
       const editUser = {
@@ -48,6 +77,7 @@ function UserProfile() {
         last_name: data?.last_name,
         phone: data?.phone,
         username: data?.username,
+        lang_id: data?.lang_id,
       };
 
       setUser(editUser);
@@ -109,7 +139,6 @@ function UserProfile() {
             last_name: user?.last_name,
             username: user?.username,
             phone: user?.phone,
-            email: user?.email,
           }}
           onFinish={onFinishUserEdit}
           autoComplete="off"
@@ -169,7 +198,7 @@ function UserProfile() {
             </Form.Item>
           </div>
 
-          <Form.Item
+          {/* <Form.Item
             label="Email"
             name="email"
             rules={[
@@ -180,7 +209,21 @@ function UserProfile() {
             className="full-input"
             required="true"
           >
-            <Input />
+            <Input disabled={true} />
+          </Form.Item> */}
+
+          <Form.Item name="lang_id" label="Language">
+            <Select
+              defaultValue={user?.lang_id}
+              placeholder="Select a language"
+              allowClear
+            >
+              {Object.keys(languageOptions).map((key) => (
+                <Option value={key} key={key}>
+                  {languageOptions[key]}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item wrapperCol={{ span: 16 }}>
