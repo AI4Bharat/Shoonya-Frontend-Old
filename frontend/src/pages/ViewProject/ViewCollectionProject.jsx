@@ -1,20 +1,21 @@
 import React, { useState } from "react";
-import { Button, Col, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, message, Row } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams } from "react-router-dom";
-import { addAnnotatorsToProject } from "../../api/ProjectAPI";
+import { addAnnotatorsToProject, publishProject } from "../../api/ProjectAPI";
 
 function ViewCollectionProject() {
   const { id } = useParams();
   const { TextArea } = Input;
 
   const onFinishAddAnnotator = async (values) => {
-    console.log(values);
-
     const emails = values.emails.split(", ");
-    console.log(emails);
 
     await addAnnotatorsToProject(id, emails);
+  };
+
+  const handlePublishProject = async () => {
+    await publishProject(id);
   };
 
   return (
@@ -53,11 +54,19 @@ function ViewCollectionProject() {
               />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Submit
+            <div style={{ display: "flex" }}>
+              <Form.Item
+                wrapperCol={{ span: 16 }}
+                style={{ marginRight: "10px" }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Add Annotators
+                </Button>
+              </Form.Item>
+              <Button type="primary" onClick={handlePublishProject}>
+                Publish Project
               </Button>
-            </Form.Item>
+            </div>
           </div>
         </Form>
       </Col>
