@@ -187,7 +187,6 @@ function CreateCollectionProject() {
       project_mode: "Collection",
     })
       .then((data) => {
-        console.log(data);
         navigate(`/project/${data.id}`, { replace: true });
       })
       .catch((err) => {
