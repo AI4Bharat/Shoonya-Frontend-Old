@@ -1,25 +1,6 @@
 import { message } from "antd";
 import axiosInstance from "../utils/apiInstance";
 
-const fetchWorkspaces = async () => {
-  try {
-    let response = await axiosInstance.get(`/workspaces/`);
-    console.log(response.data);
-    return response.data;
-  } catch {
-    message.error("Error fetching workspaces");
-  }
-};
-
-const createWorkspace = async (data) => {
-  try {
-    let response = await axiosInstance.post(`/workspaces/`, data);
-    return response.data;
-  } catch {
-    message.error("Error creating workspace");
-  }
-};
-export { createWorkspace, fetchWorkspaces };
 // const inviteUsers = async (emails, organizationID) => {
 //   console.log("ID is", organizationID);
 //   try {
@@ -50,4 +31,28 @@ const fetchWorkspaceData = async (workspaceID) => {
     message.error("Error fetching Workspace details");
   }
 };
-export { fetchUsersInWorkspace, fetchWorkspaceData };
+
+const fetchWorkspaces = async () => {
+  try {
+    let response = await axiosInstance.get(`/workspaces/`);
+    console.log(response.data);
+    return response.data;
+  } catch {
+    message.error("Error fetching workspaces");
+  }
+};
+
+const createWorkspace = async (data) => {
+  try {
+    let response = await axiosInstance.post(`/workspaces/`, data);
+    return response.data;
+  } catch {
+    message.error("Error creating workspace");
+  }
+};
+export {
+  createWorkspace,
+  fetchWorkspaces,
+  fetchUsersInWorkspace,
+  fetchWorkspaceData,
+};

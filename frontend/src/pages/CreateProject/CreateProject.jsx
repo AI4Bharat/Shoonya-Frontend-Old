@@ -96,9 +96,22 @@ function CreateProject() {
     }
   }, [batchSize, batchNumber]);
 
+  useEffect(() => {
+    setSelectedType(null);
+    setSamplingParameters(null);
+    setConfirmed(false);
+    setTableData(null);
+  }, [selectedDomain]);
+
+  useEffect(() => {
+    setInstanceIds(null);
+    setSamplingParameters(null);
+    setConfirmed(false);
+    setTableData(false);
+  }, [selectedType]);
+
   const handleDomainChange = (value) => {
     setSelectedDomain(value);
-    setSelectedType(null);
   };
 
   const handleTypeChange = (value) => {
@@ -151,7 +164,7 @@ function CreateProject() {
   const handleGetData = () => {
     if (selectedInstances) {
       setConfirmed(true);
-      getData(selectedInstances).then((res) => {
+      getData(selectedInstances, datasetType[selectedType]).then((res) => {
         let key = 1;
         for (const data in res) {
           res[data].key = key;

@@ -32,11 +32,12 @@ function RequireAuth({ children }) {
 function GlobalRoutes() {
   let userContext = useContext(UserContext);
   useEffect(() => {
-    if (userContext.refresh) {
+    if (localStorage.getItem("shoonya_refresh_token")) {
       userContext.loadUser();
+      console.log("Fetching user")
     }
     // eslint-disable-next-line
-  }, []);
+  }, [userContext.refresh]);
 
   return (
     <Routes>

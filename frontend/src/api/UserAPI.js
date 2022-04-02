@@ -9,4 +9,61 @@ const fetchProfile = async (userID) => {
     message.error("Error fetching profile");
   }
 };
-export { fetchProfile };
+
+const userProfileEdit = async ({
+  email,
+  lang_id,
+  first_name,
+  last_name,
+  username,
+  phone,
+}) => {
+  try {
+    let response = await axiosInstance.patch("users/account/update/", {
+      email,
+      lang_id,
+      first_name,
+      last_name,
+      username,
+      phone,
+    });
+    if (response.status !== 200) throw new Error("Error Updating User Profile");
+    return {
+      lang_id,
+      first_name,
+      last_name,
+      username,
+      phone,
+    };
+  } catch (err) {
+    message.error("Error : Unable to Edit User Profile");
+  }
+};
+
+const organizationEdit = async ({
+  id,
+  created_by,
+  title,
+  email_domain_name,
+}) => {
+  try {
+    let response = await axiosInstance.patch(`organizations/${id}/`, {
+      created_by,
+      title,
+      email_domain_name,
+    });
+
+    if (response.status !== 200)
+      throw new Error("Error : Unable to edit Organization");
+
+    return {
+      created_by,
+      title,
+      email_domain_name,
+    };
+  } catch {
+    message.error("Error : Unable to edit Organization");
+  }
+};
+
+export { fetchProfile, userProfileEdit, organizationEdit };

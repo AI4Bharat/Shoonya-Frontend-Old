@@ -21,10 +21,11 @@ const getInstanceIds = async (datasetType) => {
   }
 };
 
-const getData = async (instanceIds) => {
+const getData = async (instanceIds, datasetType) => {
   try {
     let response = await axiosInstance.post(`/data/dataitems/get_data_items/`, {
       instance_ids: instanceIds,
+      dataset_type: datasetType,
     });
     return response.data;
   } catch (e) {
