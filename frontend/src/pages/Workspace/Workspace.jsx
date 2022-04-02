@@ -33,7 +33,11 @@ function Workspace() {
       fetchUsersInWorkspace(id).then((res) => {
         setUsers(res);
       });
-      fetchProjects().then((res) => setProject({ ...project, projects: res }));
+      fetchProjects().then((res) => {
+        console.log(res);
+
+        setProject({ ...project, projects: res });
+      });
       fetchWorkspaceData(id).then((res) => setWorkspace(res));
     }
   }, [userContext]);
@@ -62,13 +66,31 @@ function Workspace() {
                 {userContext.user?.role === 2 && (
                   <>
                     <Button
-                      style={{ width: "100%", marginBottom: "1%" }}
+                      style={{
+                        width: "48%",
+                        marginRight: "4%",
+                        marginBottom: "1%",
+                      }}
                       onClick={() =>
-                        navigate(`/createproject/${id}`, { replace: true })
+                        navigate(`/create-annotation-project/${id}`, {
+                          replace: true,
+                        })
                       }
                       type="primary"
                     >
-                      Add new Project
+                      Add new Annotation Project
+                    </Button>
+
+                    <Button
+                      style={{ width: "48%", marginBottom: "1%" }}
+                      onClick={() =>
+                        navigate(`/create-collection-project/${id}`, {
+                          replace: true,
+                        })
+                      }
+                      type="primary"
+                    >
+                      Add new Collection Project
                     </Button>
                   </>
                 )}

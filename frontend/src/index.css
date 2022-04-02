@@ -23,34 +23,52 @@ code {
   border-radius: 1rem;
 }
 
-.ant-modal{
-  width : 80% !important;
-  min-height : 50%;
+.margin-top-heading {
+  margin: 0;
+  margin-top: 20px;
+}
+
+textarea.ant-input {
+  max-width: 80% !important;
+}
+
+.full-textarea {
+  width: 100% !important;
+}
+
+.full-textarea .ant-form-item-label label {
+  font-size: 22px !important;
+  letter-spacing: 1.3px;
+}
+.ant-modal {
+  width: 80% !important;
+  min-height: 50%;
   /* height : 70%; */
 }
 
-.ant-modal-content{
-  height : 100%;
+.ant-modal-content {
+  height: 100%;
 }
 
-.ant-modal-mask{
+.ant-modal-mask {
   backdrop-filter: blur(3px);
 }
 
-.half-input{
-  width : 45%;
+.half-input {
+  width: 45%;
 }
 
-.ant-modal-title,.ant-form-item-label label{
+.ant-modal-title,
+.ant-form-item-label label {
   font-size: 20px !important;
 }
 
-.ant-input{
-  padding : 10px !important;
+.ant-input {
+  padding: 10px !important;
 }
 
-.ant-modal-footer .ant-btn{
+.ant-modal-footer .ant-btn {
   font-size: 20px !important;
   margin-bottom: 10px !important;
-  height : 40px !important;
+  height: 40px !important;
 }

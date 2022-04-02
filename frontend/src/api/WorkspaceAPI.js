@@ -31,6 +31,7 @@ const fetchWorkspaceData = async (workspaceID) => {
     message.error("Error fetching Workspace details");
   }
 };
+
 const fetchWorkspaces = async () => {
   try {
     let response = await axiosInstance.get(`/workspaces/`);
