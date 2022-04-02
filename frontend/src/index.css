@@ -22,3 +22,35 @@ code {
 .ant-btn {
   border-radius: 1rem;
 }
+
+.ant-modal{
+  width : 80% !important;
+  min-height : 50%;
+  /* height : 70%; */
+}
+
+.ant-modal-content{
+  height : 100%;
+}
+
+.ant-modal-mask{
+  backdrop-filter: blur(3px);
+}
+
+.half-input{
+  width : 45%;
+}
+
+.ant-modal-title,.ant-form-item-label label{
+  font-size: 20px !important;
+}
+
+.ant-input{
+  padding : 10px !important;
+}
+
+.ant-modal-footer .ant-btn{
+  font-size: 20px !important;
+  margin-bottom: 10px !important;
+  height : 40px !important;
+}

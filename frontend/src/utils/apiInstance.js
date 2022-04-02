@@ -19,19 +19,19 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  config =>{
-    config.headers['Authorization'] = `JWT ${localStorage.getItem(ACCESS_TOKEN)}`;
-    return config
+  (config) => {
+    config.headers["Authorization"] = `JWT ${localStorage.getItem(
+      ACCESS_TOKEN
+    )}`;
+    return config;
   },
-  error =>{
-    return Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
   }
-)
-
+);
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    
     return response;
   },
   async function (error) {
