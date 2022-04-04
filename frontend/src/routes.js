@@ -10,6 +10,7 @@ import UserProfile from "./pages/Profile/UserProfile";
 import Workspace from "./pages/Workspace/Workspace";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
+import ProjectDashboard from "./pages/Projects/ProjectDashboard"
 import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
@@ -68,6 +69,17 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="projects/:project_id"
+          component={ProjectDashboard}
+          element={
+            <RequireAuth>
+              <ProjectDashboard />
+            </RequireAuth>
+          }
+        />
+
         <Route
           path="workspace/:id"
           element={

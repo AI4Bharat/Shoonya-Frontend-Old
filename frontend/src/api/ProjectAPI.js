@@ -10,6 +10,15 @@ const fetchProjects = async () => {
   }
 };
 
+const getProject = async (project_id) => {
+  try {
+    let response = await axiosInstance.get(`/projects/${project_id}`);
+    return response.data;
+  } catch {
+    message.error(`Error getting project with id ${project_id}`);
+  }
+};
+
 const addAnnotatorsToProject = async (id, emails) => {
   try {
     let response = await axiosInstance.post(
@@ -47,4 +56,4 @@ const publishProject = async (id) => {
   }
 };
 
-export { fetchProjects, addAnnotatorsToProject, publishProject };
+export { fetchProjects, getProject, addAnnotatorsToProject, publishProject };
