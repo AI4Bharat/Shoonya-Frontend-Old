@@ -1,91 +1,123 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
 import Navbar from "../../components/Layout/Navbar";
 import { Layout } from "antd";
 import { Content } from "antd/lib/layout/layout";
+import { getProjectsandTasks, postAnnotations } from "../../api/LSFTest";
+import UserContext from "../../context/User/UserContext";
+
 const LabelStudioWrapper = (props) => {
   // we need a reference to a DOM node here so LSF knows where to render
   const rootRef = useRef();
   // this reference will be populated when LSF initialized and can be used somewhere else
   const lsfRef = useRef();
-  let test = ["test1", "test2"];
-  const [labeltry, setLabeltry] = useState();
-  const [path, setPath] = useState();
+  const [labelConfig, setLabelConfig] = useState();
+  const [taskData, setTaskData] = useState(undefined);
+  const userContext = useContext(UserContext);
 
   // we're running an effect on component mount and rendering LSF inside rootRef node
   useEffect(() => {
-    if (typeof labeltry === "undefined") {
-      setLabeltry("Passaro");
+
+    if (typeof labelConfig === "undefined" && typeof taskData === "undefined") {
+
+      getProjectsandTasks(8, 2)
+        .then(([labelConfig, taskData, annotations, predictions]) => {
+          // both have loaded!
+          setLabelConfig(labelConfig.label_config);
+          setTaskData(taskData.data);
+          LSFRoot(rootRef, lsfRef, userContext, taskData, labelConfig.label_config, annotations, predictions);
+
+        })
     }
-    if (typeof path === "undefined") {
-      setPath(
-        "https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_960_720.png"
-      );
-    }
-    if (rootRef.current) {
-      lsfRef.current = new LabelStudio(rootRef.current, {
-        /* all the options according to the docs */
-        config:
-          `
-        <View>
-          <Image name="img" value="$image"></Image>
-          <RectangleLabels name="tag" toName="img">
-            <Label value="` +
-          labeltry +
-          `"></Label>
-            ${test.map((item) => `<Label value="${item}"></Label>`).join("")}
-            <Label value="World"></Label>
-          </RectangleLabels>
-        </View>
-      `,
-
-        interfaces: [
-          "panel",
-          "update",
-          "submit",
-          "controls",
-          "side-column",
-          "annotations:menu",
-          "annotations:add-new",
-          "annotations:delete",
-          "predictions:menu",
-        ],
-
-        user: {
-          pk: 1,
-          firstName: "Nelson",
-          lastName: "Nunes",
-        },
-
-        task: {
-          annotations: [],
-          predictions: [],
-          id: 1,
-          data: {
-            image: path,
-          },
-        },
-
-        onLabelStudioLoad: function (ls) {
-          var c = ls.annotationStore.addAnnotation({
-            userGenerate: true,
-          });
-          ls.annotationStore.selectAnnotation(c.id);
-        },
-        onSubmitAnnotation: function (ls, annotation) {
-          console.log(annotation.serializeAnnotation());
-          setLabeltry("Leão");
-          setPath(
-            "https://i.pinimg.com/originals/1e/06/e1/1e06e107f0ca520aed316957b685ef5c.jpg"
-          );
-          console.log(labeltry);
-        },
-      });
-    }
-  }, [labeltry, path]);
+  }, [labelConfig]);
   return <div className="label-studio-root" ref={rootRef} />;
 };
+
+function LSFRoot(rootRef, lsfRef, userContext, taskData, labelConfig, annotations, predictions) {
+
+  if (rootRef.current) {
+    lsfRef.current = new LabelStudio(rootRef.current, {
+
+
+      /* all the options according to the docs */
+      config: labelConfig,
+
+      interfaces: [
+        "panel",
+        "update",
+        "submit",
+        "skip",
+        "controls",
+        "infobar",
+        "topbar",
+        "instruction",
+        "side-column",
+        "annotations:history",
+        "annotations:tabs",
+        "annotations:menu",
+        "annotations:current",
+        // "annotations:add-new",
+        "annotations:delete",
+        'annotations:view-all',
+        "predictions:tabs",
+        "predictions:menu",
+        "auto-annotation",
+        "edit-history",
+      ],
+
+      user: {
+        pk: 1,
+        firstName: "Nelson",
+        lastName: "Nunes",
+      },
+
+      task: {
+        annotations: [
+          // {
+          //     "id": 1,
+          //     "result": {
+          //         "text": [
+          //             "Hello hello",
+          //         ]
+          //     },
+          //     "lead_time": "2022-04-05T07:13:08.385227Z",
+          //     "task": 2,
+          //     "completed_by": 2
+          // },
+          // {
+          //     "id": 2,
+          //     "result": {
+          //         "text": [
+          //             "Hello",
+          //         ]
+          //     },
+          //     "lead_time": "2022-04-05T07:19:41.367683Z",
+          //     "task": 2,
+          //     "completed_by": 2
+          // },
+        ],
+        // predictions: predictions[0].result.text,
+        predictions: [],
+        id: taskData.id,
+        data: taskData.data,
+      },
+
+      onLabelStudioLoad: function (ls) {
+        var c = ls.annotationStore.addAnnotation({
+          userGenerate: true,
+        });
+        ls.annotationStore.selectAnnotation(c.id);
+      },
+      onSubmitAnnotation: function (ls, annotation) {
+        console.log(annotation.serializeAnnotation());
+        console.log(userContext)
+        postAnnotations(annotation.serializeAnnotation(), taskData.id, 2)
+      },
+    });
+  }
+}
+
 
 function LSF() {
   return (
