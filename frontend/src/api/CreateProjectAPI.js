@@ -33,6 +33,16 @@ const getData = async (instanceIds, datasetType) => {
   }
 };
 
+const getProject = async (id) => {
+  try {
+    let response = await axiosInstance.get(`/projects/${id}/`);
+    // console.log(response);
+    return response.data;
+  } catch (error) {
+    message.error("Error Fetching Project");
+  }
+};
+
 const createProject = async (data) => {
   try {
     let response = await axiosInstance.post(`/projects/`, data);
@@ -42,4 +52,4 @@ const createProject = async (data) => {
   }
 };
 
-export { getDomains, getInstanceIds, getData, createProject };
+export { getDomains, getInstanceIds, getData, getProject, createProject };

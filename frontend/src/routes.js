@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
+import DynamicForm from "./components/DynamicForm";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -34,7 +35,7 @@ function GlobalRoutes() {
   useEffect(() => {
     if (localStorage.getItem("shoonya_refresh_token")) {
       userContext.loadUser();
-      console.log("Fetching user")
+      console.log("Fetching user");
     }
     // eslint-disable-next-line
   }, [userContext.refresh]);
@@ -97,6 +98,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <ViewCollectionProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="dynamic-form/:id"
+          element={
+            <RequireAuth>
+              <DynamicForm />
             </RequireAuth>
           }
         />
