@@ -6,6 +6,7 @@ import { Layout } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { getProjectsandTasks, postAnnotations } from "../../api/LSFTest";
 import UserContext from "../../context/User/UserContext";
+import { useParams } from "react-router-dom";
 
 const LabelStudioWrapper = (props) => {
   // we need a reference to a DOM node here so LSF knows where to render
@@ -16,12 +17,14 @@ const LabelStudioWrapper = (props) => {
   const [taskData, setTaskData] = useState(undefined);
   const userContext = useContext(UserContext);
 
+  const { project_id, task_id } = useParams();
+
   // we're running an effect on component mount and rendering LSF inside rootRef node
   useEffect(() => {
 
     if (typeof labelConfig === "undefined" && typeof taskData === "undefined") {
 
-      getProjectsandTasks(8, 2)
+      getProjectsandTasks(project_id, task_id)
         .then(([labelConfig, taskData, annotations, predictions]) => {
           // both have loaded!
           setLabelConfig(labelConfig.label_config);

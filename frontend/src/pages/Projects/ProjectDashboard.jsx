@@ -4,11 +4,13 @@ import {
     Row,
     Card,
     Table,
+    Button
 } from "antd";
+import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import { useParams } from "react-router-dom";
-import { getTasks } from "../../api/ProjectsDashboardAPI"
+import { getTasks } from "../../api/ProjectDashboardAPI"
 import { getProject } from "../../api/ProjectAPI"
 import { getColumnNames, getDataSource } from "./TasksTableContent"
 
@@ -37,7 +39,7 @@ function ProjectDashboard() {
 
     useEffect(() => {
         if (tasks) {
-            getDataSource(tasks, project_id).then(res => {
+            getDataSource(tasks, project_id, project.project_mode).then(res => {
                 setDataSource(res);
             });
         }
@@ -45,7 +47,7 @@ function ProjectDashboard() {
 
     useEffect(() => {
         if (dataSource) {
-            getColumnNames(dataSource[0]).then(res => {
+            getColumnNames(dataSource[0], project.project_mode).then(res => {
                 setColumns(res);
             });
         }
@@ -61,10 +63,20 @@ function ProjectDashboard() {
                         <Paragraph><b>Project ID:</b> {project.id}</Paragraph>
                         <Paragraph><b>Description:</b> {project.description}</Paragraph>
                         <Paragraph><b>Project Type:</b> {project.project_mode} - {project.project_type}</Paragraph>
-                        <Paragraph><b>Status: </b> {project.published ? "Published" : (project.archived ? "Archived" : "Not published or archived.")}</Paragraph>
+                        <Paragraph><b>Status: </b> {project.published ? "Published" : (project.archived ? "Archived" : "Draft")}</Paragraph>
                     </Card>
+                    <br />
                     <Card style={{ width: "100%" }}>
-                        <Title>Tasks</Title>
+                        <Row>
+                            <Col span={21}>
+                                <Title>Tasks</Title>
+                            </Col>
+                            <Col span={3}>
+                                <Link to={`/projects/${project_id}/tasks/new`}>
+                                    {project.project_mode == "Annotation" ? <Button type="primary">Label All Tasks</Button> : <Button type="primary">Add New Item</Button>}
+                                </Link>
+                            </Col>
+                        </Row>
                         <Table
                             columns={columns}
                             dataSource={dataSource}
