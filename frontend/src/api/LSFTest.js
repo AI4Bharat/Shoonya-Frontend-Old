@@ -24,7 +24,6 @@ const fetchTasks = async (taskID) => {
 const fetchPredictions = async (taskID) => {
   try {
     let response = await axiosInstance.get(`/task/${taskID}/predictions/`);
-    console.log(response.data)
     return response.data;
   } catch {
     message.error("Error fetching predictions");
@@ -44,7 +43,7 @@ const fetchAnnotations = async (taskID) => {
 const postAnnotations = async (result,task,completed_by) => {
   try {
     let response = await axiosInstance.post(`/annotation/`, {
-      result: result[0].value,
+      result: result,
       task: task,
       completed_by: completed_by
     });
@@ -56,8 +55,48 @@ const postAnnotations = async (result,task,completed_by) => {
 }
 
 
+const patchAnnotation = async (result, annotationID) => {
+  try {
+    console.log(result)
+    console.log(annotationID)
+    let response = await axiosInstance.patch(`/annotation/${result.id}/`, {
+      result: result,
+    });
+    console.log(response.data)
+  }
+  catch {
+    message.error("Error updating annotations")
+  }
+}
+
+const postTasks = async (taskID) => {
+  try {
+    let response = await axiosInstance.patch(`/task/${taskID}/`, {
+      task_status: "skipped"
+    })
+    console.log(response.data)
+    return response.data
+  }
+  catch {
+    message.error("Error skipping task.")
+  }
+}
+
+const getNextProject = async (projectID) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${projectID}/next/`, {
+      id: projectID
+    })
+    console.log(response.data)
+    return response.data
+  }
+  catch {
+    message.error("Error getting next task.")
+  }
+}
+
 const getProjectsandTasks = async (projectID, taskID) => {
   return Promise.all([fetchProjects(projectID), fetchTasks(taskID), fetchAnnotations(taskID), fetchPredictions(taskID)])
 };
 
-export { getProjectsandTasks, postAnnotations };
+export { getProjectsandTasks, postAnnotations, postTasks, getNextProject, patchAnnotation };

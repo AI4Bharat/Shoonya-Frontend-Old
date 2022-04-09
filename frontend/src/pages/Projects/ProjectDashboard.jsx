@@ -54,8 +54,8 @@ function ProjectDashboard() {
     }, [dataSource]);
 
     return (
-        <>
-            <Row style={{width: "100%"}}>
+        <div>
+            <Row style={{width: "100%", maxHeight: "90vh"}}>
                 <Col span={1} />
                 <Col span={22}>
                     <Card style={{ width: "100%" }}>
@@ -85,7 +85,7 @@ function ProjectDashboard() {
                 </Col>
                 <Col span={1} />
             </Row>
-        </>
+        </div>
     );
 }
 
