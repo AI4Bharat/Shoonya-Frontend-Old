@@ -50,7 +50,11 @@ function GlobalRoutes() {
         path="forget-password/confirm/:key/:token"
         element={<ConfirmForgetPassword />}
       />
-      <Route path="projects/:project_id/task/:task_id" element={<LSF />} />
+      <Route path="projects/:project_id/task/:task_id" element={
+      <RequireAuth>
+      <LSF />
+      </RequireAuth>
+      } />
       <Route path="/" element={<DefinedLayout />}>
         <Route
           path="profile/*"

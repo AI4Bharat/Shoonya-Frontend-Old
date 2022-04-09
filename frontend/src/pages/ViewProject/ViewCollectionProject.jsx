@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Input, message, Row } from "antd";
 import Title from "antd/lib/typography/Title";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { addAnnotatorsToProject, publishProject } from "../../api/ProjectAPI";
 
 function ViewCollectionProject() {
   const { id } = useParams();
+  let navigate = useNavigate();
   const { TextArea } = Input;
 
   const onFinishAddAnnotator = async (values) => {
@@ -16,6 +17,7 @@ function ViewCollectionProject() {
 
   const handlePublishProject = async () => {
     await publishProject(id);
+    navigate(`/projects/${id}`, { replace: true });
   };
 
   return (
