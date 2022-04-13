@@ -1,17 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import {
-  Col,
-  Row,
-  Button,
-  Select,
-  Input,
-  InputNumber,
-  message,
-  Table,
-} from "antd";
+import { Col, Row, Button, Select, Input, message, Table } from "antd";
 import Title from "antd/lib/typography/Title";
+
+import { InputNumber } from "antd";
 
 import UserContext from "../../context/User/UserContext";
 
@@ -41,6 +34,7 @@ function CreateCollectionProject() {
   const [description, setDescription] = useState("");
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
+  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
   const [filterString, setFilterString] = useState(null);
   const [samplingMode, setSamplingMode] = useState(null);
   const [random, setRandom] = useState(5);
@@ -185,6 +179,7 @@ function CreateCollectionProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Collection",
+      required_annotators_per_task: 1,
     })
       .then((data) => {
         navigate(`/project/${data.id}`, { replace: true });
@@ -250,6 +245,18 @@ function CreateCollectionProject() {
         )}
 
         {selectedType && (
+          <>
+            <h1 className="margin-top-heading">Annotators Per Task :</h1>
+            <Input
+              value={selectedAnnotatorsNum}
+              onChange={(e) => {
+                setSelectedAnnotatorsNum(e.target.value);
+              }}
+            />
+          </>
+        )}
+
+        {selectedAnnotatorsNum && (
           <>
             <h1 className="margin-top-heading">Finalize Project</h1>
             <Button
