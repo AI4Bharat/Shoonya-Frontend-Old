@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
-import DynamicForm from "./components/DynamicForm";
+import AddCollectionData from "./components/AddCollectionData";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -102,10 +102,10 @@ function GlobalRoutes() {
           }
         />
         <Route
-          path="dynamic-form/:id"
+          path="add-collection-data/:id"
           element={
             <RequireAuth>
-              <DynamicForm />
+              <AddCollectionData />
             </RequireAuth>
           }
         />
