@@ -1,10 +1,9 @@
-import { Button, Col, Form, Input, message, Row } from "antd";
+import { Button, Col, Input, message, Row, InputNumber } from "antd";
 import Title from "antd/lib/typography/Title";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createTask, updateTask } from "../api/CollectionDataAPI";
 import { getDomains, getFieldTypes, getProject } from "../api/CreateProjectAPI";
-// import projects from "../utils/projectData";
 
 function AddCollectionData() {
   const { id } = useParams();
@@ -12,23 +11,16 @@ function AddCollectionData() {
 
   const [currentProject, setCurrentProject] = useState({});
   const [datasetFieldsList, setDatasetFieldsList] = useState([]);
-  // const [domains, setDomains] = useState({});
-  // const [projectType, setProjectType] = useState([]);
-  // const [fieldList, setFieldList] = useState([]);
-  // const [fieldClass, setFieldClass] = useState("");
   const [formValues, setFormValues] = useState({});
   const [currentTaskId, setCurrentTaskId] = useState(null);
   const [dataPresent, setDataPresent] = useState(false);
 
   const getDatasetFields = (currentProjectData) => {
-    console.log(currentProjectData);
     const tempFields = [];
     let fieldClass = "";
     let flag = false;
 
     getDomains().then((data) => {
-      console.log(data);
-
       Object.keys(data).forEach((key) => {
         Object.keys(data[key].project_types).forEach((project_type) => {
           if (currentProjectData.project_type === project_type) {
@@ -43,7 +35,6 @@ function AddCollectionData() {
             return;
           }
         });
-        // console.log(tempFields, fieldClass);
         if (flag === true) {
           return;
         }
@@ -59,20 +50,14 @@ function AddCollectionData() {
     const tempData = [];
 
     const data = await getFieldTypes(fieldClass);
-    console.log(data);
 
     datasetFields.forEach((inputField) => {
       const index = Object.keys(data).findIndex(
         (field) => field === inputField
       );
 
-      console.log(index);
       if (index !== -1) {
-        // console.log(data[inputField].data.name);
-        const tempdata = data[inputField].data;
-        // console.log(tempdata);
-
-        // Object.keys(tempdata).forEach((val) => console.log(val));
+        // const tempdata = data[inputField].data;
 
         tempData.push({ title: inputField, type: data[inputField].name });
       }
@@ -82,22 +67,18 @@ function AddCollectionData() {
   };
 
   const onSave = () => {
-    console.log(formValues);
     if (!dataPresent) {
       createTask(formValues, id)
         .then((data) => {
-          console.log(data);
           setCurrentTaskId(data.id);
           setDataPresent(true);
           message.success("Successfully Created a New Task");
         })
-        .catch((error) => message.error("Unable to create a task"));
+        .catch(message.error("Unable to create a task"));
     } else {
       updateTask(formValues, id, currentTaskId)
-        .then((data) =>
-          message.success("Successfully Updated the Current Task")
-        )
-        .catch((error) => message.error("Unable to update Task"));
+        .then(() => message.success("Successfully Updated the Current Task"))
+        .catch(message.error(`Unable to update Task `));
     }
   };
 
@@ -120,7 +101,7 @@ function AddCollectionData() {
         setCurrentProject({ ...data });
         getDatasetFields(data);
       })
-      .catch((err) => message.error("Unable to fetch Project"));
+      .catch(message.error("Unable to fetch Project"));
   }, []);
 
   return (
@@ -157,22 +138,12 @@ function AddCollectionData() {
                   datasetFieldsList.map((field, idx) => {
                     const type = field.type;
                     const title = field.title;
-                    // console.log(
-                    //   field.title.split("_").join(" ").toUpperCase()
-                    // );
-                    // field.title
-                    //       .split("_")
-                    //       .map(
-                    //         (word) => word[0].toUpperCase() + word.substring(1)
-                    //       )
-                    //       .join(" ")
 
                     return (
                       <div key={idx}>
                         {(type === "TextField" ||
                           type === "CharField" ||
-                          type === "DecimalField" ||
-                          type === "IntegerFIeld") && (
+                          type === "DecimalField") && (
                           <div>
                             <h3 className="margin-top-heading">
                               {title
@@ -194,7 +165,55 @@ function AddCollectionData() {
                             />
                           </div>
                         )}
-                        {/* <Input /> */}
+
+                        {type === "IntegerFIeld" && (
+                          <div>
+                            <h3 className="margin-top-heading">
+                              {title
+                                .split("_")
+                                .map(
+                                  (word) =>
+                                    word[0].toUpperCase() + word.substring(1)
+                                )
+                                .join(" ")}
+                            </h3>
+                            <InputNumber
+                              value={formValues[title]}
+                              onChange={(value) =>
+                                setFormValues({
+                                  ...formValues,
+                                  [title]: value,
+                                })
+                              }
+                            />
+                          </div>
+                        )}
+
+                        {type === "DecimalField" && (
+                          <div>
+                            <h3 className="margin-top-heading">
+                              {title
+                                .split("_")
+                                .map(
+                                  (word) =>
+                                    word[0].toUpperCase() + word.substring(1)
+                                )
+                                .join(" ")}
+                            </h3>
+                            <InputNumber
+                              defaultValue="1"
+                              step="0.00000000000001"
+                              stringMode
+                              value={formValues[title]}
+                              onChange={(value) =>
+                                setFormValues({
+                                  ...formValues,
+                                  [title]: value,
+                                })
+                              }
+                            />
+                          </div>
+                        )}
                       </div>
                     );
                   })}

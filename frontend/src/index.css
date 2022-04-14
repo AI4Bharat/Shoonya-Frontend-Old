@@ -72,6 +72,11 @@ textarea.ant-input {
   padding: 10px !important;
 }
 
+.ant-input-number {
+  padding: 5px !important;
+  width: 100% !important;
+}
+
 .ant-modal-footer .ant-btn {
   font-size: 20px !important;
   margin-bottom: 10px !important;
