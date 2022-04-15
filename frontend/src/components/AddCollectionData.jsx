@@ -74,11 +74,11 @@ function AddCollectionData() {
           setDataPresent(true);
           message.success("Successfully Created a New Task");
         })
-        .catch(message.error("Unable to create a task"));
+        .catch((err) => message.error("Unable to create a task ", err));
     } else {
       updateTask(formValues, id, currentTaskId)
         .then(() => message.success("Successfully Updated the Current Task"))
-        .catch(message.error(`Unable to update Task `));
+        .catch((err) => message.error(`Unable to update Task `, err));
     }
   };
 
@@ -101,7 +101,7 @@ function AddCollectionData() {
         setCurrentProject({ ...data });
         getDatasetFields(data);
       })
-      .catch(message.error("Unable to fetch Project"));
+      .catch((err) => message.error("Unable to fetch Project ", err));
   }, []);
 
   return (
