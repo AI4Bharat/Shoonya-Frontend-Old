@@ -1,19 +1,7 @@
 import Layout, { Content } from "antd/lib/layout/layout";
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Card,
-  Divider,
-  Button,
-  Result,
-  message,
-} from "antd";
-import {
-  UserOutlined,
-  KeyOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import React, { useContext, useState } from "react";
+import { Form, Input, Card, Divider, Button, Result, message } from "antd";
+import { UserOutlined, KeyOutlined, MailOutlined } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
 import UserContext from "../../context/User/UserContext";
 
@@ -25,11 +13,10 @@ export const SignUp = () => {
     delete values.confirmPassword;
     userContext
       .register({ formData: values, inviteCode: inviteCode })
-      .then((res) => {
+      .then(() => {
         setSentMail(true);
-        message.success(res.message);
       })
-      .catch((err) => {
+      .catch(() => {
         message.error("Error while registering. Have you registered before?");
       });
   };
@@ -45,21 +32,25 @@ export const SignUp = () => {
         }}
       >
         <Card style={{ width: "30%", marginBottom: "3%" }}>
-          <h1
-            style={{ fontSize: "25px", marginBottom: "0", textAlign: "center" }}
-          >
-            Create new account
-          </h1>
-          <Divider />
           {sentMail ? (
             <>
               <Result
                 status="success"
-                title="Email sent to your account. Please verify to activate."
+                title="Sucessful Sign-up!"
               />
             </>
           ) : (
             <>
+              <h1
+                style={{
+                  fontSize: "25px",
+                  marginBottom: "0",
+                  textAlign: "center",
+                }}
+              >
+                Create new account
+              </h1>
+              <Divider />
               <Form
                 name="register"
                 onFinish={onFinish}
@@ -84,7 +75,6 @@ export const SignUp = () => {
                     prefix={<MailOutlined />}
                     placeholder={"Enter your Email ID."}
                     // disabled={true}
-                    defaultValue="test@test.com"
                   />
                 </Form.Item>
                 <Form.Item name="username">
@@ -151,7 +141,7 @@ export const SignUp = () => {
               </Form>
               <Divider />
               <p>
-                Already have an account? <Link to="/login">Login</Link>
+                {/* Already have an account? <Link to="/login">Login</Link> */}
               </p>
             </>
           )}
