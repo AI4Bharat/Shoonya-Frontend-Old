@@ -57,8 +57,6 @@ function AddCollectionData() {
       );
 
       if (index !== -1) {
-        // const tempdata = data[inputField].data;
-
         tempData.push({ title: inputField, type: data[inputField].name });
       }
     });
@@ -226,16 +224,13 @@ function AddCollectionData() {
                     <Button onClick={onSaveAddNew}>Save and Add New</Button>
 
                     <Button onClick={onSaveExit}>Save and Go Back</Button>
+                    <Button danger onClick={() => navigate(`/profile/me`)}>
+                      Cancel
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* <>
-              <h1 className="margin-top-heading">Finalize Project</h1>
-              <Button style={{ marginRight: "10px" }}>Submit</Button>
-              <Button danger>Cancel</Button>
-            </> */}
           </Col>
         </Row>
       )}
