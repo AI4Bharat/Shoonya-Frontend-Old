@@ -10,6 +10,17 @@ const getDomains = async () => {
   }
 };
 
+const getFieldTypes = async (dataset_type) => {
+  try {
+    let response = await axiosInstance.get(
+      `/data/dataset_fields/${dataset_type}/`
+    );
+    return response.data;
+  } catch (e) {
+    message.error("Error fetching dataset field types");
+  }
+};
+
 const getInstanceIds = async (datasetType) => {
   try {
     let response = await axiosInstance.get(
@@ -33,6 +44,16 @@ const getData = async (instanceIds, datasetType) => {
   }
 };
 
+const getProject = async (id) => {
+  try {
+    let response = await axiosInstance.get(`/projects/${id}/`);
+    // console.log(response);
+    return response.data;
+  } catch (error) {
+    message.error("Error Fetching Project");
+  }
+};
+
 const createProject = async (data) => {
   try {
     let response = await axiosInstance.post(`/projects/`, data);
@@ -42,4 +63,11 @@ const createProject = async (data) => {
   }
 };
 
-export { getDomains, getInstanceIds, getData, createProject };
+export {
+  getDomains,
+  getInstanceIds,
+  getData,
+  getProject,
+  getFieldTypes,
+  createProject,
+};
