@@ -121,7 +121,7 @@ function Organization() {
 
                 <Table
                   columns={workspaceColumns}
-                  dataSource={workspace.workspaces}
+                  dataSource={workspace.results}
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
