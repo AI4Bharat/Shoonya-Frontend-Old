@@ -58,9 +58,6 @@ function AddCollectionData() {
 
       if (index !== -1) {
         tempData.push({ title: inputField, type: data[inputField].name });
-        const tdata = data[inputField].data;
-        const t2data = JSON.parse(tdata);
-        console.log(data[inputField], tdata);
       }
     });
 
@@ -111,8 +108,8 @@ function AddCollectionData() {
         <Row style={{ width: "100%" }}>
           <Col span={5} />
           <Col span={14} style={{ height: "80vh" }}>
-            <Title>Add Dataset</Title>
-            <div
+            <Title>Add Data Item</Title>
+            {/* <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -131,7 +128,7 @@ function AddCollectionData() {
                   <Input value={currentProject.description} disabled={true} />
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div>
               <div>
@@ -219,18 +216,15 @@ function AddCollectionData() {
                     );
                   })}
 
-                <div>
-                  <h1 className="margin-top-heading">Finalize Project</h1>
-                  <div style={{ display: "flex" }}>
-                    <Button onClick={onSave}>Save</Button>
+                <div style={{ display: "flex", marginTop: "20px" }}>
+                  <Button onClick={onSave}>Save</Button>
 
-                    <Button onClick={onSaveAddNew}>Save and Add New</Button>
+                  <Button onClick={onSaveAddNew}>Save and Add New</Button>
 
-                    <Button onClick={onSaveExit}>Save and Go Back</Button>
-                    <Button danger onClick={() => navigate(`/profile/me`)}>
-                      Cancel
-                    </Button>
-                  </div>
+                  <Button onClick={onSaveExit}>Save and Go Back</Button>
+                  <Button danger onClick={() => navigate(`/profile/me`)}>
+                    Cancel
+                  </Button>
                 </div>
               </div>
             </div>
