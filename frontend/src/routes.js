@@ -35,7 +35,6 @@ function GlobalRoutes() {
   useEffect(() => {
     if (localStorage.getItem("shoonya_refresh_token")) {
       userContext.loadUser();
-      console.log("Fetching user");
     }
     // eslint-disable-next-line
   }, [userContext.refresh]);
@@ -44,7 +43,7 @@ function GlobalRoutes() {
     <Routes>
       <Route index element={<App />} />
       <Route path="login" element={<Login />} />
-      <Route path="sign-up/:inviteCode" element={<SignUp />} />
+      <Route path="invite/:inviteCode" element={<SignUp />} />
       <Route path="forget-password" element={<ForgetPassword />} />
       <Route
         path="forget-password/confirm/:key/:token"
