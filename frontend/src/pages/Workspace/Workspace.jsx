@@ -36,7 +36,7 @@ function Workspace() {
       fetchProjects().then((res) => {
         console.log(res);
 
-        setProject({ ...project, projects: res });
+        setProject({ ...project, projects: res.results });
       });
       fetchWorkspaceData(id).then((res) => setWorkspace(res));
     }

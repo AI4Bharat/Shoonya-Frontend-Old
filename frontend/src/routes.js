@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
+import AddCollectionData from "./components/AddCollectionData";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -35,7 +36,6 @@ function GlobalRoutes() {
   useEffect(() => {
     if (localStorage.getItem("shoonya_refresh_token")) {
       userContext.loadUser();
-      console.log("Fetching user")
     }
     // eslint-disable-next-line
   }, [userContext.refresh]);
@@ -44,7 +44,7 @@ function GlobalRoutes() {
     <Routes>
       <Route index element={<App />} />
       <Route path="login" element={<Login />} />
-      <Route path="sign-up/:inviteCode" element={<SignUp />} />
+      <Route path="invite/:inviteCode" element={<SignUp />} />
       <Route path="forget-password" element={<ForgetPassword />} />
       <Route
         path="forget-password/confirm/:key/:token"
@@ -113,6 +113,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <ViewCollectionProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="add-collection-data/:id"
+          element={
+            <RequireAuth>
+              <AddCollectionData />
             </RequireAuth>
           }
         />
