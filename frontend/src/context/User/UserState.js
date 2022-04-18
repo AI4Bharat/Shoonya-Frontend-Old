@@ -45,15 +45,13 @@ const UserState = (props) => {
     }
   };
   const register = async ({ formData, inviteCode }) => {
-    await axiosInstance
-      .patch(`users/invite/${inviteCode}/accept/`, formData)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        dispatch({ type: REGISTER_FAIL, payload: err.response.data });
-        return err;
-      });
+    try {
+      await axiosInstance.patch(`users/invite/${inviteCode}/accept/`, formData);
+    } catch (err) {
+      dispatch({ type: REGISTER_FAIL, payload: err.response.data });
+      console.log("Errored out")
+      throw "Error"
+    }
   };
   const logout = async () => {
     dispatch({ type: LOGOUT });
@@ -96,7 +94,8 @@ const UserState = (props) => {
     try {
       let res = await axiosInstance.get("users/account/me/fetch");
       dispatch({ type: USER_LOADED, payload: res.data });
-    } catch {
+    } catch (err) {
+      console.log(err);
       message.error("Error fetching user data.");
     }
   };

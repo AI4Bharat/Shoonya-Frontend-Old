@@ -25,10 +25,14 @@ const { Option } = Select;
 function Organization() {
   const [workspaceForm] = useForm();
   const [organization, setOrganization] = useState(undefined);
-  const [inviteData, setInviteData] = useState({ visible: false, users: [] });
+  const [inviteData, setInviteData] = useState({
+    visible: false,
+    users: [],
+    role: 0,
+  });
   const [users, setUsers] = useState([]);
   const [workspace, setWorkspace] = useState({
-    workspaces:[],
+    workspaces: [],
     visible: false,
   });
   const userContext = useContext(UserContext);
@@ -48,7 +52,9 @@ function Organization() {
       fetchUsers(userContext.user.organization.id).then((res) => {
         setUsers(res);
       });
-      fetchWorkspaces().then((res) => setWorkspace({ ...workspace, workspaces: res }));
+      fetchWorkspaces().then((res) =>
+        setWorkspace({ ...workspace, workspaces: res })
+      );
     }
   }, [userContext]);
 
@@ -115,7 +121,7 @@ function Organization() {
 
                 <Table
                   columns={workspaceColumns}
-                  dataSource={workspace.workspaces}
+                  dataSource={workspace.results}
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
@@ -136,18 +142,29 @@ function Organization() {
                   onOk={() =>
                     inviteUsers(
                       inviteData.users,
-                      userContext.user.organization.id
+                      userContext.user.organization.id,
+                      inviteData.role
                     ).then(() =>
                       setInviteData({ ...inviteData, visible: false })
                     )
                   }
                 >
-                  <Title level={5}>Enter emails to be invited</Title>
+                  <Title level={2}>Invite Users</Title>
                   <Select
+                    placeholder="Please enter email IDs to be invited"
                     mode="tags"
                     style={{ width: "100%", marginTop: "5%" }}
                     onChange={(e) => setInviteData({ ...inviteData, users: e })}
                   />
+                  <Select
+                    placeholder="Please select a role for all the mentioned users"
+                    style={{ width: "100%", marginTop: "5%" }}
+                    onChange={(e) =>setInviteData({...inviteData, role: e})}
+                  >
+                    <Option value={1}>Annotator</Option>
+                    <Option value={2}>Manager</Option>
+                    <Option value={3}>Admin</Option>
+                  </Select>
                 </Modal>
                 <Table
                   columns={memberColumns}

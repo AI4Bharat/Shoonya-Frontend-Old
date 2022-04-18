@@ -20,9 +20,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    config.headers["Authorization"] = `JWT ${localStorage.getItem(
-      ACCESS_TOKEN
-    )}`;
+    config.headers["Authorization"] = localStorage.getItem(ACCESS_TOKEN)
+      ? `JWT ${localStorage.getItem(ACCESS_TOKEN)}`
+      : null;
     return config;
   },
   (error) => {
@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(
           token: refreshToken,
         });
 
-        if (data.response.status === 200) {
+        if (data.status === 200) {
           return axiosInstance
             .post(REFRESH_URL, {
               refresh: refreshToken,
@@ -91,7 +91,7 @@ axiosInstance.interceptors.response.use(
           window.location.href = "/";
         }
       } else {
-        window.location.href = "/";
+        // window.location.href = "/";
       }
 
       return Promise.reject(error);
