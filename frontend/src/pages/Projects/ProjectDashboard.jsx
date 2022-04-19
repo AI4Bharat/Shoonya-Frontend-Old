@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
     Col,
     Row,
@@ -9,13 +9,18 @@ import {
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI"
 import { getProject } from "../../api/ProjectAPI"
 import { getColumnNames, getDataSource } from "./TasksTableContent"
+import { message } from "antd";
+import axiosInstance from "../../utils/apiInstance";
+import LabelAllTaskContext from "../../context/TaskContext";
+
 
 function ProjectDashboard() {
 
+    let navigate = useNavigate();
     const { project_id } = useParams();
     const [project, setProject] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -53,6 +58,18 @@ function ProjectDashboard() {
         }
     }, [dataSource]);
 
+    const labelAllTasks = async (project_id) => {
+        try {
+            let response = await axiosInstance.post(`/projects/${project_id}/next/`, {
+              id: project_id
+            })
+            navigate(`/projects/${project_id}/task/${response.data.id}`);
+          }
+          catch {
+            message.error("Error labelling all tasks.")
+          }
+    }
+
     return (
         <div>
             <Row style={{width: "100%", maxHeight: "90vh"}}>
@@ -72,9 +89,11 @@ function ProjectDashboard() {
                                 <Title>Tasks</Title>
                             </Col>
                             <Col span={3}>
-                                <Link to={`/projects/${project_id}/tasks/new`}>
-                                    {project.project_mode == "Annotation" ? <Button type="primary">Label All Tasks</Button> : <Button type="primary">Add New Item</Button>}
-                                </Link>
+                                {project.project_mode == "Annotation" ? 
+                                <LabelAllTaskContext.Provider value='labelAll'>
+                                    <Button onClick={e => { e.stopPropagation(); labelAllTasks(project_id)}} type="primary">Label All Tasks</Button>
+                                </LabelAllTaskContext.Provider> :
+                                <Button type="primary">Add New Item</Button>}
                             </Col>
                         </Row>
                         <Table
