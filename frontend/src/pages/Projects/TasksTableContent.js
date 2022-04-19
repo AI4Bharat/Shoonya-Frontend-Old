@@ -52,4 +52,8 @@ const getDataSource = async (data, project_id, project_type) => {
     }
 }
 
-export { getColumnNames, getDataSource }
+const getVariableParams = async (project) => {
+    return project.variable_parameters;
+}
+
+export { getColumnNames, getDataSource, getVariableParams }

@@ -12,7 +12,7 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI"
 import { getProject } from "../../api/ProjectAPI"
-import { getColumnNames, getDataSource } from "./TasksTableContent"
+import { getColumnNames, getDataSource, getVariableParams } from "./TasksTableContent"
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import LabelAllTaskContext from "../../context/TaskContext";
@@ -26,6 +26,7 @@ function ProjectDashboard() {
     const [tasks, setTasks] = useState([]);
     const [columns, setColumns] = useState([]);
     const [dataSource, setDataSource] = useState([]);
+    const [variableParams, setVariableParams] = useState([]);
 
     useEffect(() => {
         getProject(project_id).then(res => {
@@ -41,6 +42,14 @@ function ProjectDashboard() {
         }
 
     }, [project_id]);
+
+    useEffect(() => {
+        if (project) {
+            getVariableParams(project).then(res => {
+                setVariableParams(res);
+            })
+        }
+    }, [project]);
 
     useEffect(() => {
         if (tasks) {
@@ -70,6 +79,8 @@ function ProjectDashboard() {
           }
     }
 
+    console.log(variableParams);
+
     return (
         <>
             <Row style={{width: "100%", maxHeight: "90vh"}}>
@@ -81,6 +92,9 @@ function ProjectDashboard() {
                         <Paragraph><b>Description:</b> {project.description}</Paragraph>
                         <Paragraph><b>Project Type:</b> {project.project_mode} - {project.project_type}</Paragraph>
                         <Paragraph><b>Status: </b> {project.published ? "Published" : (project.archived ? "Archived" : "Draft")}</Paragraph>
+                        <Paragraph>
+                            <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
+                        </Paragraph>
                     </Card>
                     <br />
                     <Card style={{ width: "100%" }}>

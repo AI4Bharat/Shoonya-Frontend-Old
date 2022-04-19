@@ -12,8 +12,4 @@ const getTasks = async (projectID) => {
     }
 };
 
-const getColumnNames = async (data) => {
-    console.log(data);
-}
-
-export { getTasks, getColumnNames }
+export { getTasks }
