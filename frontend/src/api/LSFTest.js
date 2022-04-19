@@ -58,8 +58,7 @@ const postAnnotations = async (result,task,completed_by) => {
 const patchAnnotation = async (result, annotationID) => {
   try {
     console.log(result)
-    console.log(annotationID)
-    let response = await axiosInstance.patch(`/annotation/${result.id}/`, {
+    let response = await axiosInstance.patch(`/annotation/${annotationID}/`, {
       result: result,
     });
     console.log(response.data)
