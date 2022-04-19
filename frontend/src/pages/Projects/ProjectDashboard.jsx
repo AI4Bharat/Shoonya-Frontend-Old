@@ -71,7 +71,7 @@ function ProjectDashboard() {
     }
 
     return (
-        <div>
+        <>
             <Row style={{width: "100%", maxHeight: "90vh"}}>
                 <Col span={1} />
                 <Col span={22}>
@@ -104,7 +104,7 @@ function ProjectDashboard() {
                 </Col>
                 <Col span={1} />
             </Row>
-        </div>
+        </>
     );
 }
 
