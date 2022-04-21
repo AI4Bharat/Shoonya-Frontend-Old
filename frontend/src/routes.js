@@ -16,7 +16,7 @@ import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
-import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
+import ProjectSettings from "./pages/Projects/ProjectSettings";
 import AddCollectionData from "./components/AddCollectionData";
 
 function RequireAuth({ children }) {
@@ -89,6 +89,15 @@ function GlobalRoutes() {
             </RequireAuth>
           } 
         />
+        
+        <Route
+          path="projects/:id/settings"
+          element={
+            <RequireAuth>
+              <ProjectSettings />
+            </RequireAuth>
+          }
+        />
 
         <Route
           path="workspace/:id"
@@ -111,14 +120,6 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <CreateCollectionProject />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="project/:id"
-          element={
-            <RequireAuth>
-              <ViewCollectionProject />
             </RequireAuth>
           }
         />

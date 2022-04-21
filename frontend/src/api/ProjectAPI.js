@@ -56,4 +56,19 @@ const publishProject = async (id) => {
   }
 };
 
-export { fetchProjects, getProject, addAnnotatorsToProject, publishProject };
+const updateProject = async (id, payload) => {
+  try {
+    console.log("Payload is ", payload);
+    let response = await axiosInstance.put(`/projects/${id}/`, payload);
+
+    if (response.status !== 200)
+      return message.error("Unable to update Project");
+
+    message.success("Successfully Updated Project");
+    return;    
+  } catch (error) {
+    message.error(error);
+  }
+}
+
+export { fetchProjects, getProject, addAnnotatorsToProject, publishProject, updateProject };
