@@ -17,6 +17,7 @@ import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
 import AddCollectionData from "./components/AddCollectionData";
+import Landing from "./pages/Landing/Landing";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -65,6 +66,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <Organization />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <Landing />
             </RequireAuth>
           }
         />
