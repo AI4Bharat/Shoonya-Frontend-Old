@@ -34,7 +34,15 @@ function CreateCollectionProject() {
         const tempDatasetTypes = {};
         const tempColumnFields = {};
         for (const domain in res) {
-          tempDomains.push(domain);
+          for (const project_type in res[domain]["project_types"]) {
+            if (
+              res[domain]["project_types"][project_type].project_mode ===
+              "Collection"
+            ) {
+              tempDomains.push(domain);
+            }
+          }
+
           const tempTypesArr = [];
 
           for (const project_type in res[domain]["project_types"]) {
