@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
+import AddCollectionData from "./components/AddCollectionData";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -96,6 +97,14 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <ViewCollectionProject />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="add-collection-data/:id"
+          element={
+            <RequireAuth>
+              <AddCollectionData />
             </RequireAuth>
           }
         />
