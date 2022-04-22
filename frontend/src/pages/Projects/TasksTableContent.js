@@ -2,12 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "antd";
 
-const getColumnNames = async (data, project_type) => {
+const getColumnNames = async (data, project_mode, project_type) => {
     if (data) {
         let cols = Object.keys(data);
+        // console.log(cols)
+        // console.log(project_type);
+        if(project_type == "TranslationEditing"){
+            cols.splice(0, 0, cols.splice(4, 1)[0]);
+            cols.splice(4,1);
+        }
+        else if(project_type == "OCRAnnotation"){
+            cols.splice(1,1);
+            cols.splice(0, 0, cols.splice(1, 1)[0]);
+        }
+        
         let columns = [];
         cols.forEach((value) => {
-            if (project_type == 'Collection' && value == 'status') {
+            if (project_mode == 'Collection' && value == 'status') {
                 return;
             }
             let el = {}

@@ -48,7 +48,7 @@ function Landing() {
             grid={{ gutter: 24, column: 4 }}
             dataSource={projects}
             renderItem={(project) => (
-              <a href={`project/${project.id}`}>
+              <a href={`projects/${project.id}`}>
                 <Card style={{ margin: "1% 2%" }} key={project.title}>
                   <Meta
                     title={project.title}

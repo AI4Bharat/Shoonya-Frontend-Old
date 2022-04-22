@@ -6,8 +6,8 @@ import { Layout, message } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { getProjectsandTasks, postAnnotations, postTasks, getNextProject, patchAnnotation } from "../../api/LSFTest";
 import UserContext from "../../context/User/UserContext";
-import LabelAllTaskContext from "../../context/TaskContext";
 import { useParams } from "react-router-dom";
+import {  Button } from "antd";
 
 const LabelStudioWrapper = (props) => {
   // we need a reference to a DOM node here so LSF knows where to render
@@ -17,7 +17,6 @@ const LabelStudioWrapper = (props) => {
   const [labelConfig, setLabelConfig] = useState();
   const [taskData, setTaskData] = useState(undefined);
   const userContext = useContext(UserContext);
-  const taskContext = useContext(LabelAllTaskContext);
   const { project_id, task_id } = useParams();
 
   // we're running an effect on component mount and rendering LSF inside rootRef node
@@ -30,7 +29,7 @@ const LabelStudioWrapper = (props) => {
           // both have loaded!
           setLabelConfig(labelConfig.label_config);
           setTaskData(taskData.data);
-          LSFRoot(rootRef, lsfRef, userContext, taskContext, project_id, taskData, labelConfig.label_config, annotations, predictions);
+          LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig.label_config, annotations, predictions);
 
         })
     }
@@ -38,9 +37,14 @@ const LabelStudioWrapper = (props) => {
   return <div className="label-studio-root" ref={rootRef} />;
 };
 
-function LSFRoot(rootRef, lsfRef, userContext, taskContext, project_id, taskData, labelConfig, annotations, predictions) {
+function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig, annotations, predictions) {
 
   let interfaces=[]
+  if(predictions == null) predictions = [];
+
+  // let annotationdata = annotations.length === 0? predictions: annotations
+  // if(annotations.length == 0) annotations = predictions;
+
   if(taskData.task_status == "freezed"){
     interfaces = [
       "panel",
@@ -119,6 +123,16 @@ function LSFRoot(rootRef, lsfRef, userContext, taskContext, project_id, taskData
           userGenerate: true,
         });
         ls.annotationStore.selectAnnotation(c.id);
+
+      //  let tempannotation;
+        // if(annotations.length === 0 ){
+        //   // ls.annotationStore.selectAnnotation(tempannotation.id);
+
+        //   window.setTimeout(function() {
+        //     tempannotation = ls.annotationStore.addAnnotationFromPrediction(predictions[0]);
+        //     ls.annotationStore.selectAnnotation(tempannotation.id);
+        //   }, 50);
+        // }
       },
       onSubmitAnnotation: function (ls, annotation) {
         if(taskData.task_status != "freezed")
@@ -126,7 +140,7 @@ function LSFRoot(rootRef, lsfRef, userContext, taskContext, project_id, taskData
         else
           message.error("Task is freezed")
 
-        if(taskContext == "labelAll")
+        if(localStorage.getItem('labelAll'))
           getNextProject(project_id)
           .then((res) => {
             window.location.href=`/projects/${project_id}/task/${res.id}`
@@ -143,6 +157,7 @@ function LSFRoot(rootRef, lsfRef, userContext, taskContext, project_id, taskData
       },
 
       onUpdateAnnotation: function(ls, annotation){
+        console.log(annotation)
         if(taskData.task_status != "freezed"){
           for(let i=0; i<annotations.length; i++){
             if(annotation.serializeAnnotation().id == annotations[i].result.id)
@@ -161,9 +176,10 @@ function LSF() {
   return (
     <div style={{ maxHeight: "100%" }}>
       <div style={{display: "flex", justifyContent: "left"}}>
-      <button value="Back to Project" onClick={() => {
+      <Button value="Back to Project" onClick={() => {
+        localStorage.removeItem('labelAll');
         var id = window.location.href.split("/")[4]
-        window.location.href=`/projects/${id}`}}>Back to Dashboard</button>
+        window.location.href=`/projects/${id}`}}>Back to Dashboard</Button>
       </div>
       <LabelStudioWrapper />
     </div>
