@@ -79,14 +79,16 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
-        <Route
-          path="workspace/:id"
-          element={
-            <RequireAuth>
-              <ProjectDashboard />
-            </RequireAuth>
-          }
-        />
+//         <Route
+//           path="workspace/:id"
+//           path="projects/:project_id"
+//           component={ProjectDashboard}
+//           element={
+//             <RequireAuth>
+//               <ProjectDashboard />
+//             </RequireAuth>
+//           }
+//         />
 
         <Route 
           path="projects/:project_id/task/:task_id" 
