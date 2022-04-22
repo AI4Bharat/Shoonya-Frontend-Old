@@ -40,7 +40,6 @@ function Navbar() {
         >
           <Menu.Item key="1">
             <Link to="/dashboard">Dashboard</Link>
-//             <Link to="/projects/8">Projects</Link>
           </Menu.Item>
         </Menu>
         {userContext.user && (
