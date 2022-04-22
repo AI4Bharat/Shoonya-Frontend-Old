@@ -26,6 +26,7 @@ function ProjectDashboard() {
     const [columns, setColumns] = useState([]);
     const [dataSource, setDataSource] = useState([]);
     const [variableParams, setVariableParams] = useState([]);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         getProject(project_id).then(res => {
@@ -67,6 +68,7 @@ function ProjectDashboard() {
                 setColumns(res);
             });
         }
+        setLoading(false);
     }, [dataSource]);
 
     const labelAllTasks = async (project_id) => {
@@ -82,7 +84,9 @@ function ProjectDashboard() {
           }
     }
 
-    // console.log(variableParams);
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <>
@@ -98,6 +102,9 @@ function ProjectDashboard() {
                         <Paragraph>
                             <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
                         </Paragraph>
+                        <Button type="primary">
+                            <Link to="settings">Show Project Settings</Link>
+                        </Button>
                     </Card>
                     <br />
                     <Card style={{ width: "100%" }}>
