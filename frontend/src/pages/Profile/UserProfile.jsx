@@ -8,8 +8,6 @@ import {
   Form,
   Input,
   Button,
-  Checkbox,
-  Alert,
   message,
   Select,
 } from "antd";

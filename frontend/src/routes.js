@@ -18,6 +18,7 @@ import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
 import ProjectSettings from "./pages/Projects/ProjectSettings";
 import AddCollectionData from "./components/AddCollectionData";
+import Landing from "./pages/Landing/Landing";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -71,8 +72,15 @@ function GlobalRoutes() {
         />
 
         <Route
-          path="projects/:project_id"
-          component={ProjectDashboard}
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <Landing />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="workspace/:id"
           element={
             <RequireAuth>
               <ProjectDashboard />
