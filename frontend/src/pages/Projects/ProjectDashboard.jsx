@@ -15,7 +15,6 @@ import { getProject } from "../../api/ProjectAPI"
 import { getColumnNames, getDataSource, getVariableParams } from "./TasksTableContent"
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
-import LabelAllTaskContext from "../../context/TaskContext";
 
 
 function ProjectDashboard() {
@@ -61,7 +60,10 @@ function ProjectDashboard() {
 
     useEffect(() => {
         if (dataSource) {
-            getColumnNames(dataSource[0], project.project_mode).then(res => {
+            getColumnNames(dataSource[0], project.project_mode, project.project_type).then(res => {
+                for(let i =0;i<res.length;i++){
+                    res[i].title = res[i].title.replaceAll('_', ' ');
+                }
                 setColumns(res);
             });
         }
@@ -72,12 +74,15 @@ function ProjectDashboard() {
             let response = await axiosInstance.post(`/projects/${project_id}/next/`, {
               id: project_id
             })
+            localStorage.setItem('labelAll', true);
             navigate(`/projects/${project_id}/task/${response.data.id}`);
           }
           catch {
             message.error("Error labelling all tasks.")
           }
     }
+
+    // console.log(variableParams);
 
     return (
         <>
@@ -102,9 +107,7 @@ function ProjectDashboard() {
                             </Col>
                             <Col span={3}>
                                 {project.project_mode == "Annotation" ? 
-                                <LabelAllTaskContext.Provider value='labelAll'>
-                                    <Button onClick={e => { e.stopPropagation(); labelAllTasks(project_id)}} type="primary">Label All Tasks</Button>
-                                </LabelAllTaskContext.Provider> :
+                                <Button onClick={e => { e.stopPropagation(); labelAllTasks(project_id)}} type="primary">Label All Tasks</Button>:
                                 <Button type="primary"><Link to={`/add-collection-data/${project.id}`}>Add New Item</Link></Button>}
                             </Col>
                         </Row>
