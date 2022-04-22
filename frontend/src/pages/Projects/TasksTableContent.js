@@ -17,13 +17,30 @@ const getColumnNames = async (data, project_type) => {
             if (value == 'status') {
                 el['filters'] = [
                     {
-                        text: 'UnLabel',
-                        value: 'UnLabel'
+                        text: 'unlabeled',
+                        value: 'unlabeled'
                     },
                     {
-                        text: 'Label',
-                        value: 'Label'
-                    }
+                        text: 'labeled',
+                        value: 'labeled'
+                    },
+                    {
+                        text: 'skipped',
+                        value: 'skipped'
+                    },
+                    {
+                        text: 'accepted',
+                        value: 'accepted'
+                    },
+                    {
+                        text: 'freezed',
+                        value: 'freezed'
+                    },
+                    {
+                        text: 'rejected',
+                        value: 'rejected'
+                    },
+
                 ]
                 el['onFilter'] = (value, record) => record.status == value;
             }

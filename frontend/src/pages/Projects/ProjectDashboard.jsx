@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Col,
     Row,
@@ -79,8 +79,6 @@ function ProjectDashboard() {
           }
     }
 
-    console.log(variableParams);
-
     return (
         <>
             <Row style={{width: "100%", maxHeight: "90vh"}}>
@@ -107,7 +105,7 @@ function ProjectDashboard() {
                                 <LabelAllTaskContext.Provider value='labelAll'>
                                     <Button onClick={e => { e.stopPropagation(); labelAllTasks(project_id)}} type="primary">Label All Tasks</Button>
                                 </LabelAllTaskContext.Provider> :
-                                <Button type="primary">Add New Item</Button>}
+                                <Button type="primary"><Link to={`/add-collection-data/${project.id}`}>Add New Item</Link></Button>}
                             </Col>
                         </Row>
                         <Table
