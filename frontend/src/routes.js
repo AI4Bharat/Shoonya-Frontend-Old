@@ -10,12 +10,13 @@ import UserProfile from "./pages/Profile/UserProfile";
 import Workspace from "./pages/Workspace/Workspace";
 import UserContext from "./context/User/UserContext";
 import LSF from "./pages/Label-Studio/LSF";
+import ProjectDashboard from "./pages/Projects/ProjectDashboard"
 import { Result, Button } from "antd";
 import DefinedLayout from "./components/Layout/DefinedLayout";
 import PropTypes from "prop-types";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProject";
-import ViewCollectionProject from "./pages/ViewProject/ViewCollectionProject";
+import ProjectSettings from "./pages/Projects/ProjectSettings";
 import AddCollectionData from "./components/AddCollectionData";
 import Landing from "./pages/Landing/Landing";
 
@@ -50,7 +51,7 @@ function GlobalRoutes() {
         path="forget-password/confirm/:key/:token"
         element={<ConfirmForgetPassword />}
       />
-      <Route path="lsf-test" element={<LSF />} />
+      
       <Route path="/" element={<DefinedLayout />}>
         <Route
           path="profile/*"
@@ -69,6 +70,7 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
+
         <Route
           path="dashboard"
           element={
@@ -77,6 +79,36 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
+//         <Route
+//           path="workspace/:id"
+//           path="projects/:project_id"
+//           component={ProjectDashboard}
+//           element={
+//             <RequireAuth>
+//               <ProjectDashboard />
+//             </RequireAuth>
+//           }
+//         />
+
+        <Route 
+          path="projects/:project_id/task/:task_id" 
+          component={LSF}
+          element={
+            <RequireAuth>
+              <LSF />
+            </RequireAuth>
+          } 
+        />
+        
+        <Route
+          path="projects/:id/settings"
+          element={
+            <RequireAuth>
+              <ProjectSettings />
+            </RequireAuth>
+          }
+        />
+
         <Route
           path="workspace/:id"
           element={
@@ -98,14 +130,6 @@ function GlobalRoutes() {
           element={
             <RequireAuth>
               <CreateCollectionProject />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="project/:id"
-          element={
-            <RequireAuth>
-              <ViewCollectionProject />
             </RequireAuth>
           }
         />
