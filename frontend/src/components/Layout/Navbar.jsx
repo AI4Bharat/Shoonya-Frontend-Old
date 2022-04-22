@@ -27,7 +27,7 @@ function Navbar() {
       />
       <div
         style={{
-          width: "20%",
+          width: "15%",
           height: "100%",
           display: "flex",
           float: "right",
@@ -36,13 +36,12 @@ function Navbar() {
         <Menu
           theme="light"
           mode="horizontal"
-          style={{ height: "100%", width: "90%" }}
+          style={{ height: "100%", width: "50%" }}
         >
           <Menu.Item key="1">
-            <Link to="/projects/8">Projects</Link>
+            <Link to="/dashboard">Dashboard</Link>
+//             <Link to="/projects/8">Projects</Link>
           </Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
         </Menu>
         {userContext.user && (
           <Dropdown
@@ -55,7 +54,6 @@ function Navbar() {
                     My Organization
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="2">My Projects</Menu.Item>
                 <Menu.Item key="3" onClick={() => userContext.logout()}>
                   <Link to="/">Logout</Link>
                 </Menu.Item>
