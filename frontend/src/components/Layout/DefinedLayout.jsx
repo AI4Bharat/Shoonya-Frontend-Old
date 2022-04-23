@@ -5,14 +5,17 @@ import { Outlet } from "react-router-dom";
 
 function DefinedLayout() {
   return (
-    <Layout style={{height:'100vh'}}>
+    <Layout style={{ height: "100vh", overflowY: "hidden" }}>
       <Navbar />
       <Content
         style={{
+          minHeight: "calc(100vh - 7%)",
           height: "100%",
+          display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          display: "flex",
+          overflowY: "auto",
+          padding: "30px 0",
         }}
       >
         <Outlet />
