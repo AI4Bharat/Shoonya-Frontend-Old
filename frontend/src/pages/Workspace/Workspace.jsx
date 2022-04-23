@@ -10,14 +10,12 @@ import {
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
 import { fetchProjects } from "../../api/ProjectAPI";
-import { useForm } from "antd/lib/form/Form";
 const { TabPane } = Tabs;
 
 function Workspace() {
   const { id } = useParams();
   let navigate = useNavigate();
 
-  const [projectForm] = useForm();
   const [workspace, setWorkspace] = useState(undefined);
   const [inviteData, setInviteData] = useState({ visible: false, users: [] });
   const [users, setUsers] = useState([]);

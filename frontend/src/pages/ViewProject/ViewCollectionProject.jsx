@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Col, Form, Input, message, Row } from "antd";
+import React from "react";
+import { Button, Col, Form, Input, Row } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams } from "react-router-dom";
 import { addAnnotatorsToProject, publishProject } from "../../api/ProjectAPI";

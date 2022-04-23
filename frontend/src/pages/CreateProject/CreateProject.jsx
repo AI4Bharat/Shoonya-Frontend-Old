@@ -41,7 +41,6 @@ function CreateProject() {
   const [description, setDescription] = useState("");
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  const [filterString, setFilterString] = useState(null);
   const [samplingMode, setSamplingMode] = useState(null);
   const [random, setRandom] = useState(5);
   const [batchSize, setBatchSize] = useState(null);
@@ -206,7 +205,7 @@ function CreateProject() {
       .then((data) => {
         navigate(`/project/${data.id}`, { replace: true });
       })
-      .catch((err) => {
+      .catch(() => {
         message.error("Error creating project");
       });
   };
