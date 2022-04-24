@@ -197,7 +197,7 @@ function CreateProject() {
       sampling_mode: samplingMode,
       sampling_parameters_json: samplingParameters,
       project_type: selectedType,
-      dataset_id: [1],
+      dataset_id: selectedInstances,
       label_config: "string",
       variable_parameters: {},
       project_mode: "Annotation",
