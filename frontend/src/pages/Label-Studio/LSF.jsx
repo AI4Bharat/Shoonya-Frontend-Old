@@ -1,15 +1,19 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
-import Navbar from "../../components/Layout/Navbar";
-import { Layout, message } from "antd";
-import { Content } from "antd/lib/layout/layout";
-import { getProjectsandTasks, postAnnotations, postTasks, getNextProject, patchAnnotation } from "../../api/LSFTest";
+import { message } from "antd";
+import {
+  getProjectsandTasks,
+  postAnnotations,
+  postTasks,
+  getNextProject,
+  patchAnnotation,
+} from "../../api/LSFTest";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
-import {  Button } from "antd";
+import { Button } from "antd";
 
-const LabelStudioWrapper = (props) => {
+const LabelStudioWrapper = () => {
   // we need a reference to a DOM node here so LSF knows where to render
   const rootRef = useRef();
   // this reference will be populated when LSF initialized and can be used somewhere else
@@ -21,31 +25,50 @@ const LabelStudioWrapper = (props) => {
 
   // we're running an effect on component mount and rendering LSF inside rootRef node
   useEffect(() => {
-
-    if (typeof labelConfig === "undefined" && typeof taskData === "undefined" && userContext.user) {
-
-      getProjectsandTasks(project_id, task_id)
-        .then(([labelConfig, taskData, annotations, predictions]) => {
+    if (
+      typeof labelConfig === "undefined" &&
+      typeof taskData === "undefined" &&
+      userContext.user
+    ) {
+      getProjectsandTasks(project_id, task_id).then(
+        ([labelConfig, taskData, annotations, predictions]) => {
           // both have loaded!
           setLabelConfig(labelConfig.label_config);
           setTaskData(taskData.data);
-          LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig.label_config, annotations, predictions);
-
-        })
+          LSFRoot(
+            rootRef,
+            lsfRef,
+            userContext,
+            project_id,
+            taskData,
+            labelConfig.label_config,
+            annotations,
+            predictions
+          );
+        }
+      );
     }
-  }, [labelConfig,userContext]);
+  }, [labelConfig, userContext]);
   return <div className="label-studio-root" ref={rootRef} />;
 };
 
-function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig, annotations, predictions) {
-
-  let interfaces=[]
-  if(predictions == null) predictions = [];
+function LSFRoot(
+  rootRef,
+  lsfRef,
+  userContext,
+  project_id,
+  taskData,
+  labelConfig,
+  annotations,
+  predictions
+) {
+  let interfaces = [];
+  if (predictions == null) predictions = [];
 
   // let annotationdata = annotations.length === 0? predictions: annotations
   // if(annotations.length == 0) annotations = predictions;
 
-  if(taskData.task_status == "freezed"){
+  if (taskData.task_status == "freezed") {
     interfaces = [
       "panel",
       // "update",
@@ -62,15 +85,13 @@ function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig
       "annotations:current",
       // "annotations:add-new",
       "annotations:delete",
-      'annotations:view-all',
+      "annotations:view-all",
       "predictions:tabs",
       "predictions:menu",
       // "auto-annotation",
       "edit-history",
-    ]
-  }
-
-  else{
+    ];
+  } else {
     interfaces = [
       "panel",
       "update",
@@ -87,24 +108,21 @@ function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig
       "annotations:current",
       // "annotations:add-new",
       "annotations:delete",
-      'annotations:view-all',
+      "annotations:view-all",
       "predictions:tabs",
       "predictions:menu",
       // "auto-annotation",
       "edit-history",
-    ]
+    ];
   }
-  
-  
+
   if (rootRef.current) {
     lsfRef.current = new LabelStudio(rootRef.current, {
-
-
       /* all the options according to the docs */
       config: labelConfig,
 
       interfaces: interfaces,
-  
+
       user: {
         pk: userContext.user.id,
         firstName: userContext.user.first_name,
@@ -124,7 +142,7 @@ function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig
         });
         ls.annotationStore.selectAnnotation(c.id);
 
-      //  let tempannotation;
+        //  let tempannotation;
         // if(annotations.length === 0 ){
         //   // ls.annotationStore.selectAnnotation(tempannotation.id);
 
@@ -135,51 +153,58 @@ function LSFRoot(rootRef, lsfRef, userContext, project_id, taskData, labelConfig
         // }
       },
       onSubmitAnnotation: function (ls, annotation) {
-        if(taskData.task_status != "freezed")
-          postAnnotations(annotation.serializeAnnotation(), taskData.id, userContext.user.id)
-        else
-          message.error("Task is freezed")
+        if (taskData.task_status != "freezed")
+          postAnnotations(
+            annotation.serializeAnnotation(),
+            taskData.id,
+            userContext.user.id
+          );
+        else message.error("Task is freezed");
 
-        if(localStorage.getItem('labelAll'))
-          getNextProject(project_id)
-          .then((res) => {
-            window.location.href=`/projects/${project_id}/task/${res.id}`
-          })
+        if (localStorage.getItem("labelAll"))
+          getNextProject(project_id).then((res) => {
+            window.location.href = `/projects/${project_id}/task/${res.id}`;
+          });
       },
 
-      onSkipTask: function(){
+      onSkipTask: function () {
         console.log("Skipped task");
         postTasks(taskData.id);
-        getNextProject(project_id)
-        .then((res) => {
-          window.location.href=`/projects/${project_id}/task/${res.id}`
-        })
+        getNextProject(project_id).then((res) => {
+          window.location.href = `/projects/${project_id}/task/${res.id}`;
+        });
       },
 
-      onUpdateAnnotation: function(ls, annotation){
-        console.log(annotation)
-        if(taskData.task_status != "freezed"){
-          for(let i=0; i<annotations.length; i++){
-            if(annotation.serializeAnnotation().id == annotations[i].result.id)
-              patchAnnotation(annotation.serializeAnnotation(),annotations[0].id)
+      onUpdateAnnotation: function (ls, annotation) {
+        console.log(annotation);
+        if (taskData.task_status != "freezed") {
+          for (let i = 0; i < annotations.length; i++) {
+            if (annotation.serializeAnnotation().id == annotations[i].result.id)
+              patchAnnotation(
+                annotation.serializeAnnotation(),
+                annotations[0].id
+              );
           }
-        }
-        else
-          message.error("Task is freezed")
-      }
+        } else message.error("Task is freezed");
+      },
     });
   }
 }
 
-
 function LSF() {
   return (
     <div style={{ maxHeight: "100%" }}>
-      <div style={{display: "flex", justifyContent: "left"}}>
-      <Button value="Back to Project" onClick={() => {
-        localStorage.removeItem('labelAll');
-        var id = window.location.href.split("/")[4]
-        window.location.href=`/projects/${id}`}}>Back to Dashboard</Button>
+      <div style={{ display: "flex", justifyContent: "left" }}>
+        <Button
+          value="Back to Project"
+          onClick={() => {
+            localStorage.removeItem("labelAll");
+            var id = window.location.href.split("/")[4];
+            window.location.href = `/projects/${id}`;
+          }}
+        >
+          Back to Dashboard
+        </Button>
       </div>
       <LabelStudioWrapper />
     </div>
