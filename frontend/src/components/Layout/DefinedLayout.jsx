@@ -8,11 +8,7 @@ function DefinedLayout() {
     <Layout style={{height:'100vh'}}>
       <Navbar />
       <Content
-        style={{
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
+        style={{paddingTop:'3%'
         }}
       >
         <Outlet />
