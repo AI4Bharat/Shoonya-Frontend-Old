@@ -98,7 +98,7 @@ function CreateCollectionProject() {
       required_annotators_per_task: 1,
     })
       .then((data) => {
-        navigate(`/project/${data.id}`, { replace: true });
+        navigate(`/projects/${data.id}`, { replace: true });
       })
       .catch((err) => {
         message.error("Error creating project ", err);
