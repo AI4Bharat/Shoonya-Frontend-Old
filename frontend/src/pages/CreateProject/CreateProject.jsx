@@ -226,7 +226,7 @@ function CreateProject() {
         style={{
           width: "100%",
           rowGap: "0px",
-          marginBottom: "20px",
+          marginBottom: "30px",
         }}
       >
         <Title>Create a Project</Title>
