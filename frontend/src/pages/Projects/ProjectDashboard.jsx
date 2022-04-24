@@ -53,7 +53,7 @@ function ProjectDashboard() {
 
     useEffect(() => {
         if (tasks) {
-            getDataSource(tasks, project_id, project.project_mode).then(res => {
+            getDataSource(tasks, project_id, project.project_mode, project.is_published).then(res => {
                 setDataSource(res);
             });
         }
@@ -98,7 +98,7 @@ function ProjectDashboard() {
                         <Paragraph><b>Project ID:</b> {project.id}</Paragraph>
                         <Paragraph><b>Description:</b> {project.description}</Paragraph>
                         <Paragraph><b>Project Type:</b> {project.project_mode} - {project.project_type}</Paragraph>
-                        <Paragraph><b>Status: </b> {project.published ? "Published" : (project.archived ? "Archived" : "Draft")}</Paragraph>
+                        <Paragraph><b>Status: </b> {project.is_published ? "Published" : (project.is_archived ? "Archived" : "Draft")}</Paragraph>
                         <Paragraph>
                             <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
                         </Paragraph>

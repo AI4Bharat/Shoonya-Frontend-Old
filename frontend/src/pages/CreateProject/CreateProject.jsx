@@ -204,7 +204,7 @@ function CreateProject() {
       project_mode: "Annotation",
     })
       .then((data) => {
-        navigate(`/project/${data.id}`, { replace: true });
+        navigate(`/projects/${data.id}`, { replace: true });
       })
       .catch((err) => {
         message.error("Error creating project");
