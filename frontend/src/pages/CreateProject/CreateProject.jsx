@@ -64,7 +64,13 @@ function CreateProject() {
           tempDomains.push(domain);
           const tempTypesArr = [];
           for (const project_type in res[domain]["project_types"]) {
-            tempTypesArr.push(project_type);
+            if (
+              res[domain]["project_types"][project_type].project_mode ===
+              "Annotation"
+            ) {
+              tempTypesArr.push(project_type);
+            }
+
             if (res[domain]["project_types"][project_type]["input_dataset"]) {
               tempDatasetTypes[project_type] =
                 res[domain]["project_types"][project_type]["input_dataset"][
