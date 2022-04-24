@@ -213,7 +213,16 @@ function CreateProject() {
   return (
     <Row style={{ width: "100%" }}>
       <Col span={5} />
-      <Col span={7} style={{ height: "80vh" }}>
+      <Col
+        span={7}
+        style={{
+          marginTop: "120px",
+          margiBottom: "20px",
+          width: "100%",
+
+          rowGap: "0px",
+        }}
+      >
         <Title>Create a Project</Title>
         <h1 className="margin-top-heading">Title:</h1>
         <Input

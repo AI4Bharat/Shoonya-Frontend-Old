@@ -15,7 +15,7 @@ function DefinedLayout() {
           justifyContent: "center",
           alignItems: "center",
           overflowY: "auto",
-          padding: "30px 0",
+          paddingTop: "10px",
         }}
       >
         <Outlet />

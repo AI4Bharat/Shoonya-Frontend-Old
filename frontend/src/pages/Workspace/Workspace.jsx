@@ -42,7 +42,7 @@ function Workspace() {
 
   return (
     <>
-      <Row style={{ width: "100%", paddingBottom: "20px" }}>
+      <Row style={{ width: "100%", height: "100%" }}>
         <Col span={1} />
         <Col span={22} style={{ height: "80vh" }}>
           <Card>
