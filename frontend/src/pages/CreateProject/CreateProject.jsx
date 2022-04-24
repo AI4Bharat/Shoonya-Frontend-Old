@@ -48,6 +48,7 @@ function CreateProject() {
   const [samplingParameters, setSamplingParameters] = useState(null);
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
+  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
 
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
@@ -207,9 +208,10 @@ function CreateProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Annotation",
+      required_annotators_per_Task: selectedAnnotatorsNum,
     })
       .then((data) => {
-        navigate(`/project/${data.id}`, { replace: true });
+        navigate(`/projects/${data.id}`, { replace: true });
       })
       .catch(() => {
         message.error("Error creating project");
@@ -222,11 +224,9 @@ function CreateProject() {
       <Col
         span={7}
         style={{
-          // marginTop: "120px",
-          margiBottom: "20px",
           width: "100%",
-
           rowGap: "0px",
+          marginBottom: "20px",
         }}
       >
         <Title>Create a Project</Title>
@@ -352,8 +352,27 @@ function CreateProject() {
         )}
         {samplingParameters && (
           <>
+            <h1 className="margin-top-heading">Annotators Per Task :</h1>
+            <Input
+              value={selectedAnnotatorsNum}
+              onChange={(e) => {
+                setSelectedAnnotatorsNum(e.target.value);
+              }}
+            />
+          </>
+        )}
+        {selectedAnnotatorsNum && (
+          <>
             <h1 className="margin-top-heading">Finalize Project</h1>
-            <Button onClick={handleCreateProject}>Create Project</Button>
+            <Button
+              onClick={handleCreateProject}
+              style={{ marginRight: "10px" }}
+            >
+              Create Project
+            </Button>
+            <Button onClick={() => navigate(`/workspace/${id}`)} danger>
+              Cancel
+            </Button>
           </>
         )}
       </Col>
