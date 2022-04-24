@@ -211,12 +211,12 @@ function CreateProject() {
   };
 
   return (
-    <Row style={{ width: "100%" }}>
+    <Row style={{ width: "100%", height: "100%" }}>
       <Col span={5} />
       <Col
         span={7}
         style={{
-          marginTop: "120px",
+          // marginTop: "120px",
           margiBottom: "20px",
           width: "100%",
 
