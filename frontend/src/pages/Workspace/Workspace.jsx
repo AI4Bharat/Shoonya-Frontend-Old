@@ -64,7 +64,7 @@ function Workspace() {
             </Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Projects" key="1">
-                {userContext.user?.role === 2 && (
+                {(userContext.user?.role === 2 || userContext?.role === 3) && (
                   <>
                     <Button
                       style={{
@@ -131,7 +131,8 @@ function Workspace() {
                 </Modal>
                 <Table columns={memberColumns} dataSource={users} />
               </TabPane>
-              {userContext.user?.role === 3 && (
+              {(userContext.user?.role === 3 ||
+                userContext.user?.role === 2) && (
                 <TabPane tab="Invites">
                   <Table columns={memberColumns} dataSource={users} />
                 </TabPane>
