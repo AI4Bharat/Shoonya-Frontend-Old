@@ -7,15 +7,15 @@ const getColumnNames = async (data, project_mode, project_type) => {
         let cols = Object.keys(data);
         // console.log(cols)
         // console.log(project_type);
-        if(project_type == "TranslationEditing"){
+        if (project_type == "TranslationEditing") {
             cols.splice(0, 0, cols.splice(4, 1)[0]);
-            cols.splice(4,1);
+            cols.splice(4, 1);
         }
-        else if(project_type == "OCRAnnotation"){
-            cols.splice(1,1);
+        else if (project_type == "OCRAnnotation") {
+            cols.splice(1, 1);
             cols.splice(0, 0, cols.splice(1, 1)[0]);
         }
-        
+
         let columns = [];
         cols.forEach((value) => {
             if (project_mode == 'Collection' && value == 'status') {
@@ -61,18 +61,22 @@ const getColumnNames = async (data, project_mode, project_type) => {
     }
 }
 
-const getDataSource = async (data, project_id, project_type) => {
+const getDataSource = async (data, project_id, project_type, is_published) => {
     if (data) {
         data.forEach((value) => {
             value.data['key'] = value.id;
             value.data['status'] = value.task_status;
 
             value.data['actions'] = (
-                <Link to={`/projects/${project_id}/task/${value.id}`}>
-                    <Button type="primary">
-                        {project_type === "Annotation" ? "Annotate" : "Edit"}
-                    </Button>
-                </Link>
+                <Button type="primary">
+                    {is_published ?
+                        <Link to={`/projects/${project_id}/task/${value.id}`}>
+                            {project_type === "Annotation" ? "Annotate" : "Edit"}
+                        </Link>
+                        :
+                        "Disabled"
+                    }
+                </Button>
             );
         })
         const d = data.map(t => t.data);

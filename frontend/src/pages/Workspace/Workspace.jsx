@@ -32,7 +32,7 @@ function Workspace() {
         setUsers(res);
       });
       fetchProjects().then((res) => {
-        console.log(res);
+        // console.log(res);
 
         setProject({ ...project, projects: res.results });
       });

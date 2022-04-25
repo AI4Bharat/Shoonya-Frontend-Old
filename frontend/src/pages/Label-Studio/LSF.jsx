@@ -141,16 +141,6 @@ function LSFRoot(
           userGenerate: true,
         });
         ls.annotationStore.selectAnnotation(c.id);
-
-        //  let tempannotation;
-        // if(annotations.length === 0 ){
-        //   // ls.annotationStore.selectAnnotation(tempannotation.id);
-
-        //   window.setTimeout(function() {
-        //     tempannotation = ls.annotationStore.addAnnotationFromPrediction(predictions[0]);
-        //     ls.annotationStore.selectAnnotation(tempannotation.id);
-        //   }, 50);
-        // }
       },
       onSubmitAnnotation: function (ls, annotation) {
         if (taskData.task_status != "freezed")
@@ -168,7 +158,6 @@ function LSFRoot(
       },
 
       onSkipTask: function () {
-        console.log("Skipped task");
         postTasks(taskData.id);
         getNextProject(project_id).then((res) => {
           window.location.href = `/projects/${project_id}/task/${res.id}`;
@@ -176,7 +165,6 @@ function LSFRoot(
       },
 
       onUpdateAnnotation: function (ls, annotation) {
-        console.log(annotation);
         if (taskData.task_status != "freezed") {
           for (let i = 0; i < annotations.length; i++) {
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
@@ -193,7 +181,7 @@ function LSFRoot(
 
 function LSF() {
   return (
-    <div style={{ maxHeight: "100%" }}>
+    <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
       <div style={{ display: "flex", justifyContent: "left" }}>
         <Button
           value="Back to Project"

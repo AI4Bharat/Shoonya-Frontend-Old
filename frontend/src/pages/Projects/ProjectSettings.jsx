@@ -40,7 +40,6 @@ function ProjectSettings() {
   };
 
   const onEditProjectForm = async (values) => {
-    console.log(project.id);
     await updateProject(project.id, values);
   };
 
@@ -48,8 +47,6 @@ function ProjectSettings() {
     await publishProject(id);
     navigate(`/projects/${id}`, { replace: true });
   };
-
-  console.log(project);
 
   prefilBasicForm();
 

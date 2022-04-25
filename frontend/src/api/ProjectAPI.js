@@ -58,7 +58,7 @@ const publishProject = async (id) => {
 
 const updateProject = async (id, payload) => {
   try {
-    console.log("Payload is ", payload);
+    // console.log("Payload is ", payload);
     let response = await axiosInstance.put(`/projects/${id}/`, payload);
 
     if (response.status !== 200)
