@@ -49,7 +49,7 @@ const UserState = (props) => {
       await axiosInstance.patch(`users/invite/${inviteCode}/accept/`, formData);
     } catch (err) {
       dispatch({ type: REGISTER_FAIL, payload: err.response.data });
-      console.log("Errored out")
+      // console.log("Errored out")
       throw "Error"
     }
   };
@@ -95,7 +95,7 @@ const UserState = (props) => {
       let res = await axiosInstance.get("users/account/me/fetch");
       dispatch({ type: USER_LOADED, payload: res.data });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       message.error("Error fetching user data.");
     }
   };

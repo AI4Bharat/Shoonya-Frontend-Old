@@ -27,25 +27,20 @@ function Navbar() {
       />
       <div
         style={{
-          width: "15%",
+          width: "10%",
           height: "100%",
           display: "flex",
           float: "right",
         }}
       >
-        <Menu
-          theme="light"
-          mode="horizontal"
-          style={{ height: "100%", width: "50%" }}
-        >
-          <Menu.Item key="1">
-            <Link to="/dashboard">Dashboard</Link>
-          </Menu.Item>
-        </Menu>
+       
         {userContext.user && (
           <Dropdown
             overlay={
               <Menu theme="light" mode="horizontal">
+                <Menu.Item key="1">
+            <Link to="/dashboard">Dashboard</Link>
+          </Menu.Item>
                 <Menu.Item key="1">
                   <Link
                     to={`/organization/${userContext.user.organization.id}`}

@@ -41,7 +41,6 @@ function CreateProject() {
   const [description, setDescription] = useState("");
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  const [filterString, setFilterString] = useState(null);
   const [samplingMode, setSamplingMode] = useState(null);
   const [random, setRandom] = useState(5);
   const [batchSize, setBatchSize] = useState(null);
@@ -49,6 +48,7 @@ function CreateProject() {
   const [samplingParameters, setSamplingParameters] = useState(null);
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
+  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
 
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
@@ -65,7 +65,13 @@ function CreateProject() {
           tempDomains.push(domain);
           const tempTypesArr = [];
           for (const project_type in res[domain]["project_types"]) {
-            tempTypesArr.push(project_type);
+            if (
+              res[domain]["project_types"][project_type].project_mode ===
+              "Annotation"
+            ) {
+              tempTypesArr.push(project_type);
+            }
+
             if (res[domain]["project_types"][project_type]["input_dataset"]) {
               tempDatasetTypes[project_type] =
                 res[domain]["project_types"][project_type]["input_dataset"][
@@ -202,35 +208,43 @@ function CreateProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Annotation",
+      required_annotators_per_Task: selectedAnnotatorsNum,
     })
       .then((data) => {
-        navigate(`/project/${data.id}`, { replace: true });
+        navigate(`/projects/${data.id}`, { replace: true });
       })
-      .catch((err) => {
+      .catch(() => {
         message.error("Error creating project");
       });
   };
 
   return (
-    <Row style={{ width: "100%" }}>
+    <Row style={{ width: "100%", height: "100%" }}>
       <Col span={5} />
-      <Col span={5} style={{ height: "80vh" }}>
+      <Col
+        span={7}
+        style={{
+          width: "100%",
+          rowGap: "0px",
+          marginBottom: "30px",
+        }}
+      >
         <Title>Create a Project</Title>
-        <h1>Title:</h1>
+        <h1 className="margin-top-heading">Title:</h1>
         <Input
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
         />
-        <h1>Description:</h1>
+        <h1 className="margin-top-heading">Description:</h1>
         <Input
           value={description}
           onChange={(e) => {
             setDescription(e.target.value);
           }}
         />
-        <h1>Select a domain to work in:</h1>
+        <h1 className="margin-top-heading">Select a domain to work in:</h1>
         {domains && (
           <Select
             style={{ width: "100%" }}
@@ -248,7 +262,7 @@ function CreateProject() {
         )}
         {selectedDomain && (
           <>
-            <h1>Select a Project Type:</h1>
+            <h1 className="margin-top-heading">Select a Project Type:</h1>
             <Select
               style={{ width: "100%" }}
               placeholder="Select Project Type"
@@ -267,7 +281,9 @@ function CreateProject() {
         )}
         {instanceIds && (
           <>
-            <h1>Select sources to fetch data from:</h1>
+            <h1 className="margin-top-heading">
+              Select sources to fetch data from:
+            </h1>
             <Select
               disabled={confirmed}
               style={{ width: "100%" }}
@@ -294,13 +310,13 @@ function CreateProject() {
         )}
         {selectedType && columns && tableData && selectedInstances && (
           <>
-            <h1>Dataset Rows:</h1>
+            <h1 className="margin-top-heading">Dataset Rows:</h1>
             <Table dataSource={tableData} columns={columns} />
           </>
         )}
         {selectedType && columns && tableData && selectedInstances && (
           <>
-            <h1>Select Sampling Type:</h1>
+            <h1 className="margin-top-heading">Select Sampling Type:</h1>
             <Select
               placeholder="Select Sampling Type"
               onChange={handleSamplingChange}
@@ -336,8 +352,27 @@ function CreateProject() {
         )}
         {samplingParameters && (
           <>
-            <h1>Finalize Project</h1>
-            <Button onClick={handleCreateProject}>Create Project</Button>
+            <h1 className="margin-top-heading">Annotators Per Task :</h1>
+            <Input
+              value={selectedAnnotatorsNum}
+              onChange={(e) => {
+                setSelectedAnnotatorsNum(e.target.value);
+              }}
+            />
+          </>
+        )}
+        {selectedAnnotatorsNum && (
+          <>
+            <h1 className="margin-top-heading">Finalize Project</h1>
+            <Button
+              onClick={handleCreateProject}
+              style={{ marginRight: "10px" }}
+            >
+              Create Project
+            </Button>
+            <Button onClick={() => navigate(`/workspace/${id}`)} danger>
+              Cancel
+            </Button>
           </>
         )}
       </Col>
