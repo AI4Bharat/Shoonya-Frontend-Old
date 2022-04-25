@@ -10,14 +10,12 @@ import {
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
 import { fetchProjects } from "../../api/ProjectAPI";
-import { useForm } from "antd/lib/form/Form";
 const { TabPane } = Tabs;
 
 function Workspace() {
   const { id } = useParams();
   let navigate = useNavigate();
 
-  const [projectForm] = useForm();
   const [workspace, setWorkspace] = useState(undefined);
   const [inviteData, setInviteData] = useState({ visible: false, users: [] });
   const [users, setUsers] = useState([]);
@@ -44,9 +42,12 @@ function Workspace() {
 
   return (
     <>
-      <Row style={{ width: "100%" }}>
+      <Row style={{ width: "100%", height: "100%" }}>
         <Col span={1} />
-        <Col span={22} style={{ height: "80vh" }}>
+        <Col
+          span={22}
+          style={{ width: "100%", rowGap: "0px", marginBottom: "20px" }}
+        >
           <Card>
             <Title>{workspace && workspace.workspace_name}</Title>
             <Paragraph>

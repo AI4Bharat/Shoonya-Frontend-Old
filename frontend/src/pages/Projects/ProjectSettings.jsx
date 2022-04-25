@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, message, Row, Card } from "antd";
+import { Button, Col, Form, Input, Row, Card } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate } from "react-router-dom";
-import { addAnnotatorsToProject, publishProject, getProject, updateProject } from "../../api/ProjectAPI";
+import {
+  addAnnotatorsToProject,
+  publishProject,
+  getProject,
+  updateProject,
+} from "../../api/ProjectAPI";
 
 function ProjectSettings() {
   const { id } = useParams();
@@ -17,15 +22,15 @@ function ProjectSettings() {
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
       title: project.title,
-      description: project.description
-   });
-  }
+      description: project.description,
+    });
+  };
 
   useEffect(() => {
-      getProject(id).then(res => {
-          setProject(res);
-          setLoading(false);
-      });
+    getProject(id).then((res) => {
+      setProject(res);
+      setLoading(false);
+    });
   }, []);
 
   const onFinishAddAnnotator = async (values) => {
@@ -43,9 +48,7 @@ function ProjectSettings() {
     navigate(`/projects/${id}`, { replace: true });
   };
 
-
   prefilBasicForm();
-
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -73,7 +76,9 @@ function ProjectSettings() {
               <Form.Item
                 label="Project Name"
                 name="title"
-                rules={[{ required: true, message: 'Please enter a project name!' }]}
+                rules={[
+                  { required: true, message: "Please enter a project name!" },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -81,7 +86,12 @@ function ProjectSettings() {
               <Form.Item
                 label="Project Description"
                 name="description"
-                rules={[{ required: true, message: 'Please enter a project description!' }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter a project description!",
+                  },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -91,7 +101,6 @@ function ProjectSettings() {
                   Save
                 </Button>
               </Form.Item>
-
             </Form>
           </Card>
 
