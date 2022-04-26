@@ -22,6 +22,14 @@ const fetchUsersInWorkspace = async (workspaceID) => {
     message.error("Error fetching users");
   }
 };
+const fetchWorkspaceProjects = async (workspaceID) => {
+  try {
+    let response = await axiosInstance.get(`workspaces/${workspaceID}/projects/`);
+    return response.data;
+  } catch {
+    message.error("Error fetching users");
+  }
+};
 
 const fetchWorkspaceData = async (workspaceID) => {
   try {
@@ -49,9 +57,12 @@ const createWorkspace = async (data) => {
     message.error("Error creating workspace");
   }
 };
+
+
 export {
   createWorkspace,
   fetchWorkspaces,
   fetchUsersInWorkspace,
   fetchWorkspaceData,
+  fetchWorkspaceProjects
 };

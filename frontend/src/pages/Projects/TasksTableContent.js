@@ -32,10 +32,6 @@ const getColumnNames = async (data, project_mode, project_type) => {
                         value: 'unlabeled'
                     },
                     {
-                        text: 'labeled',
-                        value: 'labeled'
-                    },
-                    {
                         text: 'skipped',
                         value: 'skipped'
                     },
@@ -43,15 +39,6 @@ const getColumnNames = async (data, project_mode, project_type) => {
                         text: 'accepted',
                         value: 'accepted'
                     },
-                    {
-                        text: 'freezed',
-                        value: 'freezed'
-                    },
-                    {
-                        text: 'rejected',
-                        value: 'rejected'
-                    },
-
                 ]
                 el['onFilter'] = (value, record) => record.status == value;
             }
