@@ -50,10 +50,14 @@ function Organization() {
     if (userContext.user) {
       setOrganization(userContext.user.organization);
       fetchUsers(userContext.user.organization.id).then((res) => {
+        console.log(res)
         setUsers(res);
       });
       fetchWorkspaces().then((res) =>
+      {
+        console.log(res)
         setWorkspace({ ...workspace, workspaces: res })
+      }
       );
     }
   }, [userContext]);

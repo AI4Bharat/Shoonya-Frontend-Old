@@ -4,11 +4,11 @@ import "@heartexlabs/label-studio/build/static/css/main.css";
 import { message } from "antd";
 import {
   getProjectsandTasks,
-  postAnnotations,
-  postTasks,
+  postAnnotation,
+  updateTask,
   getNextProject,
   patchAnnotation,
-} from "../../api/LSFTest";
+} from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
 import { Button } from "antd";
@@ -144,7 +144,7 @@ function LSFRoot(
       },
       onSubmitAnnotation: function (ls, annotation) {
         if (taskData.task_status != "freezed")
-          postAnnotations(
+          postAnnotation(
             annotation.serializeAnnotation(),
             taskData.id,
             userContext.user.id
@@ -158,7 +158,7 @@ function LSFRoot(
       },
 
       onSkipTask: function () {
-        postTasks(taskData.id);
+        updateTask(taskData.id);
         getNextProject(project_id).then((res) => {
           window.location.href = `/projects/${project_id}/task/${res.id}`;
         });

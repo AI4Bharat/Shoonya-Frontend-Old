@@ -19,11 +19,13 @@ const projectColumns = [
   },
   {
     title: "Actions",
-    render: () => (
+    render: (item) => (
       <>
-        <Button type={"primary"} style={{ marginRight: "1%" }}>
-          View
-        </Button>
+        <a href={`/projects/${item.id}`}>
+          <Button type={"primary"} style={{ marginRight: "1%" }}>
+            View
+          </Button>
+        </a>
       </>
     ),
   },
@@ -52,17 +54,14 @@ const memberColumns = [
     ),
   },
   {
-    title: "Invited By",
-    dataIndex: "inviter",
-    key: "inviter",
-  },
-  {
     title: "Actions",
     render: (item) => (
       <>
-        <Button type={"primary"} style={{ marginRight: "1%" }}>
-          View {console.log(item)}
-        </Button>
+        <a href={`profile/${item.id}`}>
+          <Button type={"primary"} style={{ marginRight: "1%" }}>
+            View
+          </Button>
+        </a>
       </>
     ),
   },

@@ -7,9 +7,9 @@ import UserContext from "../../context/User/UserContext";
 import {
   fetchUsersInWorkspace,
   fetchWorkspaceData,
+  fetchWorkspaceProjects
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
-import { fetchProjects } from "../../api/ProjectAPI";
 const { TabPane } = Tabs;
 
 function Workspace() {
@@ -31,7 +31,7 @@ function Workspace() {
       fetchUsersInWorkspace(id).then((res) => {
         setUsers(res);
       });
-      fetchProjects().then((res) => {
+      fetchWorkspaceProjects(id).then((res) => {
         // console.log(res);
 
         setProject({ ...project, projects: res.results });
@@ -51,7 +51,7 @@ function Workspace() {
           <Card>
             <Title>{workspace && workspace.workspace_name}</Title>
             <Paragraph>
-              Created by: {workspace && workspace.created_by.username}
+              Created by: {workspace && workspace.created_by?.username}
             </Paragraph>
             <Paragraph>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -64,7 +64,8 @@ function Workspace() {
             </Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Projects" key="1">
-                {(userContext.user?.role === 2 || userContext?.user.role === 3) && (
+                {(userContext.user?.role === 2 ||
+                  userContext.user?.role === 3) && (
                   <>
                     <Button
                       style={{
