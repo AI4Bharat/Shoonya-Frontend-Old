@@ -20,9 +20,12 @@ function Landing() {
   }, [userContext.user]);
 
   return (
-    <Row style={{ width: "100%" }}>
+    <Row style={{ width: "100%", height: "100%" }}>
       <Col span={1} />
-      <Col span={4}>
+      <Col
+        span={4}
+        style={{ width: "100%", rowGap: "0px", marginBottom: "20px" }}
+      >
         <Card>
           <h1>Welcome {userContext.user?.username}!</h1>
           <Divider />

@@ -222,7 +222,7 @@ function CreateProject() {
     <Row style={{ width: "100%", height: "100%" }}>
       <Col span={5} />
       <Col
-        span={7}
+        span={10}
         style={{
           width: "100%",
           rowGap: "0px",
