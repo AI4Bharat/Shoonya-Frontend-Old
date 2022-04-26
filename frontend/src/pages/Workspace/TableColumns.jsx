@@ -24,7 +24,6 @@ const projectColumns = [
         <Button type={"primary"} style={{ marginRight: "1%" }}>
           View
         </Button>
-        <Button type={"default"}>Edit</Button>
       </>
     ),
   },
@@ -59,12 +58,11 @@ const memberColumns = [
   },
   {
     title: "Actions",
-    render: () => (
+    render: (item) => (
       <>
         <Button type={"primary"} style={{ marginRight: "1%" }}>
-          View
+          View {console.log(item)}
         </Button>
-        <Button type={"default"}>Edit</Button>
       </>
     ),
   },

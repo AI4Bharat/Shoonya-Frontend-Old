@@ -24,7 +24,6 @@ const workspaceColumns = [
         <Button type={"primary"} style={{ marginRight: "1%" }}>
           View
         </Button>
-        <Button type={"default"}>Edit</Button>
       </>
     ),
   },
@@ -64,7 +63,6 @@ const memberColumns = [
         <Button type={"primary"} style={{ marginRight: "1%" }}>
           View
         </Button>
-        <Button type={"default"}>Edit</Button>
       </>
     ),
   },

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Col,
     Row,
@@ -15,10 +15,11 @@ import { getProject } from "../../api/ProjectAPI"
 import { getColumnNames, getDataSource, getVariableParams } from "./TasksTableContent"
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
+import UserContext from "../../context/User/UserContext";
 
 
 function ProjectDashboard() {
-
+    const userContext = useContext(UserContext)
     let navigate = useNavigate();
     const { project_id } = useParams();
     const [project, setProject] = useState([]);
@@ -102,9 +103,10 @@ function ProjectDashboard() {
                         <Paragraph>
                             <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
                         </Paragraph>
-                        <Button type="primary">
+                        {userContext.user.role !== 1 && <Button type="primary">
                             <Link to="settings">Show Project Settings</Link>
-                        </Button>
+                        </Button>}
+                        
                     </Card>
                     <br />
                     <Card style={{ width: "100%" }}>
