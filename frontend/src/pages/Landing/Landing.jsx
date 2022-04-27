@@ -12,7 +12,8 @@ function Landing() {
   const [workspaces, setWorkspaces] = useState();
   useEffect(() => {
     fetchProjects().then((res) => {
-      setProject(res);
+      console.log(res);
+      setProject(res.results);
     });
     fetchWorkspaces().then((res) => {
       setWorkspaces(res.results);

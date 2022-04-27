@@ -124,7 +124,7 @@ function ProjectDashboard() {
             <Paragraph>
               <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
             </Paragraph>
-            {userContext.user.role !== 1 && (
+            {userContext.user?.role !== 1 && (
               <Button type="primary">
                 <Link to="settings">Show Project Settings</Link>
               </Button>
