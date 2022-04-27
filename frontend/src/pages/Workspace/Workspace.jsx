@@ -7,7 +7,7 @@ import UserContext from "../../context/User/UserContext";
 import {
   fetchUsersInWorkspace,
   fetchWorkspaceData,
-  fetchWorkspaceProjects
+  fetchWorkspaceProjects,
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
 const { TabPane } = Tabs;
@@ -32,8 +32,6 @@ function Workspace() {
         setUsers(res);
       });
       fetchWorkspaceProjects(id).then((res) => {
-        // console.log(res);
-
         setProject({ ...project, projects: res.results });
       });
       fetchWorkspaceData(id).then((res) => setWorkspace(res));

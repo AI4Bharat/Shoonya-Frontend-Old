@@ -191,13 +191,15 @@ function CreateProject() {
   };
 
   const handleCreateProject = () => {
+    console.log(selectedInstances);
+
     createProject({
       title: title,
       description: description,
       created_by: userContext.user.id,
       is_archived: false,
       is_published: false,
-      users: [userContext.user.id],
+      users: [userContext.user?.id],
       workspace_id: id,
       organization_id: userContext.user.organization.id,
       filter_string: "string",
@@ -300,21 +302,25 @@ function CreateProject() {
                 );
               })}
             </Select>
-            <Button disabled={confirmed} onClick={handleGetData}>
-              Confirm Selections
-            </Button>
-            <Button disabled={!confirmed} onClick={handleChangeInstances}>
-              Change Sources
-            </Button>
+            {selectedInstances.length > 0 && (
+              <>
+                <Button disabled={confirmed} onClick={handleGetData}>
+                  Confirm Selections
+                </Button>
+                <Button disabled={!confirmed} onClick={handleChangeInstances}>
+                  Change Sources
+                </Button>
+              </>
+            )}
           </>
         )}
-        {selectedType && columns && tableData && selectedInstances && (
+        {selectedType && columns && tableData && selectedInstances.length > 0 && (
           <>
             <h1 className="margin-top-heading">Dataset Rows:</h1>
             <Table dataSource={tableData} columns={columns} />
           </>
         )}
-        {selectedType && columns && tableData && selectedInstances && (
+        {selectedType && columns && tableData && selectedInstances.length > 0 && (
           <>
             <h1 className="margin-top-heading">Select Sampling Type:</h1>
             <Select
