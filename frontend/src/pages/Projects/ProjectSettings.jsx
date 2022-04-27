@@ -40,7 +40,14 @@ function ProjectSettings() {
   };
 
   const onEditProjectForm = async (values) => {
-    await updateProject(project.id, values);
+    const { project_mode, project_type, users } = project;
+
+    await updateProject(project.id, {
+      ...values,
+      project_mode,
+      project_type,
+      users,
+    });
   };
 
   const handlePublishProject = async () => {
