@@ -95,7 +95,7 @@ function CreateCollectionProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Collection",
-      required_annotators_per_task: 1,
+      required_annotators_per_task: selectedAnnotatorsNum,
     })
       .then((data) => {
         navigate(`/projects/${data.id}`, { replace: true });
