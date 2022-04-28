@@ -191,12 +191,10 @@ function CreateProject() {
   };
 
   const handleCreateProject = () => {
-    console.log(selectedInstances);
-
     createProject({
       title: title,
       description: description,
-      created_by: userContext.user.id,
+      created_by: +userContext.user.id,
       is_archived: false,
       is_published: false,
       users: [userContext.user?.id],

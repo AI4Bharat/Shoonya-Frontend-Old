@@ -32,7 +32,7 @@ function Workspace() {
         setUsers(res);
       });
       fetchWorkspaceProjects(id).then((res) => {
-        setProject({ ...project, projects: res.results });
+        setProject({ ...project, projects: res });
       });
       fetchWorkspaceData(id).then((res) => setWorkspace(res));
     }

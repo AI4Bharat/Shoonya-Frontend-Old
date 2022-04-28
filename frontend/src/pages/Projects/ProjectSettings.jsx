@@ -34,7 +34,7 @@ function ProjectSettings() {
   }, []);
 
   const onFinishAddAnnotator = async (values) => {
-    const emails = values.emails.split(", ");
+    const emails = values.emails.split(",").map((email) => email.trim());
 
     await addAnnotatorsToProject(id, emails);
   };
