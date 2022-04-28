@@ -50,15 +50,13 @@ function Organization() {
     if (userContext.user) {
       setOrganization(userContext.user.organization);
       fetchUsers(userContext.user.organization.id).then((res) => {
-        console.log(res)
+        console.log(res);
         setUsers(res);
       });
-      fetchWorkspaces().then((res) =>
-      {
-        console.log(res)
-        setWorkspace({ ...workspace, workspaces: res })
-      }
-      );
+      fetchWorkspaces().then((res) => {
+        console.log(res);
+        setWorkspace({ ...workspace, workspaces: res });
+      });
     }
   }, [userContext]);
 
@@ -81,47 +79,54 @@ function Organization() {
             </Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Workspaces" key="1">
-                {userContext.user?.role === 3 && (
-                  <>
-                    <Button
-                      style={{ width: "100%", marginBottom: "1%" }}
-                      onClick={() =>
-                        setWorkspace({ ...workspace, visible: true })
-                      }
-                      type="primary"
-                    >
-                      Add new workspace
-                    </Button>
-                    <Modal
-                      visible={workspace.visible}
-                      onCancel={() =>
-                        setWorkspace({ ...workspace, visible: false })
-                      }
-                      onOk={() => workspaceForm.submit()}
-                    >
-                      <Title level={5}>Enter workspace details</Title>
-                      <Form
-                        form={workspaceForm}
-                        labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 14 }}
-                        onFinish={(data) => onCreateWorkspace(data)}
+                {userContext.user?.role === 1 &&
+                  userContext.user?.role === 2 &&
+                  userContext.user?.role === 3 && (
+                    <>
+                      <Button
+                        style={{ width: "100%", marginBottom: "1%" }}
+                        onClick={() =>
+                          setWorkspace({ ...workspace, visible: true })
+                        }
+                        type="primary"
                       >
-                        <FormItem label="Workspace Name" name="workspace_name">
-                          <Input />
-                        </FormItem>
-                        <FormItem label="Managers" name="managers">
-                          <Select mode="multiple" placeholder="Please Select">
-                            {users.map((e) => {
-                              if (e.role === 2) {
-                                return <Option key={e.id}>{e.username}</Option>;
-                              }
-                            })}
-                          </Select>
-                        </FormItem>
-                      </Form>
-                    </Modal>
-                  </>
-                )}
+                        Add new workspace
+                      </Button>
+                      <Modal
+                        visible={workspace.visible}
+                        onCancel={() =>
+                          setWorkspace({ ...workspace, visible: false })
+                        }
+                        onOk={() => workspaceForm.submit()}
+                      >
+                        <Title level={5}>Enter workspace details</Title>
+                        <Form
+                          form={workspaceForm}
+                          labelCol={{ span: 4 }}
+                          wrapperCol={{ span: 14 }}
+                          onFinish={(data) => onCreateWorkspace(data)}
+                        >
+                          <FormItem
+                            label="Workspace Name"
+                            name="workspace_name"
+                          >
+                            <Input />
+                          </FormItem>
+                          <FormItem label="Managers" name="managers">
+                            <Select mode="multiple" placeholder="Please Select">
+                              {users.map((e) => {
+                                if (e.role === 2) {
+                                  return (
+                                    <Option key={e.id}>{e.username}</Option>
+                                  );
+                                }
+                              })}
+                            </Select>
+                          </FormItem>
+                        </Form>
+                      </Modal>
+                    </>
+                  )}
 
                 <Table
                   columns={workspaceColumns}
@@ -163,7 +168,7 @@ function Organization() {
                   <Select
                     placeholder="Please select a role for all the mentioned users"
                     style={{ width: "100%", marginTop: "5%" }}
-                    onChange={(e) =>setInviteData({...inviteData, role: e})}
+                    onChange={(e) => setInviteData({ ...inviteData, role: e })}
                   >
                     <Option value={1}>Annotator</Option>
                     <Option value={2}>Manager</Option>
@@ -177,7 +182,7 @@ function Organization() {
                   })}
                 />
               </TabPane>
-              {userContext.user?.role === 3 && (
+              {userContext.user?.role === 3 && userContext.user?.role === 2 && (
                 <TabPane tab="Invites">
                   <Table
                     columns={memberColumns}
