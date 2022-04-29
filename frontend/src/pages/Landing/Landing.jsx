@@ -66,29 +66,33 @@ function Landing() {
         )}
 
         <Divider />
-        <h1 style={{ fontSize: "1.5rem" }}>Visit Workspaces</h1>
-        <Table
-          dataSource={workspaces}
-          columns={[
-            {
-              title: "Name",
-              dataIndex: "workspace_name",
-              key: "workspace_name",
-            },
-            {
-              title: "Actions",
-              render: (item) => (
-                <>
-                  <a href={`/workspace/${item.id}`}>
-                    <Button type={"primary"} style={{ marginRight: "1%" }}>
-                      View
-                    </Button>
-                  </a>
-                </>
-              ),
-            },
-          ]}
-        />
+        {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
+          <>
+            <h1 style={{ fontSize: "1.5rem" }}>Visit Workspaces</h1>
+            <Table
+              dataSource={workspaces}
+              columns={[
+                {
+                  title: "Name",
+                  dataIndex: "workspace_name",
+                  key: "workspace_name",
+                },
+                {
+                  title: "Actions",
+                  render: (item) => (
+                    <>
+                      <a href={`/workspace/${item.id}`}>
+                        <Button type={"primary"} style={{ marginRight: "1%" }}>
+                          View
+                        </Button>
+                      </a>
+                    </>
+                  ),
+                },
+              ]}
+            />
+          </>
+        )}
       </Col>
     </Row>
   );
