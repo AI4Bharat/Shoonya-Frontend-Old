@@ -12,7 +12,7 @@ const fetchProfile = async (userID) => {
 
 const userProfileEdit = async ({
   email,
-  lang_id,
+  language,
   first_name,
   last_name,
   username,
@@ -21,7 +21,7 @@ const userProfileEdit = async ({
   try {
     let response = await axiosInstance.patch("users/account/update/", {
       email,
-      lang_id,
+      language,
       first_name,
       last_name,
       username,
@@ -29,7 +29,7 @@ const userProfileEdit = async ({
     });
     if (response.status !== 200) throw new Error("Error Updating User Profile");
     return {
-      lang_id,
+      language,
       first_name,
       last_name,
       username,
