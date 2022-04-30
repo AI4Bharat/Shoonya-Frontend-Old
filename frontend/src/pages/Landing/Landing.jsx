@@ -69,6 +69,7 @@ function Landing() {
         <h1 style={{ fontSize: "1.5rem" }}>Visit Workspaces</h1>
         <Table
           dataSource={workspaces}
+          pagination={{ pageSize: 5 }} 
           columns={[
             {
               title: "Name",
