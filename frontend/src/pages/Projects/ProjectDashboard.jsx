@@ -145,7 +145,7 @@ function ProjectDashboard() {
                     }}
                     type="primary"
                   >
-                    Label All Tasks
+                    Start Labelling Now
                   </Button>
                 ) : (
                   <Button type="primary">
