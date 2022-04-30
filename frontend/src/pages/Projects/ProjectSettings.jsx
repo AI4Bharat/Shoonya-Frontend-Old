@@ -34,13 +34,20 @@ function ProjectSettings() {
   }, []);
 
   const onFinishAddAnnotator = async (values) => {
-    const emails = values.emails.split(", ");
+    const emails = values.emails.split(",").map((email) => email.trim());
 
     await addAnnotatorsToProject(id, emails);
   };
 
   const onEditProjectForm = async (values) => {
-    await updateProject(project.id, values);
+    const { project_mode, project_type, users } = project;
+
+    await updateProject(project.id, {
+      ...values,
+      project_mode,
+      project_type,
+      users,
+    });
   };
 
   const handlePublishProject = async () => {
@@ -56,14 +63,14 @@ function ProjectSettings() {
 
   return (
     <>
-      <Row style={{ width: "100%" }}>
+      <Row style={{ width: "100%", height: "100%" }}>
         <Col span={1} />
-        <Col span={22}>
+        <Col
+          span={22}
+          style={{ width: "100%", rowGap: "0px", marginBottom: "20px" }}
+        >
           <Card>
             <Title>Project Settings</Title>
-          </Card>
-
-          <Card>
             <Title level={3}>Basic Settings</Title>
             <Form
               name="basic"
@@ -102,9 +109,6 @@ function ProjectSettings() {
                 </Button>
               </Form.Item>
             </Form>
-          </Card>
-
-          <Card span={22} style={{ height: "80vh" }}>
             <Title level={3}>Add Annotators To The Project</Title>
             <Form
               name="basic"
