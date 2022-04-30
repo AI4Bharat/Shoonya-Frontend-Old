@@ -4,6 +4,7 @@ services:
     container_name: frontend
     build:
       context: ./frontend
+    restart: always
     volumes:
       - ./frontend:/usr/app
       - /usr/frontend/node_modules

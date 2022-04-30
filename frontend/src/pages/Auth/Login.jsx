@@ -1,14 +1,26 @@
 import Layout, { Content } from "antd/lib/layout/layout";
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Card, Divider, Button } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import UserContext from "../../context/User/UserContext";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem('shoonya_access_token'));
+  }, [setToken]);
+
+  useEffect(() => {
+    if (token) {
+      console.log(token);
+      window.location.pathname = '/dashboard';
+    }
+  }, [token]);
 
   const onFinish = (values) => {
     userContext.login(values).then(() => navigate("/dashboard"));

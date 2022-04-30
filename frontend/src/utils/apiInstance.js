@@ -80,7 +80,7 @@ axiosInstance.interceptors.response.use(
 
               return axiosInstance(originalRequest);
             })
-            .catch((err) => {
+            .catch(() => {
               // console.log(err);
             });
         } else if (data.response.status !== 200) {

@@ -2,7 +2,7 @@ import Layout, { Content } from "antd/lib/layout/layout";
 import React, { useContext, useState } from "react";
 import { Form, Input, Card, Divider, Button, Result, message } from "antd";
 import { UserOutlined, KeyOutlined, MailOutlined } from "@ant-design/icons";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import UserContext from "../../context/User/UserContext";
 
 export const SignUp = () => {
