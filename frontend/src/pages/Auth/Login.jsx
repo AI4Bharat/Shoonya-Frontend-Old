@@ -1,6 +1,6 @@
 import Layout, { Content } from "antd/lib/layout/layout";
 import React, { useEffect } from "react";
-import { Form, Input, Card, Divider, Button } from "antd";
+import { Form, Input, Card, Divider, Button, message } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
@@ -23,7 +23,11 @@ export const Login = () => {
   }, [token]);
 
   const onFinish = (values) => {
-    userContext.login(values).then(() => navigate("/dashboard"));
+    userContext.login(values).then(() => navigate("/dashboard"))
+      .catch(err => {
+        console.log(err);
+        message.error("Wrong Credentials!");
+      });
   };
   return (
     <Layout>
