@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "antd";
+import { Button,Tag } from "antd";
 
 const getColumnNames = async (data, project_mode, project_type) => {
     if (data) {
@@ -74,5 +74,41 @@ const getDataSource = async (data, project_id, project_type, is_published) => {
 const getVariableParams = async (project) => {
     return project.variable_parameters;
 }
-
-export { getColumnNames, getDataSource, getVariableParams }
+const memberColumns = [
+    {
+      title: "Name",
+      dataIndex: "username",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (role) => (
+        <>
+          {role === 3 && <Tag color="red">Admin</Tag>}
+          {role === 2 && <Tag color="blue">Manager</Tag>}
+          {role === 1 && <Tag color="green">Annotator</Tag>}
+        </>
+      ),
+    },
+    {
+      title: "Actions",
+      render: (item) => (
+        <>
+          <a href={`/profile/${item.id}`}>
+            <Button type={"primary"} style={{ marginRight: "1%" }}>
+              View
+            </Button>
+          </a>
+        </>
+      ),
+    },
+  ];
+  
+export { getColumnNames, getDataSource, getVariableParams,memberColumns }
