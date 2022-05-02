@@ -42,9 +42,9 @@ const fetchWorkspaceData = async (workspaceID) => {
   }
 };
 
-const fetchWorkspaces = async () => {
+const fetchWorkspaces = async (page) => {
   try {
-    let response = await axiosInstance.get(`/workspaces/`);
+    let response = await axiosInstance.get(`/workspaces/?page=`+page);
     return response.data;
   } catch {
     message.error("Error fetching workspaces");

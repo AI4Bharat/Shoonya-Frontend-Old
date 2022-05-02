@@ -28,14 +28,26 @@ function ProjectDashboard() {
   const [dataSource, setDataSource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({});
+
+  function handleTableChange() {
+    getTasks(project_id, pagination.current).then((res) => {
+      pagination.next = res.next;
+      setPagination(pagination);
+      setTasks(res.results);
+    })
+  }
 
   useEffect(() => {
     if (project_id) {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id).then((res) => {
-        setTasks(res);
+      getTasks(project_id, 1).then((res) => {
+        setTasks(res.results);
+        pagination.total = res.count;
+        pagination.next = res.next;
+        setPagination(pagination);
       });
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
@@ -121,8 +133,8 @@ function ProjectDashboard() {
               {project.is_published
                 ? "Published"
                 : project.is_archived
-                ? "Archived"
-                : "Draft"}
+                  ? "Archived"
+                  : "Draft"}
             </Paragraph>
             {userContext.user?.role !== 1 && (
               <Button type="primary">
@@ -149,10 +161,15 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
-                <Table columns={columns} dataSource={dataSource} />
+                <Table pagination={{
+                  total: pagination.total,
+                  onChange: (page) => { pagination.current = page }
+                }}
+                  onChange={handleTableChange}
+                  columns={columns} dataSource={dataSource} />
               </TabPane>
               <TabPane tab="Members" key="2">
-                <Table columns={memberColumns} dataSource={projectMembers}/>
+                <Table columns={memberColumns} dataSource={projectMembers} />
               </TabPane>
             </Tabs>
           </Card>

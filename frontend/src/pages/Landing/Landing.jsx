@@ -10,12 +10,25 @@ function Landing() {
   let userContext = useContext(UserContext);
   const [projects, setProject] = useState();
   const [workspaces, setWorkspaces] = useState();
+  const [pagination, setPagination] = useState({});
+
+  function handleTableChange() {
+    fetchWorkspaces(pagination.current).then((res) => {
+      pagination.next = res.next;
+      setPagination(pagination);
+      setWorkspaces(res.results);
+    })
+  }
+
   useEffect(() => {
     fetchProjects().then((res) => {
       setProject(res);
     });
-    fetchWorkspaces().then((res) => {
+    fetchWorkspaces(1).then((res) => {
       setWorkspaces(res.results);
+      pagination.total = res.count;
+      pagination.next = res.next;
+      setPagination(pagination);
     });
   }, [userContext.user]);
 
@@ -66,12 +79,16 @@ function Landing() {
         )}
 
         <Divider />
-<<<<<<< HEAD
         {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
           <>
             <h1 style={{ fontSize: "1.5rem" }}>Visit Workspaces</h1>
             <Table
               dataSource={workspaces}
+              pagination={{
+                total: pagination.total,
+                onChange: (page) => { pagination.current = page }
+              }}
+              onChange={handleTableChange}
               columns={[
                 {
                   title: "Name",
@@ -94,32 +111,6 @@ function Landing() {
             />
           </>
         )}
-=======
-        <h1 style={{ fontSize: "1.5rem" }}>Visit Workspaces</h1>
-        <Table
-          dataSource={workspaces}
-          pagination={{ pageSize: 5 }} 
-          columns={[
-            {
-              title: "Name",
-              dataIndex: "workspace_name",
-              key: "workspace_name",
-            },
-            {
-              title: "Actions",
-              render: (item) => (
-                <>
-                  <a href={`/workspace/${item.id}`}>
-                    <Button type={"primary"} style={{ marginRight: "1%" }}>
-                      View
-                    </Button>
-                  </a>
-                </>
-              ),
-            },
-          ]}
-        />
->>>>>>> 71abfa5bd867f6e066397874700c3d86d3598ea8
       </Col>
     </Row>
   );
