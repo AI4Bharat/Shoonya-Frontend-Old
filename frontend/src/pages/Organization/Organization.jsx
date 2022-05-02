@@ -129,7 +129,7 @@ function Organization() {
 
                 <Table
                   columns={workspaceColumns}
-                  dataSource={workspace.workspaces.results}
+                  dataSource={workspace.workspaces?.results}
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
@@ -186,7 +186,7 @@ function Organization() {
                 </Modal>
                 <Table
                   columns={memberColumns}
-                  dataSource={users.filter((e) => {
+                  dataSource={users?.filter((e) => {
                     return e.has_accepted_invite == true;
                   })}
                 />
@@ -195,7 +195,7 @@ function Organization() {
                 <TabPane tab="Invites">
                   <Table
                     columns={memberColumns}
-                    dataSource={users.filter((e) => {
+                    dataSource={users?.filter((e) => {
                       return e.has_accepted_invite == false;
                     })}
                   />
