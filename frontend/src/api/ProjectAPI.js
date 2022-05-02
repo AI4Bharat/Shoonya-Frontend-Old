@@ -10,6 +10,17 @@ const fetchProjects = async () => {
   }
 };
 
+const getProjectMembers = async (project_id) => {
+  try {
+    let response = await axiosInstance.get(
+      `/projects/${project_id}/get_project_users/`
+    );
+    return response.data;
+  } catch {
+    message.error(`Error getting project members with id ${project_id}`);
+  }
+};
+
 const getProject = async (project_id) => {
   try {
     let response = await axiosInstance.get(`/projects/${project_id}`);
@@ -76,4 +87,5 @@ export {
   addAnnotatorsToProject,
   publishProject,
   updateProject,
+  getProjectMembers
 };

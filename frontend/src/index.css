@@ -82,3 +82,12 @@ textarea.ant-input {
   margin-bottom: 10px !important;
   height: 40px !important;
 }
+.email-textarea {
+  padding: 2px 10px 0 !important;
+
+  width: 100% !important;
+}
+
+textarea.ant-input {
+  max-width: 100% !important;
+}

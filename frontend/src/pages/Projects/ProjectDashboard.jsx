@@ -1,25 +1,28 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Card, Table, Button } from "antd";
+import { Col, Row, Card, Table, Button, Tabs } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI";
-import { getProject } from "../../api/ProjectAPI";
+import { getProject, getProjectMembers } from "../../api/ProjectAPI";
 import {
   getColumnNames,
   getDataSource,
   getVariableParams,
+  memberColumns,
 } from "./TasksTableContent";
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
+const { TabPane } = Tabs;
 
 function ProjectDashboard() {
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
   const { project_id } = useParams();
   const [project, setProject] = useState([]);
+  const [projectMembers, setProjectMembers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -33,21 +36,21 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
     })
- }
-
-  useEffect(() => {
-    getProject(project_id).then((res) => {
-      setProject(res);
-    });
-  }, [project_id]);
+  }
 
   useEffect(() => {
     if (project_id) {
+      getProject(project_id).then((res) => {
+        setProject(res);
+      });
       getTasks(project_id, 1).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.next = res.next;
         setPagination(pagination);
+      });
+      getProjectMembers(project_id).then((res) => {
+        setProjectMembers(res["users"]);
       });
     }
   }, [project_id]);
@@ -130,25 +133,16 @@ function ProjectDashboard() {
               {project.is_published
                 ? "Published"
                 : project.is_archived
-                ? "Archived"
-                : "Draft"}
-            </Paragraph>
-            <Paragraph>
-              <b>Variable Parameters: </b> {JSON.stringify(variableParams)}
+                  ? "Archived"
+                  : "Draft"}
             </Paragraph>
             {userContext.user?.role !== 1 && (
               <Button type="primary">
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-          </Card>
-          <br />
-          <Card style={{ width: "100%" }}>
-            <Row>
-              <Col span={21}>
-                <Title>Tasks</Title>
-              </Col>
-              <Col span={3}>
+            <Tabs>
+              <TabPane tab="Tasks" key="1">
                 {project.project_mode == "Annotation" ? (
                   <Button
                     onClick={(e) => {
@@ -156,8 +150,9 @@ function ProjectDashboard() {
                       labelAllTasks(project_id);
                     }}
                     type="primary"
+                    style={{ width: "100%", marginBottom: "1%" }}
                   >
-                    Label All Tasks
+                    Start Labelling Now
                   </Button>
                 ) : (
                   <Button type="primary">
@@ -166,13 +161,17 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
-              </Col>
-            </Row>
-            <Table pagination={{
-              total: pagination.total,
-              onChange: (page) => {pagination.current = page}}}
-              onChange={handleTableChange}
-              columns={columns} dataSource={dataSource} />
+                <Table pagination={{
+                  total: pagination.total,
+                  onChange: (page) => { pagination.current = page }
+                }}
+                  onChange={handleTableChange}
+                  columns={columns} dataSource={dataSource} />
+              </TabPane>
+              <TabPane tab="Members" key="2">
+                <Table columns={memberColumns} dataSource={projectMembers} />
+              </TabPane>
+            </Tabs>
           </Card>
         </Col>
         <Col span={1} />

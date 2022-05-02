@@ -23,6 +23,7 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 
 function Organization() {
+  const { TextArea } = Input;
   const [workspaceForm] = useForm();
   const [organization, setOrganization] = useState(undefined);
   const [inviteData, setInviteData] = useState({
@@ -128,7 +129,7 @@ function Organization() {
 
                 <Table
                   columns={workspaceColumns}
-                  dataSource={workspace.workspaces.results}
+                  dataSource={workspace.workspaces?.results}
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
@@ -146,23 +147,33 @@ function Organization() {
                   onCancel={() =>
                     setInviteData({ ...inviteData, visible: false })
                   }
-                  onOk={() =>
+                  onOk={() => {
+                    const emails = inviteData.users
+                      .split(",")
+                      .map((email) => email.trim());
+
                     inviteUsers(
-                      inviteData.users,
+                      emails,
                       userContext.user.organization.id,
                       inviteData.role
                     ).then(() =>
                       setInviteData({ ...inviteData, visible: false })
-                    )
-                  }
+                    );
+                  }}
                 >
                   <Title level={2}>Invite Users</Title>
-                  <Select
-                    placeholder="Please enter email IDs to be invited"
-                    mode="tags"
-                    style={{ width: "100%", marginTop: "5%" }}
-                    onChange={(e) => setInviteData({ ...inviteData, users: e })}
+                  <TextArea
+                    rows={1}
+                    placeholder="Enter emails of Annotators separated by commas(,)"
+                    className="email-textarea"
+                    onChange={(e) => {
+                      setInviteData({
+                        ...inviteData,
+                        users: e.target.value,
+                      });
+                    }}
                   />
+
                   <Select
                     placeholder="Please select a role for all the mentioned users"
                     style={{ width: "100%", marginTop: "5%" }}
@@ -175,7 +186,7 @@ function Organization() {
                 </Modal>
                 <Table
                   columns={memberColumns}
-                  dataSource={users.filter((e) => {
+                  dataSource={users?.filter((e) => {
                     return e.has_accepted_invite == true;
                   })}
                 />
@@ -184,7 +195,7 @@ function Organization() {
                 <TabPane tab="Invites">
                   <Table
                     columns={memberColumns}
-                    dataSource={users.filter((e) => {
+                    dataSource={users?.filter((e) => {
                       return e.has_accepted_invite == false;
                     })}
                   />

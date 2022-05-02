@@ -24,7 +24,6 @@ function CreateCollectionProject() {
   const [description, setDescription] = useState("");
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
 
   useEffect(() => {
     if (userContext.user) {
@@ -95,7 +94,7 @@ function CreateCollectionProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Collection",
-      required_annotators_per_task: selectedAnnotatorsNum,
+      required_annotators_per_task: 1,
     })
       .then((data) => {
         navigate(`/projects/${data.id}`, { replace: true });
@@ -161,18 +160,6 @@ function CreateCollectionProject() {
         )}
 
         {selectedType && (
-          <>
-            <h1 className="margin-top-heading">Annotators Per Task :</h1>
-            <Input
-              value={selectedAnnotatorsNum}
-              onChange={(e) => {
-                setSelectedAnnotatorsNum(e.target.value);
-              }}
-            />
-          </>
-        )}
-
-        {selectedAnnotatorsNum && (
           <>
             <h1 className="margin-top-heading">Finalize Project</h1>
             <Button

@@ -33,21 +33,26 @@ function Navbar() {
           float: "right",
         }}
       >
-       
         {userContext.user && (
           <Dropdown
             overlay={
               <Menu theme="light" mode="horizontal">
                 <Menu.Item key="1">
-            <Link to="/dashboard">Dashboard</Link>
-          </Menu.Item>
-                <Menu.Item key="1">
-                  <Link
-                    to={`/organization/${userContext.user.organization.id}`}
-                  >
-                    My Organization
-                  </Link>
+                  <Link to="/dashboard">Dashboard</Link>
                 </Menu.Item>
+                {(userContext.user?.role === 2 ||
+                  userContext.user?.role === 3) && (
+                  <>
+                    <Menu.Item key="1">
+                      <Link
+                        to={`/organization/${userContext.user.organization.id}`}
+                      >
+                        My Organization
+                      </Link>
+                    </Menu.Item>
+                  </>
+                )}
+
                 <Menu.Item key="3" onClick={() => userContext.logout()}>
                   <Link to="/">Logout</Link>
                 </Menu.Item>
