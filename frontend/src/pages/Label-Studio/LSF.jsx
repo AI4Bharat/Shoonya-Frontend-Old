@@ -158,10 +158,11 @@ function LSFRoot(
       },
 
       onSkipTask: function () {
-        updateTask(taskData.id);
-        getNextProject(project_id).then((res) => {
-          window.location.href = `/projects/${project_id}/task/${res.id}`;
-        });
+        updateTask(taskData.id).then(() => {
+          getNextProject(project_id).then((res) => {
+            window.location.href = `/projects/${project_id}/task/${res.id}`;
+          });
+        })
       },
 
       onUpdateAnnotation: function (ls, annotation) {
