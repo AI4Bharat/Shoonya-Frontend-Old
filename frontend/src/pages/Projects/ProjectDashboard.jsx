@@ -25,6 +25,15 @@ function ProjectDashboard() {
   const [dataSource, setDataSource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({});
+
+  function handleTableChange() {
+    getTasks(project_id, pagination.current).then((res) => {
+      pagination.next = res.next;
+      setPagination(pagination);
+      setTasks(res.results);
+    })
+ }
 
   useEffect(() => {
     getProject(project_id).then((res) => {
@@ -34,8 +43,11 @@ function ProjectDashboard() {
 
   useEffect(() => {
     if (project_id) {
-      getTasks(project_id).then((res) => {
-        setTasks(res);
+      getTasks(project_id, 1).then((res) => {
+        setTasks(res.results);
+        pagination.total = res.count;
+        pagination.next = res.next;
+        setPagination(pagination);
       });
     }
   }, [project_id]);
@@ -156,7 +168,11 @@ function ProjectDashboard() {
                 )}
               </Col>
             </Row>
-            <Table columns={columns} dataSource={dataSource} />
+            <Table pagination={{
+              total: pagination.total,
+              onChange: (page) => {pagination.current = page}}}
+              onChange={handleTableChange}
+              columns={columns} dataSource={dataSource} />
           </Card>
         </Col>
         <Col span={1} />
