@@ -54,84 +54,93 @@ function Workspace() {
             <Paragraph>
               {/* Put relevant text later */}
             </Paragraph>
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="Projects" key="1">
-                {(userContext.user?.role === 2 ||
-                  userContext.user?.role === 3) && (
-                  <>
+            {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
+              <>
+                <Tabs defaultActiveKey="1">
+                  <TabPane tab="Projects" key="1">
+                    {(userContext.user?.role === 2 ||
+                      userContext.user?.role === 3) && (
+                      <>
+                        <Button
+                          style={{
+                            width: "48%",
+                            marginRight: "4%",
+                            marginBottom: "1%",
+                          }}
+                          onClick={() =>
+                            navigate(`/create-annotation-project/${id}`, {
+                              replace: true,
+                            })
+                          }
+                          type="primary"
+                        >
+                          Add new Annotation Project
+                        </Button>
+
+                        <Button
+                          style={{ width: "48%", marginBottom: "1%" }}
+                          onClick={() =>
+                            navigate(`/create-collection-project/${id}`, {
+                              replace: true,
+                            })
+                          }
+                          type="primary"
+                        >
+                          Add new Collection Project
+                        </Button>
+                      </>
+                    )}
+
+                    <Table
+                      columns={projectColumns}
+                      dataSource={project.projects}
+                    />
+                  </TabPane>
+                  <TabPane tab="Members" key="2">
                     <Button
-                      style={{
-                        width: "48%",
-                        marginRight: "4%",
-                        marginBottom: "1%",
-                      }}
+                      style={{ width: "100%", marginBottom: "1%" }}
                       onClick={() =>
-                        navigate(`/create-annotation-project/${id}`, {
-                          replace: true,
-                        })
+                        setInviteData({ ...inviteData, visible: true })
                       }
                       type="primary"
                     >
-                      Add new Annotation Project
+                      Invite new members to workspace
                     </Button>
-
-                    <Button
-                      style={{ width: "48%", marginBottom: "1%" }}
-                      onClick={() =>
-                        navigate(`/create-collection-project/${id}`, {
-                          replace: true,
-                        })
+                    <Modal
+                      visible={inviteData.visible}
+                      onCancel={() =>
+                        setInviteData({ ...inviteData, visible: false })
                       }
-                      type="primary"
+                      // //   onOk={() =>
+                      //     inviteUsers(
+                      //       inviteData.users,
+                      //       userContext.user.organization.id
+                      //     ).then(() =>
+                      //       setInviteData({ ...inviteData, visible: false })
+                      //     )
+                      // //   }
                     >
-                      Add new Collection Project
-                    </Button>
-                  </>
-                )}
-
-                <Table columns={projectColumns} dataSource={project.projects} />
-              </TabPane>
-              <TabPane tab="Members" key="2">
-                <Button
-                  style={{ width: "100%", marginBottom: "1%" }}
-                  onClick={() =>
-                    setInviteData({ ...inviteData, visible: true })
-                  }
-                  type="primary"
-                >
-                  Invite new members to workspace
-                </Button>
-                <Modal
-                  visible={inviteData.visible}
-                  onCancel={() =>
-                    setInviteData({ ...inviteData, visible: false })
-                  }
-                  // //   onOk={() =>
-                  //     inviteUsers(
-                  //       inviteData.users,
-                  //       userContext.user.organization.id
-                  //     ).then(() =>
-                  //       setInviteData({ ...inviteData, visible: false })
-                  //     )
-                  // //   }
-                >
-                  <Title level={5}>Enter emails to be invited</Title>
-                  <Select
-                    mode="tags"
-                    style={{ width: "100%", marginTop: "5%" }}
-                    onChange={(e) => setInviteData({ ...inviteData, users: e })}
-                  />
-                </Modal>
-                <Table columns={memberColumns} dataSource={users} />
-              </TabPane>
-              {(userContext.user?.role === 3 ||
-                userContext.user?.role === 2) && (
-                <TabPane tab="Invites">
-                  <Table columns={memberColumns} dataSource={users} />
-                </TabPane>
-              )}
-              <TabPane tab="Settings" key="3"></TabPane>
-            </Tabs>
+                      <Title level={5}>Enter emails to be invited</Title>
+                      <Select
+                        mode="tags"
+                        style={{ width: "100%", marginTop: "5%" }}
+                        onChange={(e) =>
+                          setInviteData({ ...inviteData, users: e })
+                        }
+                      />
+                    </Modal>
+                    <Table columns={memberColumns} dataSource={users} />
+                  </TabPane>
+                  {(userContext.user?.role === 3 ||
+                    userContext.user?.role === 2) && (
+                    <TabPane tab="Invites">
+                      <Table columns={memberColumns} dataSource={users} />
+                    </TabPane>
+                  )}
+                  <TabPane tab="Settings" key="3"></TabPane>
+                </Tabs>
+              </>
+            )}
           </Card>
         </Col>
         <Col span={1} />
