@@ -87,5 +87,5 @@ export {
   addAnnotatorsToProject,
   publishProject,
   updateProject,
-  getProjectMembers
+  getProjectMembers 
 };

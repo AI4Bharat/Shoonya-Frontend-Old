@@ -66,16 +66,7 @@ function Organization() {
         <Col span={22} style={{ height: "80vh" }}>
           <Card>
             <Title>{organization && organization.title}</Title>
-            <Paragraph>Created by: Admin Name</Paragraph>
-            <Paragraph>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </Paragraph>
+            <Paragraph>Created by: {organization?.created_by.first_name + " " + organization?.created_by.last_name}</Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Workspaces" key="1">
                 {userContext.user?.role === 1 &&
