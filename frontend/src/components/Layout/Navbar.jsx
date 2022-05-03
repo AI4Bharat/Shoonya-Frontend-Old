@@ -43,7 +43,7 @@ function Navbar() {
                 {(userContext.user?.role === 2 ||
                   userContext.user?.role === 3) && (
                   <>
-                    <Menu.Item key="1">
+                    <Menu.Item key="2">
                       <Link
                         to={`/organization/${userContext.user.organization.id}`}
                       >
