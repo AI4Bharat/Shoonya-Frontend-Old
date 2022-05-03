@@ -83,9 +83,9 @@ function ProjectDashboard() {
         project.project_mode,
         project.project_type
       ).then((res) => {
-        for (let i = 0; i < res.length; i++) {
-          res[i].title = res[i].title.replaceAll("_", " ");
-        }
+        // for (let i = 0; i < res.length; i++) {
+        //   res[i].title = res[i].title.replaceAll("_", " ");
+        // }
         setColumns(res);
       });
     }
