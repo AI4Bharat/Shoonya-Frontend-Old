@@ -37,6 +37,15 @@ function Organization() {
     visible: false,
   });
   const userContext = useContext(UserContext);
+  const [pagination, setPagination] = useState({});
+
+  function handleTableChange() {
+    fetchWorkspaces(pagination.current).then((res) => {
+      pagination.next = res.next;
+      setPagination(pagination);
+      setWorkspace({ ...workspace, workspaces: res });
+    })
+  }
 
   const onCreateWorkspace = (data) => {
     createWorkspace({
@@ -53,7 +62,10 @@ function Organization() {
       fetchUsers(userContext.user.organization.id).then((res) => {
         setUsers(res);
       });
-      fetchWorkspaces().then((res) => {
+      fetchWorkspaces(1).then((res) => {
+        pagination.total = res.count;
+        pagination.next = res.next;
+        setPagination(pagination);
         setWorkspace({ ...workspace, workspaces: res });
       });
     }
@@ -119,6 +131,11 @@ function Organization() {
                   )}
 
                 <Table
+                  pagination={{
+                    total: pagination.total,
+                    onChange: (page) => { pagination.current = page }
+                  }}
+                  onChange={handleTableChange}
                   columns={workspaceColumns}
                   dataSource={workspace.workspaces?.results}
                 />
