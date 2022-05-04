@@ -83,9 +83,9 @@ function ProjectDashboard() {
         project.project_mode,
         project.project_type
       ).then((res) => {
-        // for (let i = 0; i < res.length; i++) {
-        //   res[i].title = res[i].title.replaceAll("_", " ");
-        // }
+        for (let i = 0; i < res.length; i++) {
+          res[i].title = res[i].title.replaceAll("_", " ");
+        }
         setColumns(res);
       });
     }
@@ -144,7 +144,7 @@ function ProjectDashboard() {
             <Tabs>
               <TabPane tab="Tasks" key="1">
                 {project.project_mode == "Annotation" ? (
-                  <Button
+                   project.is_published ? (<Button
                     onClick={(e) => {
                       e.stopPropagation();
                       labelAllTasks(project_id);
@@ -153,7 +153,15 @@ function ProjectDashboard() {
                     style={{ width: "100%", marginBottom: "1%" }}
                   >
                     Start Labelling Now
-                  </Button>
+                  </Button>): (
+                    <Button
+                    type="primary"
+                    style={{ width: "100%", marginBottom: "1%" }}
+                    >
+                      Disabled
+                    </Button>
+                  )
+                  
                 ) : (
                   <Button type="primary">
                     <Link to={`/add-collection-data/${project.id}`}>
