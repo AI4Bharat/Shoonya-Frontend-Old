@@ -8,6 +8,7 @@ import {
   updateTask,
   getNextProject,
   patchAnnotation,
+  deleteAnnotation
 } from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
@@ -171,11 +172,20 @@ function LSFRoot(
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
               patchAnnotation(
                 annotation.serializeAnnotation(),
-                annotations[0].id
+                annotations[i].id
               );
           }
         } else message.error("Task is freezed");
       },
+
+      onDeleteAnnotation: function (ls, annotation) {
+        for (let i = 0; i < annotations.length; i++) {
+          if (annotation.serializeAnnotation().id == annotations[i].result.id)
+            deleteAnnotation(
+              annotations[i].id
+            );
+        }
+      }
     });
   }
 }

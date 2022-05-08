@@ -59,6 +59,14 @@ const patchAnnotation = async (result, annotationID) => {
   }
 };
 
+const deleteAnnotation = async (annotationID) => {
+  try {
+    await axiosInstance.delete(`/annotation/${annotationID}/`);
+  } catch {
+    message.error("Error deleting annotations");
+  }
+};
+
 const updateTask = async (taskID) => {
   try {
     let response = await axiosInstance.patch(`/task/${taskID}/`, {
@@ -96,4 +104,5 @@ export {
   updateTask,
   getNextProject,
   patchAnnotation,
+  deleteAnnotation
 };
