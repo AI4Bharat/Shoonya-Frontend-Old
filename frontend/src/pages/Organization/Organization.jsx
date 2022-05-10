@@ -186,6 +186,7 @@ function Organization() {
                     placeholder="Please select a role for all the mentioned users"
                     style={{ width: "100%", marginTop: "5%" }}
                     onChange={(e) => setInviteData({ ...inviteData, role: e })}
+                    rules={{ required: true, message: "Please select role for users!" }}
                   >
                     <Option value={1}>Annotator</Option>
                     <Option value={2}>Manager</Option>
