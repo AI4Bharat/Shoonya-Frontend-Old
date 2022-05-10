@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Form, Input, Row, Card } from "antd";
 import Title from "antd/lib/typography/Title";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   addAnnotatorsToProject,
   publishProject,
@@ -70,6 +70,11 @@ function ProjectSettings() {
           style={{ width: "100%", rowGap: "0px", marginBottom: "20px" }}
         >
           <Card>
+            <Link to={`/projects/${id}`}>
+              <Button style={{ marginBottom: "1%" }}>
+                {"<"} Back to Project
+              </Button>
+            </Link>
             <Title>Project Settings</Title>
             <Title level={3}>Basic Settings</Title>
             <Form

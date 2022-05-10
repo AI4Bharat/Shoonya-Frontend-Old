@@ -329,6 +329,12 @@ function UserProfile() {
               <Paragraph style={{ fontSize: "1.1rem" }}>
                 <PhoneOutlined /> {user.phone}
               </Paragraph>
+              <Paragraph style={{ fontSize: "1.1rem" }}>
+                Languages: 
+                {user.languages.map((item,key) => (
+                  <Tag color="blue" key={key}>{item}</Tag>
+                ))}
+              </Paragraph>
             </Card>
           </Col>
           <Col span={1} />

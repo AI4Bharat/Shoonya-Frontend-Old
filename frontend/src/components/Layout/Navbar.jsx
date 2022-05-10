@@ -20,11 +20,16 @@ function Navbar() {
       }}
       theme="light"
     >
-      <img
-        src={Logo}
-        alt="Logo"
-        style={{ float: "left", height: "70%", verticalAlign: "middle" }}
-      />
+      <a
+        href="/dashboard"
+        style={{ display: "block", height: "100%", marginTop: "1%" }}
+      >
+        <img
+          src={Logo}
+          alt="Logo"
+          style={{ float: "left", height: "70%", verticalAlign: "middle" }}
+        />
+      </a>
       <div
         style={{
           width: "10%",
