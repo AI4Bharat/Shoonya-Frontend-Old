@@ -167,14 +167,12 @@ function LSFRoot(
       },
 
       onUpdateAnnotation: function (ls, annotation) {
-        console.log("Annotation", annotation.serializeAnnotation());
         if (taskData.task_status != "freezed") {
           for (let i = 0; i < annotations.length; i++) {
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
             {
               let temp = annotation.serializeAnnotation()
               temp[0].value.text = [temp[0].value.text[0]]
-              console.log("temp" , temp)
               patchAnnotation(
                 temp,
                 annotations[i].id
