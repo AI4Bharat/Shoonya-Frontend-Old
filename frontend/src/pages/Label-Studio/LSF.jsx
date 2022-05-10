@@ -176,7 +176,7 @@ function LSFRoot(
               patchAnnotation(
                 temp,
                 annotations[i].id
-                );
+                ).then(() => location.reload());
               }
           }
         } else message.error("Task is freezed");
