@@ -60,7 +60,6 @@ function AddCollectionData() {
         tempData.push({ title: inputField, type: data[inputField].name });
         const tdata = data[inputField].data;
         // const t2data = JSON.parse(tdata);
-        console.log(data[inputField], tdata);
       }
     });
 

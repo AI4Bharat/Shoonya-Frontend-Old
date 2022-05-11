@@ -49,7 +49,6 @@ const UserState = (props) => {
       await axiosInstance.patch(`users/invite/${inviteCode}/accept/`, formData);
     } catch (err) {
       dispatch({ type: REGISTER_FAIL, payload: err.response.data });
-      // console.log("Errored out")
       throw "Error"
     }
   };
@@ -84,10 +83,10 @@ const UserState = (props) => {
         new_password: formData.password,
       })
       .then((res) => {
-        console.log(res);
+        message.success('Password changed successfully!');
       })
       .catch((err) => {
-        console.log(err);
+        message.error("Error changing password");
       });
   };
   const loadUser = async () => {

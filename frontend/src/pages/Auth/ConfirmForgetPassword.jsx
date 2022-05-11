@@ -13,8 +13,6 @@ export const ConfirmForgetPassword = () => {
     delete values.confirmPassword;
     userContext
       .confirmForgetPassword({ formData: values, key: key, token: token })
-      .then(() => {console.log(userContext.user)})
-      .catch((err) => {console.log(err)});
   };
   return (
     <Layout>
