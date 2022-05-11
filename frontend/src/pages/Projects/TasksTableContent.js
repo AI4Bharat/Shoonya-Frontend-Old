@@ -5,8 +5,6 @@ import { Button, Tag } from "antd";
 const getColumnNames = async (data, project_mode, project_type) => {
   if (data) {
     let cols = Object.keys(data);
-    // console.log(cols)
-    // console.log(project_type);
     if (project_type == "TranslationEditing") {
       cols.splice(0, 0, cols.splice(4, 1)[0]);
       cols.splice(4, 1);

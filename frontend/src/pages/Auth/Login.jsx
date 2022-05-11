@@ -17,7 +17,6 @@ export const Login = () => {
 
   useEffect(() => {
     if (token) {
-      console.log(token);
       window.location.pathname = '/dashboard';
     }
   }, [token]);
@@ -25,7 +24,6 @@ export const Login = () => {
   const onFinish = (values) => {
     userContext.login(values).then(() => navigate("/dashboard"))
       .catch(err => {
-        console.log(err);
         message.error("Wrong Credentials!");
       });
   };
