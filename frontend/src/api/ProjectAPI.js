@@ -31,6 +31,9 @@ const getProject = async (project_id) => {
 };
 
 const addAnnotatorsToProject = async (id, emails) => {
+  if (emails[0] === "" && (emails.length === 1 || emails.length === 2)) {
+    return message.error("Unable to add Annotators(s)")
+  }
   try {
     let response = await axiosInstance.post(
       `/projects/${id}/add_project_users/`,
@@ -39,7 +42,7 @@ const addAnnotatorsToProject = async (id, emails) => {
       }
     );
 
-    if (response.status !== 201) {
+    if (response.status !== 201 || response.status === 400 || response.status === 500) {
       return message.error("Unable to add Annotator(s)");
     }
 

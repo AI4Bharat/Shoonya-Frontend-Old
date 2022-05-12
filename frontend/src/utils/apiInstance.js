@@ -80,9 +80,6 @@ axiosInstance.interceptors.response.use(
 
               return axiosInstance(originalRequest);
             })
-            .catch(() => {
-              
-            });
         } else if (data.response.status !== 200) {
           localStorage.removeItem(ACCESS_TOKEN);
           localStorage.removeItem(REFRESH_TOKEN);
