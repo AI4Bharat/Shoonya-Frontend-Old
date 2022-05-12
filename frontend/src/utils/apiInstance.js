@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { apiData } from "./apiData";
 
@@ -81,7 +82,7 @@ axiosInstance.interceptors.response.use(
               return axiosInstance(originalRequest);
             })
             .catch(() => {
-              
+              message.alert("Error refreshing token.");
             });
         } else if (data.response.status !== 200) {
           localStorage.removeItem(ACCESS_TOKEN);
@@ -96,6 +97,7 @@ axiosInstance.interceptors.response.use(
 
       return Promise.reject(error);
     }
+    return Promise.reject(error);
   }
 );
 
