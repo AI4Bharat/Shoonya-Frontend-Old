@@ -2,7 +2,6 @@ import { message } from "antd";
 import axiosInstance from "../utils/apiInstance";
 
 // const inviteUsers = async (emails, organizationID) => {
-//   console.log("ID is", organizationID);
 //   try {
 //     let response = await axiosInstance.post(`/users/invite/generate/`, {
 //       emails: emails,

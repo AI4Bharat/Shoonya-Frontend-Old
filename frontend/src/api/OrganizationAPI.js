@@ -17,8 +17,6 @@ const inviteUsers = async (emails, organizationID, role) => {
       role: role,
     });
 
-    console.log(response);
-
     return response.data;
   } catch {
     message.error("Error inviting users");
