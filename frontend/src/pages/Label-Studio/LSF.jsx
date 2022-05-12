@@ -170,10 +170,14 @@ function LSFRoot(
         if (taskData.task_status != "freezed") {
           for (let i = 0; i < annotations.length; i++) {
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
+            {
+              let temp = annotation.serializeAnnotation()
+              temp[0].value.text = [temp[0].value.text[0]]
               patchAnnotation(
-                annotation.serializeAnnotation(),
+                temp,
                 annotations[i].id
-              );
+                ).then(() => location.reload());
+              }
           }
         } else message.error("Task is freezed");
       },
