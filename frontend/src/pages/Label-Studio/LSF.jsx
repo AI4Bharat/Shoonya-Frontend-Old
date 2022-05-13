@@ -153,7 +153,7 @@ function LSFRoot(
         else message.error("Task is freezed");
 
         if (localStorage.getItem("labelAll"))
-          getNextProject(project_id).then((res) => {
+          getNextProject(project_id, taskData.id).then((res) => {
             window.location.href = `/projects/${project_id}/task/${res.id}`;
           });
       },
