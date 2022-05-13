@@ -80,7 +80,7 @@ const updateTask = async (taskID) => {
 
 const getNextProject = async (projectID) => {
   try {
-    let response = await axiosInstance.post(`/projects/${projectID}/next/`, {
+    let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
       id: projectID,
     });
     if (response.status === 204) {
