@@ -78,13 +78,17 @@ const updateTask = async (taskID) => {
   }
 };
 
-const getNextProject = async (projectID) => {
+const getNextProject = async (projectID, taskID) => {
   try {
-    let response = await axiosInstance.post(`/projects/${projectID}/next/`, {
+    let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
       id: projectID,
     });
-    return response.data;
-  } catch {
+    if (response.status === 204) {
+      message.info("No more tasks for this project.");
+    } else {
+      return response.data;
+    }
+  } catch (err) {
     message.error("Error getting next task.");
   }
 };
@@ -104,5 +108,5 @@ export {
   updateTask,
   getNextProject,
   patchAnnotation,
-  deleteAnnotation
+  deleteAnnotation,
 };

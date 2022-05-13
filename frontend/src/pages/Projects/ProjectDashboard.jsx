@@ -35,7 +35,7 @@ function ProjectDashboard() {
       pagination.next = res.next;
       setPagination(pagination);
       setTasks(res.results);
-    })
+    });
   }
 
   useEffect(() => {
@@ -97,10 +97,18 @@ function ProjectDashboard() {
       let response = await axiosInstance.post(`/projects/${project_id}/next/`, {
         id: project_id,
       });
-      localStorage.setItem("labelAll", true);
-      navigate(`/projects/${project_id}/task/${response.data.id}`);
-    } catch {
-      message.error("Error labelling all tasks.");
+      if (response.status === 204) {
+        message.info("All tasks are labeled");
+      } else {
+        localStorage.setItem("labelAll", true);
+        navigate(`/projects/${project_id}/task/${response.data.id}`);
+      }
+    } catch (err) {
+      if (err.response.status === 404) {
+        message.info("No more tasks to label");
+      } else {
+        message.error("Error labelling all tasks.");
+      }
     }
   };
 
@@ -133,8 +141,8 @@ function ProjectDashboard() {
               {project.is_published
                 ? "Published"
                 : project.is_archived
-                  ? "Archived"
-                  : "Draft"}
+                ? "Archived"
+                : "Draft"}
             </Paragraph>
             {userContext.user?.role !== 1 && (
               <Button type="primary">
@@ -144,24 +152,25 @@ function ProjectDashboard() {
             <Tabs>
               <TabPane tab="Tasks" key="1">
                 {project.project_mode == "Annotation" ? (
-                   project.is_published ? (<Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      labelAllTasks(project_id);
-                    }}
-                    type="primary"
-                    style={{ width: "100%", marginBottom: "1%" }}
-                  >
-                    Start Labelling Now
-                  </Button>): (
+                  project.is_published ? (
                     <Button
-                    type="primary"
-                    style={{ width: "100%", marginBottom: "1%" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        labelAllTasks(project_id);
+                      }}
+                      type="primary"
+                      style={{ width: "100%", marginBottom: "1%" }}
+                    >
+                      Start Labelling Now
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      style={{ width: "100%", marginBottom: "1%" }}
                     >
                       Disabled
                     </Button>
                   )
-                  
                 ) : (
                   <Button type="primary">
                     <Link to={`/add-collection-data/${project.id}`}>
@@ -169,12 +178,17 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
-                <Table pagination={{
-                  total: pagination.total,
-                  onChange: (page) => { pagination.current = page }
-                }}
+                <Table
+                  pagination={{
+                    total: pagination.total,
+                    onChange: (page) => {
+                      pagination.current = page;
+                    },
+                  }}
                   onChange={handleTableChange}
-                  columns={columns} dataSource={dataSource} />
+                  columns={columns}
+                  dataSource={dataSource}
+                />
               </TabPane>
               <TabPane tab="Members" key="2">
                 <Table columns={memberColumns} dataSource={projectMembers} />
