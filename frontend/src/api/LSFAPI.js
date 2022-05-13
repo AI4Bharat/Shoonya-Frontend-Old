@@ -78,7 +78,7 @@ const updateTask = async (taskID) => {
   }
 };
 
-const getNextProject = async (projectID) => {
+const getNextProject = async (projectID, taskID) => {
   try {
     let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
       id: projectID,
