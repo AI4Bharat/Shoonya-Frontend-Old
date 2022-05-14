@@ -128,6 +128,8 @@ function CreateProject() {
         title: columnFields[value][column],
         dataIndex: columnFields[value][column],
         key: columnFields[value][column],
+        ellipsis: true,
+
       });
     }
     setColumns(tempColumns);
@@ -220,9 +222,9 @@ function CreateProject() {
 
   return (
     <Row style={{ width: "100%", height: "100%" }}>
-      <Col span={5} />
+      <Col span={2} />
       <Col
-        span={10}
+        span={20}
         style={{
           width: "100%",
           rowGap: "0px",
@@ -380,6 +382,7 @@ function CreateProject() {
           </>
         )}
       </Col>
+      <Col span={2} />
     </Row>
   );
 }
