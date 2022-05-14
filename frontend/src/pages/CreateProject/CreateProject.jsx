@@ -48,7 +48,7 @@ function CreateProject() {
   const [samplingParameters, setSamplingParameters] = useState(null);
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
-  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
+  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(1);
 
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
@@ -210,7 +210,7 @@ function CreateProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Annotation",
-      required_annotators_per_Task: selectedAnnotatorsNum,
+      required_annotators_per_task: selectedAnnotatorsNum,
     })
       .then((data) => {
         navigate(`/projects/${data.id}`, { replace: true });
@@ -361,6 +361,7 @@ function CreateProject() {
             <h1 className="margin-top-heading">Annotators Per Task :</h1>
             <Input
               value={selectedAnnotatorsNum}
+              defaultValue={"1"}
               onChange={(e) => {
                 setSelectedAnnotatorsNum(e.target.value);
               }}
