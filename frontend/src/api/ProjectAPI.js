@@ -83,6 +83,38 @@ const updateProject = async (id, payload) => {
     message.error(error);
   }
 };
+const exportProject = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/project_export/`);
+
+    if (response.status !== 200)
+      return message.error("Unable to Export Project");
+
+    if (response.data.message === "This project is Exported")
+      message.success("This Project is Exported");
+    else message.success("This Project has already been Exported");
+
+    return;
+  } catch (error) {
+    message.error(error);
+  }
+};
+const PullNewData = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
+
+    if (response.status !== 200)
+      return message.error("Unable to pull New Items");
+
+    if (response.data.message === "This project is pulled")
+      message.success("This Project is pulled");
+    else message.success("This Project has already been pulled ");
+
+    return;
+  } catch (error) {
+    message.error(error);
+  }
+};
 
 export {
   fetchProjects,
@@ -90,5 +122,7 @@ export {
   addAnnotatorsToProject,
   publishProject,
   updateProject,
-  getProjectMembers 
+  getProjectMembers ,
+  exportProject,
+  PullNewData,
 };
