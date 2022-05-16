@@ -53,13 +53,13 @@ const getDataSource = async (data, project_id, project_type, is_published) => {
 
       value.data["actions"] = (
         <Button type="primary">
-          {is_published ? (
+          {/* {is_published === true ? ( */}
             <Link to={`/projects/${project_id}/task/${value.id}`}>
               {project_type === "Annotation" ? "Annotate this Task" : "Edit"}
             </Link>
-          ) : (
+          {/* ) : (
             "Disabled"
-          )}
+          )} */}
         </Button>
       );
     });
