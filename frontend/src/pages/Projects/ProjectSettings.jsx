@@ -7,6 +7,8 @@ import {
   publishProject,
   getProject,
   updateProject,
+  exportProject,
+  PullNewData,
 } from "../../api/ProjectAPI";
 
 function ProjectSettings() {
@@ -38,6 +40,16 @@ function ProjectSettings() {
 
     await addAnnotatorsToProject(id, emails);
   };
+  const onExport =(id)=>{
+    let projects =  exportProject(id)
+   
+    }
+   
+    const onPullData = async () => {
+      await PullNewData(id);
+     
+    };
+  
 
   const onEditProjectForm = async (values) => {
     const { project_mode, project_type, users } = project;
@@ -157,6 +169,22 @@ function ProjectSettings() {
                   </Form.Item>
                   <Button type="primary" onClick={handlePublishProject}>
                     Publish Project
+                  </Button>
+                </div>
+                <Title level={3}> Advanced Operation</Title>
+                
+                <div style={{ display: "flex" }}>
+               
+                  <Form.Item
+                    wrapperCol={{ span: 16 }}
+                    style={{ marginRight: "10px" }}
+                  >
+                   <Button type="primary"  onClick={() =>onExport(id)}>
+                      Export project
+                    </Button>
+                  </Form.Item>
+                  <Button type="primary" onClick={()=>onPullData(id)}>
+                    Pull DataItems
                   </Button>
                 </div>
               </div>

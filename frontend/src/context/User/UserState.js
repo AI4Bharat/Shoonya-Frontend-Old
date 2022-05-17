@@ -77,7 +77,7 @@ const UserState = (props) => {
   };
   const confirmForgetPassword = async ({ formData, key, token }) => {
     axiosInstance
-      .post(`users/auth/users/reset_password_confirm`, {
+      .post("users/auth/users/reset_password_confirm/", {
         uid: key,
         token: token,
         new_password: formData.password,
