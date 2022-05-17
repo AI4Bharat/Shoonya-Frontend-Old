@@ -193,6 +193,10 @@ function ProjectDashboard() {
               <TabPane tab="Members" key="2">
                 <Table columns={memberColumns} dataSource={projectMembers} />
               </TabPane>
+              <TabPane tab=" Reports" key="3">
+                
+              </TabPane>
+             
             </Tabs>
           </Card>
         </Col>
