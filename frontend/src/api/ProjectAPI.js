@@ -42,7 +42,7 @@ const addAnnotatorsToProject = async (id, emails) => {
       }
     );
 
-    if (response.status !== 201 || response.status === 400 || response.status === 500) {
+    if (response.status !== 201) {
       return message.error("Unable to add Annotator(s)");
     }
 
