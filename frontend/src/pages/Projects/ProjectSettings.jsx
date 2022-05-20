@@ -20,6 +20,7 @@ function ProjectSettings() {
 
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
+  const [published, setPublished] = useState(false);
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -64,6 +65,7 @@ function ProjectSettings() {
 
   const handlePublishProject = async () => {
     await publishProject(id);
+    setPublished(true);
     navigate(`/projects/${id}`, { replace: true });
   };
 
@@ -167,7 +169,7 @@ function ProjectSettings() {
                       Add Annotators
                     </Button>
                   </Form.Item>
-                  <Button type="primary" onClick={handlePublishProject}>
+                  <Button type="primary" disabled={published} onClick={handlePublishProject}>
                     Publish Project
                   </Button>
                 </div>
