@@ -17,7 +17,7 @@ function Landing() {
       pagination.next = res.next;
       setPagination(pagination);
       setWorkspaces(res.results);
-    })
+    });
   }
 
   useEffect(() => {
@@ -51,13 +51,15 @@ function Landing() {
       <Col span={16}>
         <Title style={{ fontSize: "2.3rem" }} level={2}>
           {userContext.user?.organization.title}
-          <a href={`/organization/${userContext.user?.organization.id}`}>
-            <Button
-              style={{ float: "right", color: "gray" }}
-              icon={<SelectOutlined />}
-              type="link"
-            />
-          </a>
+          {userContext.user?.role !== 1 && (
+            <a href={`/organization/${userContext.user?.organization.id}`}>
+              <Button
+                style={{ float: "right", color: "gray" }}
+                icon={<SelectOutlined />}
+                type="link"
+              />
+            </a>
+          )}
         </Title>
         {projects && (
           <List
@@ -86,7 +88,9 @@ function Landing() {
               dataSource={workspaces}
               pagination={{
                 total: pagination.total,
-                onChange: (page) => { pagination.current = page }
+                onChange: (page) => {
+                  pagination.current = page;
+                },
               }}
               onChange={handleTableChange}
               columns={[
