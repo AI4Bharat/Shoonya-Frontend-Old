@@ -144,12 +144,14 @@ function LSFRoot(
         ls.annotationStore.selectAnnotation(c.id);
       },
       onSubmitAnnotation: function (ls, annotation) {
-        if (taskData.task_status != "freezed")
+        if (taskData.task_status != "freezed") {
           postAnnotation(
             annotation.serializeAnnotation(),
             taskData.id,
             userContext.user.id
-          );
+          )
+          window.location.reload()
+          }
         else message.error("Task is freezed");
 
         if (localStorage.getItem("labelAll"))

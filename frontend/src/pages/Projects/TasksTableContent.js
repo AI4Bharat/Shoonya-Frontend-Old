@@ -5,21 +5,17 @@ import { Button, Tag } from "antd";
 const getColumnNames = async (data, project_mode, project_type) => {
   if (data) {
     let cols = Object.keys(data);
-    if (project_type == "TranslationEditing") {
-      cols.splice(0, 0, cols.splice(4, 1)[0]);
-      cols.splice(4, 1);
-    } else if (project_type == "OCRAnnotation") {
-      cols.splice(1, 1);
-      cols.splice(0, 0, cols.splice(1, 1)[0]);
+    if (cols.indexOf('ID') > 0) {
+      cols.splice(cols.indexOf('ID'), 1);
+      cols.unshift('ID');
     }
-
     let columns = [];
     cols.forEach((value) => {
       if (project_mode == "Collection" && value == "status") {
         return;
       }
       let el = {};
-      el["key"] = value;
+      el["ID"] = value;
       el["title"] = value[0].toUpperCase() + value.substring(1);
       el["dataIndex"] = value;
       if (value == "status") {
@@ -48,7 +44,7 @@ const getColumnNames = async (data, project_mode, project_type) => {
 const getDataSource = async (data, project_id, project_type, is_published) => {
   if (data) {
     data.forEach((value) => {
-      value.data["key"] = value.id;
+      value.data["ID"] = value.id;
       value.data["status"] = value.task_status;
 
       value.data["actions"] = (
