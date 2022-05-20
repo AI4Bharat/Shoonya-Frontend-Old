@@ -43,7 +43,13 @@ const postAnnotation = async (result, task, completed_by) => {
       result: result,
       task: task,
       completed_by: completed_by,
-    });
+    },
+    )
+    .then((res)=> {
+    if(res.status != 201){
+      message.error(res.data.message)
+    }
+  })
   } catch {
     message.error("Error submitting annotations");
   }

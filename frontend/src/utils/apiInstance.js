@@ -17,6 +17,9 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
     accept: "application/json",
   },
+  validateStatus: (status) => {
+    return true;
+  },
 });
 
 axiosInstance.interceptors.request.use(
