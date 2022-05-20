@@ -172,7 +172,11 @@ function LSFRoot(
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
             {
               let temp = annotation.serializeAnnotation()
-              temp[0].value.text = [temp[0].value.text[0]]
+              for (var obj in Object.keys(temp)) {
+                if (temp[obj].value.text === "textarea") {
+                  temp[obj].value.text = [temp[obj].value.text[0]]
+                }
+              }
               patchAnnotation(
                 temp,
                 annotations[i].id
