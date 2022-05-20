@@ -6,12 +6,12 @@ const projectColumns = [
     dataIndex: "title",
     key: "title",
   },
-  {
-    title: "Users",
-    dataIndex: "users",
-    render: (user) => user.map((m) => m.username).join(", "),
-    key: "users",
-  },
+  // {
+  //   title: "Users",
+  //   dataIndex: "users",
+  //   render: (user) => user.map((m) => m.username).join(", "),
+  //   key: "users",
+  // },
   {
     title: "Created by",
     dataIndex: ["created_by", "username"],
