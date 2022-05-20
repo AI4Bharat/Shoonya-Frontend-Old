@@ -48,7 +48,7 @@ function CreateProject() {
   const [samplingParameters, setSamplingParameters] = useState(null);
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
-  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(null);
+  const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(1);
 
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
@@ -128,6 +128,8 @@ function CreateProject() {
         title: columnFields[value][column],
         dataIndex: columnFields[value][column],
         key: columnFields[value][column],
+        ellipsis: true,
+
       });
     }
     setColumns(tempColumns);
@@ -208,7 +210,7 @@ function CreateProject() {
       label_config: "string",
       variable_parameters: {},
       project_mode: "Annotation",
-      required_annotators_per_Task: selectedAnnotatorsNum,
+      required_annotators_per_task: selectedAnnotatorsNum,
     })
       .then((data) => {
         navigate(`/projects/${data.id}`, { replace: true });
@@ -220,9 +222,9 @@ function CreateProject() {
 
   return (
     <Row style={{ width: "100%", height: "100%" }}>
-      <Col span={5} />
+      <Col span={2} />
       <Col
-        span={10}
+        span={20}
         style={{
           width: "100%",
           rowGap: "0px",
@@ -359,6 +361,7 @@ function CreateProject() {
             <h1 className="margin-top-heading">Annotators Per Task :</h1>
             <Input
               value={selectedAnnotatorsNum}
+              defaultValue={"1"}
               onChange={(e) => {
                 setSelectedAnnotatorsNum(e.target.value);
               }}
@@ -380,6 +383,7 @@ function CreateProject() {
           </>
         )}
       </Col>
+      <Col span={2} />
     </Row>
   );
 }
