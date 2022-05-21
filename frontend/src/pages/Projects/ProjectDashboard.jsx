@@ -31,8 +31,8 @@ function ProjectDashboard() {
   const [pagination, setPagination] = useState({});
 
   function handleTableChange() {
-    getTasks(project_id, pagination.current).then((res) => {
-      pagination.next = res.next;
+    getTasks(project_id, pagination.current, pagination.pageSize).then((res) => {
+      pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
     });
@@ -46,7 +46,6 @@ function ProjectDashboard() {
       getTasks(project_id, 1).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
-        pagination.next = res.next;
         setPagination(pagination);
       });
       getProjectMembers(project_id).then((res) => {
@@ -181,8 +180,10 @@ function ProjectDashboard() {
                 <Table
                   pagination={{
                     total: pagination.total,
-                    onChange: (page) => {
+                    pageSize: pagination.pageSize,
+                    onChange: (page, pageSize) => {
                       pagination.current = page;
+                      pagination.pageSize = pageSize;
                     },
                   }}
                   onChange={handleTableChange}
