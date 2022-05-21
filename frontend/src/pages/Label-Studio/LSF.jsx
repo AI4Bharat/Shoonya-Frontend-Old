@@ -150,14 +150,14 @@ function LSFRoot(
             taskData.id,
             userContext.user.id
           )
-          window.location.reload()
           }
         else message.error("Task is freezed");
 
         if (localStorage.getItem("labelAll"))
           getNextProject(project_id, taskData.id).then((res) => {
             window.location.href = `/projects/${project_id}/task/${res.id}`;
-          });
+          })
+        else window.location.reload();
       },
 
       onSkipTask: function () {
