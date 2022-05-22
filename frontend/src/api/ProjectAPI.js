@@ -10,7 +10,30 @@ const fetchProjects = async () => {
   }
 };
 
+const getProjectMembers = async (project_id) => {
+  try {
+    let response = await axiosInstance.get(
+      `/projects/${project_id}/get_project_users/`
+    );
+    return response.data;
+  } catch {
+    message.error(`Error getting project members with id ${project_id}`);
+  }
+};
+
+const getProject = async (project_id) => {
+  try {
+    let response = await axiosInstance.get(`/projects/${project_id}`);
+    return response.data;
+  } catch {
+    message.error(`Error getting project with id ${project_id}`);
+  }
+};
+
 const addAnnotatorsToProject = async (id, emails) => {
+  if (emails[0] === "" && (emails.length === 1 || emails.length === 2)) {
+    return message.error("Unable to add Annotators(s)")
+  }
   try {
     let response = await axiosInstance.post(
       `/projects/${id}/add_project_users/`,
@@ -47,4 +70,59 @@ const publishProject = async (id) => {
   }
 };
 
-export { fetchProjects, addAnnotatorsToProject, publishProject };
+const updateProject = async (id, payload) => {
+  try {
+    let response = await axiosInstance.put(`/projects/${id}/`, payload);
+
+    if (response.status !== 200)
+      return message.error("Unable to update Project");
+
+    message.success("Successfully Updated Project");
+    return;
+  } catch (error) {
+    message.error(error);
+  }
+};
+const exportProject = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/project_export/`);
+
+    if (response.status !== 200)
+      return message.error("Unable to Export Project");
+
+    if (response.data.message === "This project is Exported")
+      message.success("This Project is Exported");
+    else message.success("This Project has already been Exported");
+
+    return;
+  } catch (error) {
+    message.error(error);
+  }
+};
+const PullNewData = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
+
+    if (response.status !== 200)
+      return message.error("Unable to pull New Items");
+
+    if (response.data.message === "This project is pulled")
+      message.success("This Project is pulled");
+    else message.success("This Project has already been pulled ");
+
+    return;
+  } catch (error) {
+    message.error(error);
+  }
+};
+
+export {
+  fetchProjects,
+  getProject,
+  addAnnotatorsToProject,
+  publishProject,
+  updateProject,
+  getProjectMembers ,
+  exportProject,
+  PullNewData,
+};

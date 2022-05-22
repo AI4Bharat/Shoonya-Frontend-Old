@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { apiData } from "./apiData";
 
@@ -15,6 +16,9 @@ const axiosInstance = axios.create({
     Authorization: `JWT ${localStorage.getItem(ACCESS_TOKEN)}`,
     "Content-Type": "application/json",
     accept: "application/json",
+  },
+  validateStatus: (status) => {
+    return true;
   },
 });
 
@@ -80,8 +84,8 @@ axiosInstance.interceptors.response.use(
 
               return axiosInstance(originalRequest);
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              message.alert("Error refreshing token.");
             });
         } else if (data.response.status !== 200) {
           localStorage.removeItem(ACCESS_TOKEN);
@@ -94,6 +98,9 @@ axiosInstance.interceptors.response.use(
         // window.location.href = "/";
       }
 
+      return Promise.reject(error);
+    }
+    if (error.response.status === 404) {
       return Promise.reject(error);
     }
   }

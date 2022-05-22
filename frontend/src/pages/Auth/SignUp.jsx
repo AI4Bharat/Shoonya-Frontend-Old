@@ -2,10 +2,11 @@ import Layout, { Content } from "antd/lib/layout/layout";
 import React, { useContext, useState } from "react";
 import { Form, Input, Card, Divider, Button, Result, message } from "antd";
 import { UserOutlined, KeyOutlined, MailOutlined } from "@ant-design/icons";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserContext from "../../context/User/UserContext";
 
 export const SignUp = () => {
+  let navigate = useNavigate();
   const { inviteCode } = useParams();
   const [sentMail, setSentMail] = useState(false);
   const userContext = useContext(UserContext);
@@ -15,6 +16,7 @@ export const SignUp = () => {
       .register({ formData: values, inviteCode: inviteCode })
       .then(() => {
         setSentMail(true);
+        navigate("/login", { replace: true });
       })
       .catch(() => {
         message.error("Error while registering. Have you registered before?");
@@ -34,10 +36,7 @@ export const SignUp = () => {
         <Card style={{ width: "30%", marginBottom: "3%" }}>
           {sentMail ? (
             <>
-              <Result
-                status="success"
-                title="Sucessful Sign-up!"
-              />
+              <Result status="success" title="Sucessful Sign-up!" />
             </>
           ) : (
             <>

@@ -47,7 +47,6 @@ const getData = async (instanceIds, datasetType) => {
 const getProject = async (id) => {
   try {
     let response = await axiosInstance.get(`/projects/${id}/`);
-    // console.log(response);
     return response.data;
   } catch (error) {
     message.error("Error Fetching Project");

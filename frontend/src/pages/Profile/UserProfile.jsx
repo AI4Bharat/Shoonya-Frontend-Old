@@ -8,8 +8,6 @@ import {
   Form,
   Input,
   Button,
-  Checkbox,
-  Alert,
   message,
   Select,
 } from "antd";
@@ -55,7 +53,7 @@ function UserProfile() {
   };
 
   const onFinishUserEdit = async ({
-    lang_id,
+    language,
     first_name,
     last_name,
     username,
@@ -63,7 +61,7 @@ function UserProfile() {
   }) => {
     const data = await userProfileEdit({
       email: user?.email,
-      lang_id: lang_id === undefined ? user?.lang_id : lang_id,
+      language: language === undefined ? user?.language : language,
       first_name,
       last_name,
       username,
@@ -77,7 +75,7 @@ function UserProfile() {
         last_name: data?.last_name,
         phone: data?.phone,
         username: data?.username,
-        lang_id: data?.lang_id,
+        language: data?.language,
       };
 
       setUser(editUser);
@@ -330,6 +328,12 @@ function UserProfile() {
               </Paragraph>
               <Paragraph style={{ fontSize: "1.1rem" }}>
                 <PhoneOutlined /> {user.phone}
+              </Paragraph>
+              <Paragraph style={{ fontSize: "1.1rem" }}>
+                Languages: 
+                {user.languages.map((item,key) => (
+                  <Tag color="blue" key={key}>{item}</Tag>
+                ))}
               </Paragraph>
             </Card>
           </Col>

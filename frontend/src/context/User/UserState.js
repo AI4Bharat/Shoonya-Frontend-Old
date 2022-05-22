@@ -49,7 +49,6 @@ const UserState = (props) => {
       await axiosInstance.patch(`users/invite/${inviteCode}/accept/`, formData);
     } catch (err) {
       dispatch({ type: REGISTER_FAIL, payload: err.response.data });
-      console.log("Errored out")
       throw "Error"
     }
   };
@@ -78,16 +77,16 @@ const UserState = (props) => {
   };
   const confirmForgetPassword = async ({ formData, key, token }) => {
     axiosInstance
-      .post(`users/auth/users/reset_password_confirm`, {
+      .post("users/auth/users/reset_password_confirm/", {
         uid: key,
         token: token,
         new_password: formData.password,
       })
       .then((res) => {
-        console.log(res);
+        message.success('Password changed successfully!');
       })
       .catch((err) => {
-        console.log(err);
+        message.error("Error changing password");
       });
   };
   const loadUser = async () => {
@@ -95,7 +94,7 @@ const UserState = (props) => {
       let res = await axiosInstance.get("users/account/me/fetch");
       dispatch({ type: USER_LOADED, payload: res.data });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       message.error("Error fetching user data.");
     }
   };

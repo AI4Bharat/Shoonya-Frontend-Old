@@ -20,42 +20,44 @@ function Navbar() {
       }}
       theme="light"
     >
-      <img
-        src={Logo}
-        alt="Logo"
-        style={{ float: "left", height: "70%", verticalAlign: "middle" }}
-      />
+      <a
+        href="/dashboard"
+        style={{ display: "block", height: "100%", marginTop: "1%" }}
+      >
+        <img
+          src={Logo}
+          alt="Logo"
+          style={{ float: "left", height: "70%", verticalAlign: "middle" }}
+        />
+      </a>
       <div
         style={{
-          width: "20%",
+          width: "10%",
           height: "100%",
           display: "flex",
           float: "right",
         }}
       >
-        <Menu
-          theme="light"
-          mode="horizontal"
-          style={{ height: "100%", width: "90%" }}
-        >
-          <Menu.Item key="1">
-            <Link to="/lsf-test">LSF Test</Link>
-          </Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
         {userContext.user && (
           <Dropdown
             overlay={
               <Menu theme="light" mode="horizontal">
                 <Menu.Item key="1">
-                  <Link
-                    to={`/organization/${userContext.user.organization.id}`}
-                  >
-                    My Organization
-                  </Link>
+                  <Link to="/dashboard">Dashboard</Link>
                 </Menu.Item>
-                <Menu.Item key="2">My Projects</Menu.Item>
+                {(userContext.user?.role === 2 ||
+                  userContext.user?.role === 3) && (
+                  <>
+                    <Menu.Item key="2">
+                      <Link
+                        to={`/organization/${userContext.user.organization.id}`}
+                      >
+                        My Organization
+                      </Link>
+                    </Menu.Item>
+                  </>
+                )}
+
                 <Menu.Item key="3" onClick={() => userContext.logout()}>
                   <Link to="/">Logout</Link>
                 </Menu.Item>

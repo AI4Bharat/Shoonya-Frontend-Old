@@ -1,6 +1,6 @@
 import Layout, { Content } from "antd/lib/layout/layout";
 import React from "react";
-import { Form, Input, Card, Divider, Button } from "antd";
+import { Form, Input, Card, Divider, Button, message } from "antd";
 import {  KeyOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
@@ -13,8 +13,8 @@ export const ConfirmForgetPassword = () => {
     delete values.confirmPassword;
     userContext
       .confirmForgetPassword({ formData: values, key: key, token: token })
-      .then((res) => {console.log(userContext.user)})
-      .catch((err) => {console.log(err)});
+      .then(() => {window.location.pathname = "/login"})
+      .catch((err) => {message.error("Error changing password!")});
   };
   return (
     <Layout>
