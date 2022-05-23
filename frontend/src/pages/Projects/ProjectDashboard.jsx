@@ -48,7 +48,7 @@ function ProjectDashboard() {
   function handleFilterChange(checkedValue){
     if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
-    getTasks(project_id, pagination.current, pagination.pageSize, checkedValue).then((res) => {
+    getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
