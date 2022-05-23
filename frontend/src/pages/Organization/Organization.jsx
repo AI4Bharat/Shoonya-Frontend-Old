@@ -12,6 +12,7 @@ import {
   Form,
   Layout,
   Divider,
+  message,
 } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -65,10 +66,10 @@ function Organization() {
   const editOrganization = () => {
     axiosInstance.patch(`organizations/${userContext.user.organization.id}`, editOrg)
       .then(res => {
-        console.log(res);
+        message.success("Organization Name changed");
       })
       .catch(err => {
-        console.log(err);
+        message.error("Error changing Organization Name");
       });
   };
 
