@@ -63,6 +63,7 @@ function LSFRoot(
   annotations,
   predictions
 ) {
+  let load_time;
   let interfaces = [];
   if (predictions == null) predictions = [];
 
@@ -142,13 +143,16 @@ function LSFRoot(
           userGenerate: true,
         });
         ls.annotationStore.selectAnnotation(c.id);
+        load_time = new Date();
       },
       onSubmitAnnotation: function (ls, annotation) {
         if (taskData.task_status != "freezed") {
           postAnnotation(
             annotation.serializeAnnotation(),
             taskData.id,
-            userContext.user.id
+            userContext.user.id,
+            load_time,
+            annotation.lead_time,
           )
           window.location.reload()
           }
@@ -177,7 +181,9 @@ function LSFRoot(
               temp[0].value.text = [temp[0].value.text[0]]
               patchAnnotation(
                 temp,
-                annotations[i].id
+                annotations[i].id,
+                load_time,
+                annotations[i].lead_time
                 ).then(() => location.reload());
               }
           }
