@@ -154,14 +154,14 @@ function LSFRoot(
             load_time,
             annotation.lead_time,
           )
-          window.location.reload()
           }
         else message.error("Task is freezed");
 
         if (localStorage.getItem("labelAll"))
           getNextProject(project_id, taskData.id).then((res) => {
             window.location.href = `/projects/${project_id}/task/${res.id}`;
-          });
+          })
+        else window.location.reload();
       },
 
       onSkipTask: function () {
@@ -178,7 +178,12 @@ function LSFRoot(
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
             {
               let temp = annotation.serializeAnnotation()
-              temp[0].value.text = [temp[0].value.text[0]]
+              
+              for (let i=0; i<temp.length; i++) {
+                if (temp[i].value.text) {
+                  temp[i].value.text = [temp[i].value.text[0]]
+                }
+              }
               patchAnnotation(
                 temp,
                 annotations[i].id,
