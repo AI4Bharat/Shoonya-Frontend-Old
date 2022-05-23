@@ -29,7 +29,8 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
-  const [selectedFilters, setFilters] = useState(["skipped", "accepted", "unlabeled"]);
+  const initFilters = ["skipped", "accepted", "unlabeled"];
+  const [selectedFilters, setFilters] = useState(initFilters);
   const filters = [
     { label: "unlabeled", value: "unlabeled",},
     { label: "skipped", value: "skipped", },
@@ -45,6 +46,7 @@ function ProjectDashboard() {
   }
 
   function handleFilterChange(checkedValue){
+    if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
     getTasks(project_id, pagination.current, pagination.pageSize, checkedValue).then((res) => {
       pagination.total = res.count;
