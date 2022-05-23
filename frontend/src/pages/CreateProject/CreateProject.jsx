@@ -193,6 +193,10 @@ function CreateProject() {
   };
 
   const handleCreateProject = () => {
+    if (title === "" || description === "" || selectedType === null || selectedDomain === null) {
+      message.error("Fields cannot be empty");
+      return;
+    }
     createProject({
       title: title,
       description: description,
