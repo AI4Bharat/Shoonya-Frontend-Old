@@ -10,6 +10,8 @@ import {
   Select,
   Input,
   Form,
+  Layout,
+  Divider,
 } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -19,12 +21,16 @@ import { memberColumns, workspaceColumns } from "./TableColumns";
 import FormItem from "antd/lib/form/FormItem";
 import { createWorkspace, fetchWorkspaces } from "../../api/WorkspaceAPI";
 import { useForm } from "antd/lib/form/Form";
+import { Content } from "antd/lib/layout/layout";
+import { UserOutlined } from '@ant-design/icons';
+import axiosInstance from "../../utils/apiInstance";
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 function Organization() {
   const { TextArea } = Input;
   const [workspaceForm] = useForm();
+  const [editOrg, setEditOrg] = useState({});
   const [organization, setOrganization] = useState(undefined);
   const [inviteData, setInviteData] = useState({
     visible: false,
@@ -54,6 +60,16 @@ function Organization() {
       managers: data.managers,
       created_by: userContext.user.id,
     }).then(() => setWorkspace({ ...workspace, visible: false }));
+  };
+
+  const editOrganization = () => {
+    axiosInstance.patch(`organizations/${userContext.user.organization.id}`, editOrg)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -210,7 +226,42 @@ function Organization() {
                   />
                 </TabPane>
               )}
-              <TabPane tab="Settings" key="3"></TabPane>
+              <TabPane tab="Settings" key="3">
+                <Card bordered={true} style={{ width: "100%", marginBottom: "3%" }}>
+                  <Layout>
+                    <Content
+                      style={{
+                        height: "100vh",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        display: "flex",
+                      }}>
+                        <Card bordered="false" style={{ width: "75%", marginBottom: "3%" }}>
+                          <h1
+                            style={{
+                              fontSize: "25px",
+                              marginBottom: "0",
+                              textAlign: "center",
+                            }}>
+                              Edit Organization
+                            </h1>
+                          <Divider/>
+                          <Input onChange={(e) => setEditOrg({...editOrg, title: e.target.value})} size="default" placeholder="Organization Name" prefix={<UserOutlined />} />
+                          <Button
+                            style={{
+                              width: "100%", 
+                              marginTop: "1%"
+                            }}
+                            type="primary"
+                            onClick={editOrganization}
+                          >
+                            Change
+                          </Button>
+                        </Card>
+                      </Content>
+                  </Layout>
+                </Card>
+              </TabPane>
             </Tabs>
           </Card>
         </Col>
