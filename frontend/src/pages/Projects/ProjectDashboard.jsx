@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Card, Table, Button, Tabs } from "antd";
+import { Col, Row, Card, Table, Button, Tabs, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -29,9 +29,24 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
+  const [selectedFilters, setFilters] = useState(["skipped", "accepted", "unlabeled"]);
+  const filters = [
+    { label: "unlabeled", value: "unlabeled",},
+    { label: "skipped", value: "skipped", },
+    { label: "accepted", value: "accepted", },
+  ];
 
   function handleTableChange() {
-    getTasks(project_id, pagination.current, pagination.pageSize).then((res) => {
+    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+    });
+  }
+
+  function handleFilterChange(checkedValue){
+    setFilters(checkedValue);
+    getTasks(project_id, pagination.current, pagination.pageSize, checkedValue).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -43,9 +58,11 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1).then((res) => {
+      getTasks(project_id, 1, 10,selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
+        pagination.current = 1;
+        pagination.pageSize = 10;
         setPagination(pagination);
       });
       getProjectMembers(project_id).then((res) => {
@@ -152,20 +169,22 @@ function ProjectDashboard() {
               <TabPane tab="Tasks" key="1">
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
+                    <div style={{ display: "inline-flex", width: "49%", marginBottom: "1%", marginRight: "1%" }}>
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();
                         labelAllTasks(project_id);
                       }}
                       type="primary"
-                      style={{ width: "100%", marginBottom: "1%" }}
+                      style={{width: "100%"}}
                     >
                       Start Labelling Now
                     </Button>
+                    </div>
                   ) : (
                     <Button
                       type="primary"
-                      style={{ width: "100%", marginBottom: "1%" }}
+                      style={{ width: "49%", marginBottom: "1%", marginRight: "1%" }}
                     >
                       Disabled
                     </Button>
@@ -177,6 +196,17 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
+                {project.project_mode == "Annotation" ? (
+                    <div style={{display: "inline-flex", width: "50%", justifyContent: "space-evenly"}}>
+                      Filter by:
+                      <Checkbox.Group
+                        options={filters}
+                        value={selectedFilters}
+                        onChange={handleFilterChange}
+                      />
+                    </div>
+                ): (<div></div>)
+                }
                 <Table
                   pagination={{
                     total: pagination.total,
