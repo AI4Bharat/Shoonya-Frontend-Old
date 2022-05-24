@@ -38,6 +38,11 @@ const UserState = (props) => {
         email: formData.email,
         password: formData.password,
       });
+      if(res.status === 401){
+        message.error("Wrong Credentials!");
+        dispatch({ type: LOGIN_FAIL, payload: res.response.data });
+        return;
+      }
       dispatch({ type: LOGIN_SUCCESS, payload: res.data });
     } catch (err) {
       dispatch({ type: LOGIN_FAIL, payload: err.response.data });

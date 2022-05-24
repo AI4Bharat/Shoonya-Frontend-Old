@@ -22,10 +22,7 @@ export const Login = () => {
   }, [token]);
 
   const onFinish = (values) => {
-    userContext.login(values).then(() => navigate("/dashboard"))
-      .catch(err => {
-        message.error("Wrong Credentials!");
-      });
+    userContext.login(values).then(() => navigate("/dashboard"));
   };
   return (
     <Layout>
