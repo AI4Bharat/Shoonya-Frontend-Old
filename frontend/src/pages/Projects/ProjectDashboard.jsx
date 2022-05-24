@@ -10,11 +10,12 @@ import {
   getColumnNames,
   getDataSource,
   getVariableParams,
-  memberColumns,
 } from "./TasksTableContent";
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
+import {MembersTab} from './MembersTab'
+
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
@@ -191,7 +192,7 @@ function ProjectDashboard() {
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
-                <Table columns={memberColumns} dataSource={projectMembers} />
+                <MembersTab projectMembers={projectMembers} />
               </TabPane>
               <TabPane tab=" Reports" key="3">
                 
