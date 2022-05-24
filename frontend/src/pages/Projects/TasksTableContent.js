@@ -18,23 +18,6 @@ const getColumnNames = async (data, project_mode, project_type) => {
       el["ID"] = value;
       el["title"] = value[0].toUpperCase() + value.substring(1);
       el["dataIndex"] = value;
-      if (value == "status") {
-        el["filters"] = [
-          {
-            text: "unlabeled",
-            value: "unlabeled",
-          },
-          {
-            text: "skipped",
-            value: "skipped",
-          },
-          {
-            text: "accepted",
-            value: "accepted",
-          },
-        ];
-        el["onFilter"] = (value, record) => record.status == value;
-      }
       columns.push(el);
     });
     return columns;
