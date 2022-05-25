@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Card, Button, Input, Layout, Divider, Checkbox } from "antd";
+import { Card, Button, Input, Layout, Divider, Checkbox, message } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { UserOutlined, DoubleRightOutlined } from "@ant-design/icons";
 
 import axiosInstance from "../../utils/apiInstance";
+import { createWorkspace } from "../../api/WorkspaceAPI";
 
 export function OrganizationSettings({ organizationId }) {
 	const [editOrg, setEditOrg] = useState({});
@@ -24,8 +25,16 @@ export function OrganizationSettings({ organizationId }) {
 			});
 	};
 
-	const createNewWorkspace = () => {
-		return null;
+	const handleCreateNewWorkspace = async () => {
+		const data = await createWorkspace({
+			...newWorkspace,
+			organization: organizationId,
+		});
+
+		if ("message" in data) {
+			message.success(data.message);
+		}
+		setNewWorkspace({ workspace_name: "", is_archived: false });
 	};
 
 	return (
@@ -121,7 +130,7 @@ export function OrganizationSettings({ organizationId }) {
 								marginTop: "1%",
 							}}
 							type="primary"
-							onClick={() => createNewWorkspace()}
+							onClick={() => handleCreateNewWorkspace()}
 						>
 							Create
 						</Button>
