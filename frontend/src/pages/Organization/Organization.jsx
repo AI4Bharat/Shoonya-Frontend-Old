@@ -76,7 +76,9 @@ function Organization() {
     if (userContext.user) {
       setOrganization(userContext.user.organization);
       fetchUsers(userContext.user.organization.id).then((res) => {
-        setUsers(res);
+        if(res && Array.isArray(res)) {
+          setUsers(res);
+        }
       });
       fetchWorkspaces(1).then((res) => {
         pagination.total = res.count;
@@ -211,7 +213,7 @@ function Organization() {
                 </Modal>
                 <Table
                   columns={memberColumns}
-                  dataSource={users?.filter((e) => {
+                  dataSource={Array.isArray(users) && users.filter((e) => {
                     return e.has_accepted_invite == true;
                   })}
                 />
