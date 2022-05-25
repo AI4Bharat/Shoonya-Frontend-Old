@@ -52,11 +52,15 @@ const LabelStudioWrapper = () => {
     }
   }, [labelConfig, userContext]);
 
-  function onDraftAnnotation(){
-    draftTask(task_id).then(() => {
-      lsfRef.current.store.submitAnnotation()
-    })
+  const onDraftAnnotation = async() => {
+    await lsfRef.current.store.submitAnnotation();
+    setDraftStatus();
   }
+
+  function setDraftStatus(){
+    draftTask(task_id).then((res)=> console.log(res));
+  }
+
   return (
   <div>
     <div style={{display: "flex", justifyContent: "flex-end"}}>
@@ -183,7 +187,7 @@ function LSFRoot(
           getNextProject(project_id, taskData.id).then((res) => {
             window.location.href = `/projects/${project_id}/task/${res.id}`;
           })
-        else window.location.reload();
+        // else window.location.reload();
       },
 
       onSkipTask: function () {
@@ -211,7 +215,10 @@ function LSFRoot(
                 annotations[i].id,
                 load_time,
                 annotations[i].lead_time
-                ).then(() => location.reload());
+                ).then(() => {
+                  console.log("idhr")
+                  // location.reload()
+                });
               }
           }
         } else message.error("Task is freezed");
