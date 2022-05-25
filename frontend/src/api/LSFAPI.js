@@ -86,6 +86,17 @@ const updateTask = async (taskID) => {
   }
 };
 
+const draftTask = async (taskID) => {
+  try {
+    let response = await axiosInstance.patch(`/task/${taskID}/`, {
+      task_status: "draft",
+    });
+    return response.data;
+  } catch {
+    message.error("Error saving draft.");
+  }
+};
+
 const getNextProject = async (projectID, taskID) => {
   try {
     let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
@@ -114,6 +125,7 @@ export {
   getProjectsandTasks,
   postAnnotation,
   updateTask,
+  draftTask,
   getNextProject,
   patchAnnotation,
   deleteAnnotation,

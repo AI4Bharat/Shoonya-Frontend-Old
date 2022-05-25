@@ -6,6 +6,7 @@ import {
   getProjectsandTasks,
   postAnnotation,
   updateTask,
+  draftTask,
   getNextProject,
   patchAnnotation,
   deleteAnnotation
@@ -50,8 +51,29 @@ const LabelStudioWrapper = () => {
       );
     }
   }, [labelConfig, userContext]);
-  return <div className="label-studio-root" ref={rootRef} />;
+
+  function onDraftAnnotation(){
+    draftTask(task_id).then(() => {
+      lsfRef.current.store.submitAnnotation()
+    })
+  }
+  return (
+  <div>
+    <div style={{display: "flex", justifyContent: "flex-end"}}>
+      <Button
+          value="Draft"
+          type="danger"
+          onClick={onDraftAnnotation}
+        >
+          Draft
+        </Button>
+    </div>
+    <div className="label-studio-root" ref={rootRef}></div>
+  </div>
+    );
 };
+
+
 
 function LSFRoot(
   rootRef,
@@ -210,7 +232,8 @@ function LSFRoot(
 function LSF() {
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
-      <div style={{ display: "flex", justifyContent: "left" }}>
+      <div style={{maxWidth: "100%", display: "flex", justifyContent: "space-between"}}>
+      <div style={{ display: "inline-flex" }}>
         <Button
           value="Back to Project"
           onClick={() => {
@@ -221,6 +244,7 @@ function LSF() {
         >
           Back to Dashboard
         </Button>
+      </div>
       </div>
       <LabelStudioWrapper />
     </div>
