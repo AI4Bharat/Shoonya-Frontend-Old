@@ -112,17 +112,6 @@ export function OrganizationSettings({ organizationId }) {
 								placeholder="Workspace Name"
 								prefix={<DoubleRightOutlined />}
 							/>
-							<Checkbox
-								checked={newWorkspace.is_archived}
-								onChange={(e) =>
-									setNewWorkspace((prev) => ({
-										...prev,
-										is_archived: e.target.checked,
-									}))
-								}
-							>
-								Is Archived?
-							</Checkbox>
 						</Input.Group>
 						<Button
 							style={{
