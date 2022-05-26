@@ -15,10 +15,13 @@ export function MembersTab({ projectMembers }) {
 	const userContext = useContext(UserContext);
 
 	const addNewUsers = async () => {
-		await addAnnotatorsToProject(projectId, addedUsers).then(() =>
-			setAddedUsers([])
-		);
-		setModalOpen(false);
+		await addAnnotatorsToProject(projectId, addedUsers).then((done) => {
+			if (done) {
+				setAddedUsers([]);
+				setModalOpen(false);
+				location.reload();
+			}
+		});
 	};
 
 	return (
