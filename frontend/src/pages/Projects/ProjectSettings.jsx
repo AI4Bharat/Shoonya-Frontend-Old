@@ -41,16 +41,13 @@ function ProjectSettings() {
 
     await addAnnotatorsToProject(id, emails);
   };
-  const onExport =(id)=>{
-    let projects =  exportProject(id)
-   
-    }
-   
-    const onPullData = async () => {
-      await PullNewData(id);
-     
-    };
-  
+  const onExport = (id) => {
+    let projects = exportProject(id);
+  };
+
+  const onPullData = async () => {
+    await PullNewData(id);
+  };
 
   const onEditProjectForm = async (values) => {
     const { project_mode, project_type, users } = project;
@@ -74,6 +71,8 @@ function ProjectSettings() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  console.log(project);
 
   return (
     <>
@@ -169,28 +168,74 @@ function ProjectSettings() {
                       Add Annotators
                     </Button>
                   </Form.Item>
-                  <Button type="primary" disabled={published} onClick={handlePublishProject}>
+                  <Button
+                    type="primary"
+                    disabled={published}
+                    onClick={handlePublishProject}
+                  >
                     Publish Project
                   </Button>
                 </div>
                 <Title level={3}> Advanced Operation</Title>
-                
+
                 <div style={{ display: "flex" }}>
-               
                   <Form.Item
                     wrapperCol={{ span: 16 }}
                     style={{ marginRight: "10px" }}
                   >
-                   <Button type="primary"  onClick={() =>onExport(id)}>
+                    <Button type="primary" onClick={() => onExport(id)}>
                       Export project
                     </Button>
                   </Form.Item>
-                  <Button type="primary" onClick={()=>onPullData(id)}>
+                  <Button type="primary" onClick={() => onPullData(id)}>
                     Pull DataItems
                   </Button>
                 </div>
               </div>
             </Form>
+            <Title level={3}>Read-only Configurations</Title>
+            {project.sampling_mode && (
+              <div>
+                <Title level={4}>Sampling Parameters</Title>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                  <Col xs={12} md={8}>
+                    <p>sampling_mode:</p>
+                  </Col>
+                  <Col xs={12} md={16}>
+                    <p>
+                      {project.sampling_mode == "b" && "Batch"}
+                      {project.sampling_mode == "r" && "Random"}
+                      {project.sampling_mode == "f" && "Full"}
+                    </p>
+                  </Col>
+                </Row>
+                {Object.keys(project.sampling_parameters_json).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                    <Col xs={12} md={8}>
+                      <p>{key}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.sampling_parameters_json[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
+            {Object.keys(project.variable_parameters).length !==0 && (
+              <div>
+              <Title level={4}>Variable Parameters</Title>
+              {Object.keys(project.variable_parameters).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="variable-params">
+                    <Col xs={12} md={8}>
+                      <p>{key}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.variable_parameters[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
           </Card>
         </Col>
         <Col span={1} />
