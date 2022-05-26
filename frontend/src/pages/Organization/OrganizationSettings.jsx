@@ -1,28 +1,28 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Card, Button, Input, Layout, Divider, Checkbox, message } from "antd";
+import { Card, Button, Input, Layout, Divider, message } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { UserOutlined, DoubleRightOutlined } from "@ant-design/icons";
 
-import axiosInstance from "../../utils/apiInstance";
 import { createWorkspace } from "../../api/WorkspaceAPI";
+import { editOrganization } from "../../api/OrganizationAPI";
 
 export function OrganizationSettings({ organizationId }) {
-	const [editOrg, setEditOrg] = useState({});
+	const [editOrg, setEditOrg] = useState({ title: "" });
 	const [newWorkspace, setNewWorkspace] = useState({
 		workspace_name: "",
 		is_archived: false,
 	});
 
-	const editOrganization = () => {
-		axiosInstance
-			.patch(`organizations/${organizationId}`, editOrg)
-			.then((res) => {
-				console.log(res);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+	const handleEditOrganization = async () => {
+		await editOrganization(organizationId, editOrg).then((data) => {
+			if (data) {
+				message.success("Organization Name changed!");
+			}
+			setEditOrg({ title: "" });
+		}).then(()=>{
+			location.reload();
+		})
 	};
 
 	const handleCreateNewWorkspace = async () => {
@@ -64,6 +64,7 @@ export function OrganizationSettings({ organizationId }) {
 						</h1>
 						<Divider />
 						<Input
+							value={editOrg.title}
 							onChange={(e) =>
 								setEditOrg({
 									...editOrg,
@@ -80,7 +81,7 @@ export function OrganizationSettings({ organizationId }) {
 								marginTop: "1%",
 							}}
 							type="primary"
-							onClick={() => editOrganization()}
+							onClick={() => handleEditOrganization()}
 						>
 							Change
 						</Button>
