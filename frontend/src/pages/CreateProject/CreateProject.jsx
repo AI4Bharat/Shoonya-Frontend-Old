@@ -331,6 +331,13 @@ function CreateProject() {
               <Option value="f">Full</Option>
               <Option value="b">Batch</Option>
             </Select>
+            <h1 className="margin-top-heading">Filter String :</h1>
+            <Input
+              value={filterString}
+              onChange={(e) => {
+                setFilterString(e.target.value);
+              }}
+            />
           </>
         )}
 
@@ -366,13 +373,7 @@ function CreateProject() {
                 setSelectedAnnotatorsNum(e.target.value);
               }}
             />
-            <h1 className="margin-top-heading">Filter String :</h1>
-            <Input
-              value={filterString}
-              onChange={(e) => {
-                setFilterString(e.target.value);
-              }}
-            />
+            
           </>
         )}
         {selectedAnnotatorsNum && (
