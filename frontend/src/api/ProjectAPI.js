@@ -31,9 +31,6 @@ const getProject = async (project_id) => {
 };
 
 const addAnnotatorsToProject = async (id, emails) => {
-  console.log('id>>>',id);
-  console.log('email>>>',emails);
-  
   if (emails.length === 0) {
     message.error("Unable to add Annotators(s)")
     return false;

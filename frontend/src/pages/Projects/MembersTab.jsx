@@ -1,27 +1,65 @@
 import { Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import PropTypes from "prop-types";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { addAnnotatorsToProject } from "../../api/ProjectAPI";
+import { addAnnotatorsToProject, getProject } from "../../api/ProjectAPI";
+import { fetchUsersInWorkspace } from "../../api/WorkspaceAPI";
 import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
 
 export function MembersTab({ projectMembers }) {
 	const [modalOpen, setModalOpen] = useState(false);
-	const [addedUsers, setAddedUsers] = useState([]);
 	const { project_id: projectId } = useParams();
 	const userContext = useContext(UserContext);
+	const [availableUsers, setAvailableUsers] = useState([]);
+	const [selectedUsers, setSelectedUsers] = useState([]);
 
 	const addNewUsers = async () => {
-		await addAnnotatorsToProject(projectId, addedUsers).then((done) => {
+		await addAnnotatorsToProject(projectId, selectedUsers).then((done) => {
 			if (done) {
-				setAddedUsers([]);
+				setSelectedUsers([]);
 				setModalOpen(false);
 				location.reload();
 			}
 		});
+	};
+
+	useEffect(() => {
+		const populateAvailableUsers = async () => {
+			const projectDetails = await getProject(projectId);
+			if (!projectDetails || !projectDetails.workspace_id) {
+				return;
+			}
+
+			const users = await fetchUsersInWorkspace(
+				projectDetails.workspace_id
+			);
+			if (!users || !Array.isArray(users) || users.length === 0) {
+				return;
+			}
+
+			let displayUsers = users;
+
+			// filter out users which are already present in project
+			if (Array.isArray(projectMembers) && projectMembers.length !== 0) {
+				displayUsers = displayUsers.filter(
+					(displayUser) =>
+						projectMembers.findIndex(
+							(projectUser) => displayUser.id === projectUser.id
+						) === -1
+				);
+			}
+
+			setAvailableUsers(displayUsers);
+		};
+
+		populateAvailableUsers();
+	}, [projectId, setAvailableUsers, setSelectedUsers]);
+
+	const handleSelectChange = (userEmails) => {
+		setSelectedUsers(userEmails);
 	};
 
 	return (
@@ -42,10 +80,16 @@ export function MembersTab({ projectMembers }) {
 					>
 						<Title level={5}>Enter the emails to be added</Title>
 						<Select
-							mode="tags"
+							mode="multiple"
+							allowClear
+							bordered
+							placeholder="Select users to add"
+							options={availableUsers.map((user) => ({
+								label: user.username,
+								value: user.email,
+							}))}
 							style={{ width: "100%", marginTop: "5%" }}
-							onChange={(users) => setAddedUsers(users)}
-							value={addedUsers}
+							onChange={handleSelectChange}
 						/>
 					</Modal>
 				</>
