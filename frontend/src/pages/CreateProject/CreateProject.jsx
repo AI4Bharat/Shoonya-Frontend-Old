@@ -49,7 +49,7 @@ function CreateProject() {
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
   const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(1);
-
+  const [filterString,setFilterString] = useState(null);
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
   const [tableData, setTableData] = useState(null);
@@ -202,7 +202,7 @@ function CreateProject() {
       users: [userContext.user?.id],
       workspace_id: id,
       organization_id: userContext.user.organization.id,
-      filter_string: "string",
+      filter_string: filterString,
       sampling_mode: samplingMode,
       sampling_parameters_json: samplingParameters,
       project_type: selectedType,
@@ -364,6 +364,13 @@ function CreateProject() {
               defaultValue={"1"}
               onChange={(e) => {
                 setSelectedAnnotatorsNum(e.target.value);
+              }}
+            />
+            <h1 className="margin-top-heading">Filter String :</h1>
+            <Input
+              value={filterString}
+              onChange={(e) => {
+                setFilterString(e.target.value);
               }}
             />
           </>
