@@ -33,6 +33,7 @@ export function OrganizationSettings({ organizationId }) {
 
 		if ("message" in data) {
 			message.success(data.message);
+			location.reload();
 		}
 		setNewWorkspace({ workspace_name: "", is_archived: false });
 	};
