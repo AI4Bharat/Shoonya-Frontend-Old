@@ -219,7 +219,7 @@ function LSF() {
             window.location.href = `/projects/${id}`;
           }}
         >
-          Back to Dashboard
+          Back to Project
         </Button>
       </div>
       <LabelStudioWrapper />
