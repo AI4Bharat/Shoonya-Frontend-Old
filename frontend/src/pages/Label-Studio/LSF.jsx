@@ -28,7 +28,7 @@ const LabelStudioWrapper = () => {
   const userContext = useContext(UserContext);
   const { project_id, task_id } = useParams();
   const [loader, showLoader, hideLoader] = useFullPageLoader();
-  
+
   function LSFRoot(
     rootRef,
     lsfRef,
@@ -42,10 +42,10 @@ const LabelStudioWrapper = () => {
     let load_time;
     let interfaces = [];
     if (predictions == null) predictions = [];
-  
+
     // let annotationdata = annotations.length === 0? predictions: annotations
     // if(annotations.length == 0) annotations = predictions;
-  
+
     if (taskData.task_status == "freezed") {
       interfaces = [
         "panel",
@@ -93,27 +93,27 @@ const LabelStudioWrapper = () => {
         "edit-history",
       ];
     }
-  
+
     if (rootRef.current) {
       lsfRef.current = new LabelStudio(rootRef.current, {
         /* all the options according to the docs */
         config: labelConfig,
-  
+
         interfaces: interfaces,
-  
+
         user: {
           pk: userContext.user.id,
           firstName: userContext.user.first_name,
           lastName: userContext.user.last_name,
         },
-  
+
         task: {
           annotations: annotations,
           predictions: predictions,
           id: taskData.id,
           data: taskData.data,
         },
-  
+
         onLabelStudioLoad: function (ls) {
           var c = ls.annotationStore.addAnnotation({
             userGenerate: true,
@@ -134,18 +134,18 @@ const LabelStudioWrapper = () => {
             )
           }
           else message.error("Task is freezed");
-  
+
           if (localStorage.getItem("labelAll"))
             getNextProject(project_id, taskData.id).then((res) => {
               hideLoader();
               window.location.href = `/projects/${project_id}/task/${res.id}`;
             })
-          else{
+          else {
             hideLoader();
             window.location.reload();
           }
         },
-  
+
         onSkipTask: function () {
           showLoader();
           updateTask(taskData.id).then(() => {
@@ -155,16 +155,15 @@ const LabelStudioWrapper = () => {
             });
           })
         },
-  
+
         onUpdateAnnotation: function (ls, annotation) {
           if (taskData.task_status != "freezed") {
             showLoader();
             for (let i = 0; i < annotations.length; i++) {
-              if (annotation.serializeAnnotation().id == annotations[i].result.id)
-              {
+              if (annotation.serializeAnnotation().id == annotations[i].result.id) {
                 let temp = annotation.serializeAnnotation()
-                
-                for (let i=0; i<temp.length; i++) {
+
+                for (let i = 0; i < temp.length; i++) {
                   if (temp[i].value.text) {
                     temp[i].value.text = [temp[i].value.text[0]]
                   }
@@ -174,15 +173,15 @@ const LabelStudioWrapper = () => {
                   annotations[i].id,
                   load_time,
                   annotations[i].lead_time
-                  ).then(() => {
-                    hideLoader();
-                    location.reload()
-                  });
-                }
+                ).then(() => {
+                  hideLoader();
+                  location.reload()
+                });
+              }
             }
           } else message.error("Task is freezed");
         },
-  
+
         onDeleteAnnotation: function (ls, annotation) {
           for (let i = 0; i < annotations.length; i++) {
             if (annotation.serializeAnnotation().id == annotations[i].result.id)
@@ -229,44 +228,44 @@ const LabelStudioWrapper = () => {
     }
   }, [labelConfig, userContext]);
 
-  const onDraftAnnotation = async() => {
+  const onDraftAnnotation = async () => {
     task_status = "draft";
     lsfRef.current.store.submitAnnotation();
   }
 
 
   return (
-  <div>
-    <div style={{display: "flex", justifyContent: "flex-end"}}>
-      <Button
+    <div>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
           value="Draft"
           type="danger"
           onClick={onDraftAnnotation}
         >
           Draft
         </Button>
+      </div>
+      <div className="label-studio-root" ref={rootRef}></div>
     </div>
-    <div className="label-studio-root" ref={rootRef}></div>
-  </div>
-    );
+  );
 };
 
 function LSF() {
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
-      <div style={{maxWidth: "100%", display: "flex", justifyContent: "space-between"}}>
-      <div style={{ display: "inline-flex" }}>
-        <Button
-          value="Back to Project"
-          onClick={() => {
-            localStorage.removeItem("labelAll");
-            var id = window.location.href.split("/")[4];
-            window.location.href = `/projects/${id}`;
-          }}
-        >
-          Back to Project
-        </Button>
-      </div>
+      <div style={{ maxWidth: "100%", display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "inline-flex" }}>
+          <Button
+            value="Back to Project"
+            onClick={() => {
+              localStorage.removeItem("labelAll");
+              var id = window.location.href.split("/")[4];
+              window.location.href = `/projects/${id}`;
+            }}
+          >
+            Back to Project
+          </Button>
+        </div>
       </div>
       <LabelStudioWrapper />
     </div>

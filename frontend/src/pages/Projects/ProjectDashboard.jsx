@@ -35,13 +35,14 @@ function ProjectDashboard() {
   const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const initFilters = ["skipped", "accepted", "unlabeled"];
+  const initFilters = ["skipped", "accepted", "unlabeled", "draft"];
   const [selectedFilters, setFilters] = useState(initFilters);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
     { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
     { label: "accepted", value: "accepted", },
+    { label: "draft", value: "draft", },
   ];
   const [selectedDate, setselectedDate] = useState("");
   const [hideshow, sethideshow] = useState(false);
