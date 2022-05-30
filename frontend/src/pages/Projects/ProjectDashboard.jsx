@@ -10,11 +10,13 @@ import {
   getColumnNames,
   getDataSource,
   getVariableParams,
-  memberColumns,
 } from "./TasksTableContent";
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
+import {MembersTab} from './MembersTab';
+
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
@@ -31,6 +33,7 @@ function ProjectDashboard() {
   const [pagination, setPagination] = useState({});
   const initFilters = ["skipped", "accepted", "unlabeled"];
   const [selectedFilters, setFilters] = useState(initFilters);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
     { label: "unlabeled", value: "unlabeled",},
     { label: "skipped", value: "skipped", },
@@ -38,20 +41,24 @@ function ProjectDashboard() {
   ];
 
   function handleTableChange() {
+    showLoader();
     getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      hideLoader();
     });
   }
 
   function handleFilterChange(checkedValue){
+    showLoader();
     if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
     getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      hideLoader();
     });
   }
 
@@ -224,7 +231,7 @@ function ProjectDashboard() {
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
-                <Table columns={memberColumns} dataSource={projectMembers} />
+                <MembersTab projectMembers={projectMembers} />
               </TabPane>
               <TabPane tab=" Reports" key="3">
                 
@@ -235,6 +242,7 @@ function ProjectDashboard() {
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }
