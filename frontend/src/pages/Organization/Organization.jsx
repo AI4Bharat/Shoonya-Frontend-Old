@@ -55,7 +55,7 @@ function Organization() {
       workspace_name: data.workspace_name,
       managers: data.managers,
       created_by: userContext.user.id,
-    }).then(() => setWorkspace({ ...workspace, visible: false }));
+    }).then(() => setWorkspace({ ...workspace, visible: false })).then(()=>window.location.reload())
   };
 
   
@@ -87,9 +87,7 @@ function Organization() {
             <Paragraph>Created by: {organization?.created_by.first_name + " " + organization?.created_by.last_name}</Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Workspaces" key="1">
-                {userContext.user?.role === 1 &&
-                  userContext.user?.role === 2 &&
-                  userContext.user?.role === 3 && (
+                {userContext.user?.role === 3 && (
                     <>
                       <Button
                         style={{ width: "100%", marginBottom: "1%" }}
