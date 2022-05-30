@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Col, Row, Card, Table, Button, Tabs, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
@@ -6,6 +6,7 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
+import moment from "moment";
 import {
   getColumnNames,
   getDataSource,
@@ -16,6 +17,7 @@ import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {MembersTab} from './MembersTab';
+import "../../../src/App.css";
 
 const { TabPane } = Tabs;
 
@@ -28,17 +30,33 @@ function ProjectDashboard() {
   const [tasks, setTasks] = useState([]);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
+  const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
+  const [date, setDate] = useState("");
   const initFilters = ["skipped", "accepted", "unlabeled"];
   const [selectedFilters, setFilters] = useState(initFilters);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
-    { label: "unlabeled", value: "unlabeled",},
+    { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
     { label: "accepted", value: "accepted", },
   ];
+  const [selectedDate, setselectedDate] = useState("");
+  const [hideshow, sethideshow] = useState(false);
+  const [selectstart, setselectstart] = useState("");
+  const [selectend, setselectend] = useState("");
+  const [apidata, setapidata] = useState("");
+  const [color, setColor] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
+  }, [selectedDate]);
+
+  const hideshowdiv = () => {
+    sethideshow(true)
+  }
 
   function handleTableChange() {
     showLoader();
@@ -50,8 +68,7 @@ function ProjectDashboard() {
     });
   }
 
-  function handleFilterChange(checkedValue){
-    showLoader();
+  function handleFilterChange(checkedValue) {
     if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
     getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
@@ -62,12 +79,17 @@ function ProjectDashboard() {
     });
   }
 
+  const items = JSON.parse(localStorage.getItem('selectedDate'));
+
+  console.log(items, "itemsin prent")
+
+
   useEffect(() => {
     if (project_id) {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, 10,selectedFilters).then((res) => {
+      getTasks(project_id, 1, 10, selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
@@ -141,6 +163,82 @@ function ProjectDashboard() {
     return <div>Loading...</div>;
   }
 
+
+  const dateRange = {
+    from_date: selectstart,
+    to_date: selectend,
+  }
+
+  const onDisplayTable = async (id) => {
+    try {
+      let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
+      console.log(response)
+      setResultsource(response.data)
+      console.log(response.data, "data")
+      return;
+    } catch (error) {
+      message.error(error);
+    }
+
+  };
+  var keys = [];
+  if (resultsource?.length > 0) {
+    for (var key in resultsource[0]) {
+      let obj = {}
+      obj['title'] = camelize(key)
+      obj['dataIndex'] = key
+      obj['key'] = key
+      keys.push(obj);
+    }
+
+  }
+  console.log(keys)
+  function camelize(str) {
+    const arr = str.toString().split("_");
+    for (var i = 0; i < arr.length; i++) {
+      arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+    }
+    return arr.join(" ");
+
+  }
+  
+  const onDateRange = (date) => {
+    if (date === "Today") {
+      sethideshow(false)
+      setselectstart(moment().format("YYYY-MM-DD"))
+      setselectend(moment().format("YYYY-MM-DD"))
+      setselectedDate(`${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`)
+
+    } if (date === "Yesterday") {
+      sethideshow(false), setselectstart(moment().add(-1, "days").format("YYYY-MM-DD"))
+      setselectend(moment().add(-1, "days").format("YYYY-MM-DD"))
+      setselectedDate(`${moment().add(-1, "days").format("YYYY-MMM-DD")} - ${moment().add(-1, "days").format("YYYY-MMM-DD")}`)
+
+     
+    } if (date === "LastWeek") {
+      sethideshow(false)
+      setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
+      setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
+      setselectedDate(`${moment().subtract(1, "weeks").startOf("week").format("YYYY-MMM-DD")} - ${moment().subtract(1, "weeks").endOf("week").format("YYYY-MMM-DD")}`)
+    }
+    if (date === "ThisWeek") {
+      sethideshow(false)
+      setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
+      setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
+      setselectedDate(`${moment().startOf("week").format("YYYY-MMM-DD")} - ${moment().endOf("week").format("YYYY-MMM-DD")}`)
+    }
+    if (date === "Thismonth") {
+      sethideshow(false)
+      setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
+      setselectend(moment().endOf("month").format("YYYY-MM-DD"))
+      setselectedDate(`${moment().startOf("month").format("YYYY-MMM-DD")} - ${moment().endOf("month").format("YYYY-MMM-DD")}`)
+    }
+  }
+  const styles = {
+    
+  backgroundColor  : color
+  };
+  
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -166,8 +264,8 @@ function ProjectDashboard() {
               {project.is_published
                 ? "Published"
                 : project.is_archived
-                ? "Archived"
-                : "Draft"}
+                  ? "Archived"
+                  : "Draft"}
             </Paragraph>
             {userContext.user?.role !== 1 && (
               <Button type="primary">
@@ -179,16 +277,16 @@ function ProjectDashboard() {
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
                     <div style={{ display: "inline-flex", width: "49%", marginBottom: "1%", marginRight: "1%" }}>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        labelAllTasks(project_id);
-                      }}
-                      type="primary"
-                      style={{width: "100%"}}
-                    >
-                      Start Labelling Now
-                    </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          labelAllTasks(project_id);
+                        }}
+                        type="primary"
+                        style={{ width: "100%" }}
+                      >
+                        Start Labelling Now
+                      </Button>
                     </div>
                   ) : (
                     <Button
@@ -206,15 +304,15 @@ function ProjectDashboard() {
                   </Button>
                 )}
                 {project.project_mode == "Annotation" ? (
-                    <div style={{display: "inline-flex", width: "50%", justifyContent: "space-evenly"}}>
-                      Filter by:
-                      <Checkbox.Group
-                        options={filters}
-                        value={selectedFilters}
-                        onChange={handleFilterChange}
-                      />
-                    </div>
-                ): (<div></div>)
+                  <div style={{ display: "inline-flex", width: "50%", justifyContent: "space-evenly" }}>
+                    Filter by:
+                    <Checkbox.Group
+                      options={filters}
+                      value={selectedFilters}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                ) : (<div></div>)
                 }
                 <Table
                   pagination={{
@@ -234,9 +332,50 @@ function ProjectDashboard() {
                 <MembersTab projectMembers={projectMembers} />
               </TabPane>
               <TabPane tab=" Reports" key="3">
-                
+                <Row>
+                  <Col>  <Title level={5}>Select date range</Title></Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <div style={{ margin: "10px", display: "flex" }}>
+                      <div style={{ position: 'relative', width: "80%" }}>
+                        <div className="selectedDate" onClick={hideshowdiv}  style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px",   }}> {selectedDate}</div>
+                        {hideshow ?
+                          <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer","&:hover": { background: "#efefef"
+                          } }} className="dateptions">
+                            <p  className="dateRange"   onClick={(e) => { onDateRange("Today") }}>Today</p>
+                            <p   className="dateRange"   onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
+                           <p   className="dateRange"   onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
+                            <p   className="dateRange"  onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
+                            <p   className="dateRange"   onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
+                          </div>
+                          : ' '}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={12}>
+
+                    <Button
+                      onClick={() => onDisplayTable(project_id)}
+                      type="primary"
+                      style={{ width: "15%", margin: "20px 10px 10px 10px" }}
+                    >
+                      Submit
+                    </Button>
+                  </Col>
+                </Row>
+                {/* <Row>
+                  <Col >
+                    <Title level={3} style={{ margin: "50px 10px 10px 10px" }}  >
+                      PROJECT REPORT
+                    </Title>
+                  </Col>
+                </Row> */}
+                <Table 
+                  columns={keys}
+                  dataSource={resultsource}
+                />
               </TabPane>
-             
             </Tabs>
           </Card>
         </Col>
