@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Form, Input, Row, Card,Space } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
-
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
-  addAnnotatorsToProject,
   publishProject,
   getProject,
   updateProject,
@@ -17,14 +16,13 @@ import { CSVDownload } from "react-csv";
 function ProjectSettings() {
   const { id } = useParams();
   let navigate = useNavigate();
-  const { TextArea } = Input;
 
   const [basicSettingsForm] = Form.useForm();
 
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
-  const [data, setData] = useState({});
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -40,19 +38,16 @@ function ProjectSettings() {
     });
   }, []);
 
-  const onFinishAddAnnotator = async (values) => {
-    const emails = values.emails.split(",").map((email) => email.trim());
-
-    await addAnnotatorsToProject(id, emails);
-  };
-  const onExport =(id)=>{
-    let projects =  exportProject(id)
-   
-    }
+  const onExport = async (id)=>{
+    showLoader();
+    let projects =  await exportProject(id)
+    hideLoader();
+  }
    
     const onPullData = async () => {
+      showLoader();
       await PullNewData(id);
-     
+      hideLoader();
     };
 
     const onDownload =async (id) =>{
@@ -64,6 +59,7 @@ function ProjectSettings() {
   
 
   const onEditProjectForm = async (values) => {
+    showLoader();
     const { project_mode, project_type, users } = project;
 
     await updateProject(project.id, {
@@ -72,11 +68,14 @@ function ProjectSettings() {
       project_type,
       users,
     });
+    hideLoader();
   };
 
   const handlePublishProject = async () => {
+    showLoader();
     await publishProject(id);
     setPublished(true);
+    hideLoader();
     navigate(`/projects/${id}`, { replace: true });
   };
 
@@ -224,6 +223,7 @@ function ProjectSettings() {
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }
