@@ -59,19 +59,19 @@ function ProjectSettings() {
     await PullNewData(id);
     hideLoader();
   };
-  
+
 
   const onDownload = async (id) => {
 
     let download = await downloadProject(id)
     console.log(download)
-    if(download.status==200){
+    if (download.status == 200) {
       setData(download.data)
 
     }
-    
+
   }
- 
+
 
   const exportData = () => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
@@ -239,7 +239,7 @@ function ProjectSettings() {
                   <Form.Item
                     wrapperCol={{ span: 16 }}
                   >
-                      <Select
+                    <Select
                       defaultValue="CSV"
                       style={{
                         width: 120,
@@ -251,27 +251,24 @@ function ProjectSettings() {
                       <Option value="JSON">JSON</Option>
 
                     </Select>
-                    </Form.Item>
-                    <Form.Item
+                  </Form.Item>
+                  <Form.Item
                     wrapperCol={{ span: 16 }}
                   >
-                    <Button  type="primary" onClick={() => onDownload(id)}>
+                    <Button type="primary" onClick={() => onDownload(id)}>
                       Download project
-                     
+
                     </Button>
                   </Form.Item>
-                    
-                  
-                 
                   {data?.length && (options == "CSV" ? <CSVDownload
-                          filename={"Expense_Table.csv"}
-                          data={data}
-                          target="_blank"
-                        >
+                    filename={"Expense_Table.csv"}
+                    data={data}
+                    target="_blank"
+                  >
 
-                        </CSVDownload>:exportData())
-                       
-                      }
+                  </CSVDownload> : exportData())
+
+                  }
                 </div>
               </div>
             </Form>
