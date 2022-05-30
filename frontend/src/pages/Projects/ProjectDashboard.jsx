@@ -29,7 +29,6 @@ function ProjectDashboard() {
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
-  const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const initFilters = ["skipped", "accepted", "unlabeled"];
   const [selectedFilters, setFilters] = useState(initFilters);
@@ -64,32 +63,41 @@ function ProjectDashboard() {
 
   useEffect(() => {
     if (project_id) {
+      showLoader();
       getProject(project_id).then((res) => {
         setProject(res);
+        hideLoader();
       });
+      showLoader();
       getTasks(project_id, 1, 10,selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
         pagination.pageSize = 10;
         setPagination(pagination);
+        hideLoader();
       });
+      showLoader();
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
+        hideLoader();
       });
     }
   }, [project_id]);
 
   useEffect(() => {
     if (project) {
+      showLoader();
       getVariableParams(project).then((res) => {
         setVariableParams(res);
+        hideLoader();
       });
     }
   }, [project]);
 
   useEffect(() => {
     if (tasks) {
+      showLoader();
       getDataSource(
         tasks,
         project_id,
@@ -97,12 +105,14 @@ function ProjectDashboard() {
         project.is_published
       ).then((res) => {
         setDataSource(res);
+        hideLoader();
       });
     }
   }, [tasks]);
 
   useEffect(() => {
     if (dataSource) {
+      showLoader();
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -112,9 +122,9 @@ function ProjectDashboard() {
           res[i].title = res[i].title.replaceAll("_", " ");
         }
         setColumns(res);
+        hideLoader();
       });
     }
-    setLoading(false);
   }, [dataSource]);
 
   const labelAllTasks = async (project_id) => {
@@ -136,10 +146,6 @@ function ProjectDashboard() {
       }
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
