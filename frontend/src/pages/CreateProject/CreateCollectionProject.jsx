@@ -7,6 +7,7 @@ import Title from "antd/lib/typography/Title";
 import UserContext from "../../context/User/UserContext";
 
 import { getDomains, createProject } from "../../api/CreateProjectAPI";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 const { Option } = Select;
 
@@ -24,6 +25,7 @@ function CreateCollectionProject() {
   const [description, setDescription] = useState("");
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   useEffect(() => {
     if (userContext.user) {
@@ -81,6 +83,7 @@ function CreateCollectionProject() {
   };
 
   const handleCreateProject = () => {
+    showLoader();
     createProject({
       title: title,
       description: description,
@@ -97,9 +100,11 @@ function CreateCollectionProject() {
       required_annotators_per_task: 1,
     })
       .then((data) => {
+        hideLoader();
         navigate(`/projects/${data.id}`, { replace: true });
       })
       .catch((err) => {
+        hideLoader();
         message.error("Error creating project ", err);
       });
   };
@@ -174,6 +179,7 @@ function CreateCollectionProject() {
           </>
         )}
       </Col>
+      {loader}
     </Row>
   );
 }

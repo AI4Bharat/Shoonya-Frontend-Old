@@ -26,6 +26,11 @@ const LabelStudioWrapper = () => {
 
   // we're running an effect on component mount and rendering LSF inside rootRef node
   useEffect(() => {
+    if (localStorage.getItem('rtl') === "true") {
+      var style = document.createElement('style');
+      style.innerHTML = 'input, textarea { direction: RTL; }'
+      document.head.appendChild(style);
+    }
     if (
       typeof labelConfig === "undefined" &&
       typeof taskData === "undefined" &&
@@ -153,15 +158,15 @@ function LSFRoot(
             userContext.user.id,
             load_time,
             annotation.lead_time,
-          )
-          }
-        else message.error("Task is freezed");
-
-        if (localStorage.getItem("labelAll"))
-          getNextProject(project_id, taskData.id).then((res) => {
-            window.location.href = `/projects/${project_id}/task/${res.id}`;
+          ).then(() => {
+            if (localStorage.getItem("labelAll"))
+              getNextProject(project_id, taskData.id).then((res) => {
+                window.location.href = `/projects/${project_id}/task/${res.id}`;
+              })
+            else window.location.reload();
           })
-        else window.location.reload();
+        }
+        else message.error("Task is freezed");
       },
 
       onSkipTask: function () {
@@ -175,11 +180,10 @@ function LSFRoot(
       onUpdateAnnotation: function (ls, annotation) {
         if (taskData.task_status != "freezed") {
           for (let i = 0; i < annotations.length; i++) {
-            if (annotation.serializeAnnotation().id == annotations[i].result.id)
-            {
+            if (annotation.serializeAnnotation().id == annotations[i].result.id) {
               let temp = annotation.serializeAnnotation()
-              
-              for (let i=0; i<temp.length; i++) {
+
+              for (let i = 0; i < temp.length; i++) {
                 if (temp[i].value.text) {
                   temp[i].value.text = [temp[i].value.text[0]]
                 }
@@ -189,8 +193,8 @@ function LSFRoot(
                 annotations[i].id,
                 load_time,
                 annotations[i].lead_time
-                ).then(() => location.reload());
-              }
+              ).then(() => location.reload());
+            }
           }
         } else message.error("Task is freezed");
       },

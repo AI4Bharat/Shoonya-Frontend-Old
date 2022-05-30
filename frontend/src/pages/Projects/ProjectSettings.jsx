@@ -3,6 +3,7 @@ import { Button, Col, Form, Input, Row, Card } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { snakeToTitleCase } from "../../utils/stringConversions";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
   publishProject,
   getProject,
@@ -20,6 +21,7 @@ function ProjectSettings() {
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -35,18 +37,21 @@ function ProjectSettings() {
     });
   }, []);
 
-  const onExport =(id)=>{
-    let projects =  exportProject(id)
-   
+  const onExport = async (id)=>{
+    showLoader();
+    let projects =  await exportProject(id)
+    hideLoader();
   }
    
     const onPullData = async () => {
+      showLoader();
       await PullNewData(id);
-     
+      hideLoader();
     };
   
 
   const onEditProjectForm = async (values) => {
+    showLoader();
     const { project_mode, project_type, users } = project;
 
     await updateProject(project.id, {
@@ -55,11 +60,14 @@ function ProjectSettings() {
       project_type,
       users,
     });
+    hideLoader();
   };
 
   const handlePublishProject = async () => {
+    showLoader();
     await publishProject(id);
     setPublished(true);
+    hideLoader();
     navigate(`/projects/${id}`, { replace: true });
   };
 
@@ -181,6 +189,7 @@ function ProjectSettings() {
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }

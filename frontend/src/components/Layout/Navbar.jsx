@@ -1,6 +1,6 @@
 import { Header } from "antd/lib/layout/layout";
 import React, { useContext } from "react";
-import { Dropdown, Menu, Button, Avatar } from "antd";
+import { Dropdown, Menu, Button, Avatar, Checkbox } from "antd";
 import Logo from "../../logo.svg";
 import { UserOutlined } from "@ant-design/icons";
 import UserContext from "../../context/User/UserContext";
@@ -8,6 +8,23 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   const userContext = useContext(UserContext);
+
+  function handleRTLChange(e) {
+    let style;
+    if (e.target.checked) {
+      localStorage.setItem('rtl', true);
+      style = document.createElement('style');
+      style.innerHTML = 'input, textarea { direction: RTL; }'
+      document.head.appendChild(style);
+    }
+    else {
+      localStorage.setItem('rtl', false);
+      style = document.createElement('style');
+      style.innerHTML = 'input, textarea { direction: unset; }'
+      document.head.appendChild(style);
+    }
+  }
+
   return (
     <Header
       style={{
@@ -47,19 +64,24 @@ function Navbar() {
                 </Menu.Item>
                 {(userContext.user?.role === 2 ||
                   userContext.user?.role === 3) && (
-                  <>
-                    <Menu.Item key="2">
-                      <Link
-                        to={`/organization/${userContext.user.organization.id}`}
-                      >
-                        My Organization
-                      </Link>
-                    </Menu.Item>
-                  </>
-                )}
+                    <>
+                      <Menu.Item key="2">
+                        <Link
+                          to={`/organization/${userContext.user.organization.id}`}
+                        >
+                          My Organization
+                        </Link>
+                      </Menu.Item>
+                    </>
+                  )}
 
                 <Menu.Item key="3" onClick={() => userContext.logout()}>
                   <Link to="/">Logout</Link>
+                </Menu.Item>
+                <Menu.Item key="4">
+                  <Checkbox onChange={handleRTLChange} defaultChecked={localStorage.getItem('rtl') === "true"}	>
+                    Enable RTL-typing
+                  </Checkbox>
                 </Menu.Item>
               </Menu>
             }
