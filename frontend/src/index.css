@@ -92,6 +92,17 @@ textarea.ant-input {
   max-width: 100% !important;
 }
 
+.sampling-params p,
+.variable-params p {
+  font-size: 18px;
+  margin-bottom: 0;
+}
+
+.sampling-params:last-child,
+.variable-params:last-child {
+  margin-bottom: 18px;
+}
+
 .full-page-loader {
   position: fixed;
   top: 0;
