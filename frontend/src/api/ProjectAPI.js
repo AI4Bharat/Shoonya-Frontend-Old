@@ -87,22 +87,19 @@ const exportProject = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/project_export/`);
 
-    if (response.status !== 200)
+    if (response.status !== 200){
       return message.error("Unable to Export Project");
-
-    if (response.data.message === "This project is Exported")
-      message.success("This Project is Exported");
-    else message.success("This Project has already been Exported");
-
-    return;
-  } catch (error) {
-    message.error(error);
-  }
+    }
+      message.success("Successfully Exported Project");
+      return;
+    } catch (error) {
+      message.error(error);
+    }
 };
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
-
+console.log(response)
     if (response.status !== 200)
       return message.error("Unable to pull New Items");
 
@@ -115,6 +112,21 @@ const PullNewData = async (id) => {
     message.error(error);
   }
 };
+const downloadProject = async (id) => {
+
+  try {
+    let response = await axiosInstance.get(`/projects/${id}/download?export_type=CSV`);
+    console.log(response,"data")
+    if (response.status !== 200){
+      return message.error("Unable to Download Project");
+    }
+      message.success("Successfully Downloaded Project");
+     
+      return response;
+    } catch (error) {
+      message.error(error);
+    }
+};
 
 export {
   fetchProjects,
@@ -125,4 +137,5 @@ export {
   getProjectMembers ,
   exportProject,
   PullNewData,
+  downloadProject,
 };

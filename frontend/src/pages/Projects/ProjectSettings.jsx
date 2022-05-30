@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card } from "antd";
+import { Button, Col, Form, Input, Row, Card,Space } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
+
 import {
   addAnnotatorsToProject,
   publishProject,
@@ -9,7 +10,9 @@ import {
   updateProject,
   exportProject,
   PullNewData,
+  downloadProject,
 } from "../../api/ProjectAPI";
+import { CSVDownload } from "react-csv";
 
 function ProjectSettings() {
   const { id } = useParams();
@@ -21,6 +24,7 @@ function ProjectSettings() {
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
+  const [data, setData] = useState({});
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -50,6 +54,13 @@ function ProjectSettings() {
       await PullNewData(id);
      
     };
+
+    const onDownload =async (id) =>{
+
+      let download =await downloadProject(id)
+      console.log(download)
+      setData( download.data)
+    }
   
 
   const onEditProjectForm = async (values) => {
@@ -182,12 +193,30 @@ function ProjectSettings() {
                     style={{ marginRight: "10px" }}
                   >
                    <Button type="primary"  onClick={() =>onExport(id)}>
-                      Export project
+                   Export Project into Dataset
                     </Button>
                   </Form.Item>
+                  
                   <Button type="primary" onClick={()=>onPullData(id)}>
-                    Pull DataItems
+                  Pull New Data Items from Source Dataset
                   </Button>
+               
+                  <Form.Item
+                    wrapperCol={{ span: 16 }}
+                   >
+                  <Button   style={{ marginLeft: "10px" }} type="primary"  onClick={()=>onDownload(id)}>
+                  Download project
+                  {data?.length &&
+                   <CSVDownload
+              filename={"Expense_Table.csv"}
+              data={data}
+              target="_blank"
+            >
+             
+            </CSVDownload> 
+}
+                  </Button>
+                  </Form.Item>
                 </div>
               </div>
             </Form>
