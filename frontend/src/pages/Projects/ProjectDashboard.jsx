@@ -32,7 +32,6 @@ function ProjectDashboard() {
   const [dataSource, setDataSource] = useState([]);
   const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
-  const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
   const initFilters = ["skipped", "accepted", "unlabeled"];
@@ -86,32 +85,42 @@ function ProjectDashboard() {
 
   useEffect(() => {
     if (project_id) {
+      showLoader();
       getProject(project_id).then((res) => {
         setProject(res);
+        hideLoader();
       });
       getTasks(project_id, 1, 10, selectedFilters).then((res) => {
+      showLoader();
+      getTasks(project_id, 1, 10,selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
         pagination.pageSize = 10;
         setPagination(pagination);
+        hideLoader();
       });
+      showLoader();
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
+        hideLoader();
       });
     }
   }, [project_id]);
 
   useEffect(() => {
     if (project) {
+      showLoader();
       getVariableParams(project).then((res) => {
         setVariableParams(res);
+        hideLoader();
       });
     }
   }, [project]);
 
   useEffect(() => {
     if (tasks) {
+      showLoader();
       getDataSource(
         tasks,
         project_id,
@@ -119,12 +128,14 @@ function ProjectDashboard() {
         project.is_published
       ).then((res) => {
         setDataSource(res);
+        hideLoader();
       });
     }
   }, [tasks]);
 
   useEffect(() => {
     if (dataSource) {
+      showLoader();
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -135,9 +146,9 @@ function ProjectDashboard() {
         }
         setColumns(res);
         console.log(res, "abcd")
+        hideLoader();
       });
     }
-    setLoading(false);
   }, [dataSource]);
 
   const labelAllTasks = async (project_id) => {

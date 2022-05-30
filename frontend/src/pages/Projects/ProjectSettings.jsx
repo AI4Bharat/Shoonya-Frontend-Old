@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Form, Input, Row, Card,Space } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { snakeToTitleCase } from "../../utils/stringConversions";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
   addAnnotatorsToProject,
@@ -226,6 +227,61 @@ function ProjectSettings() {
                 </div>
               </div>
             </Form>
+            <Title level={3}>Advanced Operations</Title>
+            <div style={{width:'50%', display:'flex', justifyContent:'space-between', marginBottom: '24px'}}>
+              <Button type="primary" disabled={published} onClick={handlePublishProject}>
+                Publish Project
+              </Button>
+              <Button type="primary"  onClick={() =>onExport(id)}>
+                Export project
+              </Button>
+              <Button type="primary" onClick={()=>onPullData(id)}>
+                Pull DataItems
+              </Button> 
+            </div>
+            <Title level={3}>Read-only Configurations</Title>
+            {project.sampling_mode && (
+              <div>
+                <Title level={4}>Sampling Parameters</Title>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                  <Col xs={12} md={8}>
+                    <p>Sampling Mode:</p>
+                  </Col>
+                  <Col xs={12} md={16}>
+                    <p>
+                      {project.sampling_mode == "b" && "Batch"}
+                      {project.sampling_mode == "r" && "Random"}
+                      {project.sampling_mode == "f" && "Full"}
+                    </p>
+                  </Col>
+                </Row>
+                {Object.keys(project.sampling_parameters_json).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                    <Col xs={12} md={8}>
+                      <p>{snakeToTitleCase(key)}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.sampling_parameters_json[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
+            {Object.keys(project.variable_parameters).length !==0 && (
+              <div>
+              <Title level={4}>Variable Parameters</Title>
+              {Object.keys(project.variable_parameters).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="variable-params">
+                    <Col xs={12} md={8}>
+                      <p>{snakeToTitleCase(key)}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.variable_parameters[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
           </Card>
         </Col>
         <Col span={1} />
