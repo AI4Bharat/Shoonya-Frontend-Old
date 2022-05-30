@@ -17,6 +17,7 @@ import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {MembersTab} from './MembersTab';
+import "../../../src/App.css";
 
 const { TabPane } = Tabs;
 
@@ -47,6 +48,7 @@ function ProjectDashboard() {
   const [selectstart, setselectstart] = useState("");
   const [selectend, setselectend] = useState("");
   const [apidata, setapidata] = useState("");
+  const [color, setColor] = useState("");
 
   useEffect(() => {
     localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
@@ -183,7 +185,6 @@ function ProjectDashboard() {
   var keys = [];
   if (resultsource?.length > 0) {
     for (var key in resultsource[0]) {
-      console.log(typeof (key), "kkk")
       let obj = {}
       obj['title'] = camelize(key)
       obj['dataIndex'] = key
@@ -194,47 +195,51 @@ function ProjectDashboard() {
   }
   console.log(keys)
   function camelize(str) {
-    const arr = str.toString().split(" ");
+    const arr = str.toString().split("_");
     for (var i = 0; i < arr.length; i++) {
       arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
     }
     return arr.join(" ");
 
   }
+  
   const onDateRange = (date) => {
     if (date === "Today") {
       sethideshow(false)
       setselectstart(moment().format("YYYY-MM-DD"))
       setselectend(moment().format("YYYY-MM-DD"))
-      setselectedDate(`${moment().format("YYYY-MM-DD")} - ${moment().format("YYYY-MM-DD")}`)
+      setselectedDate(`${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`)
 
     } if (date === "Yesterday") {
       sethideshow(false), setselectstart(moment().add(-1, "days").format("YYYY-MM-DD"))
       setselectend(moment().add(-1, "days").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().add(-1, "days").format("YYYY-MM-DD")} - ${moment().add(-1, "days").format("YYYY-MM-DD")}`)
+      setselectedDate(`${moment().add(-1, "days").format("YYYY-MMM-DD")} - ${moment().add(-1, "days").format("YYYY-MMM-DD")}`)
 
      
     } if (date === "LastWeek") {
       sethideshow(false)
       setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD")} - ${moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD")}`)
+      setselectedDate(`${moment().subtract(1, "weeks").startOf("week").format("YYYY-MMM-DD")} - ${moment().subtract(1, "weeks").endOf("week").format("YYYY-MMM-DD")}`)
     }
     if (date === "ThisWeek") {
       sethideshow(false)
       setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().startOf("week").format("YYYY-MM-DD")} - ${moment().endOf("week").format("YYYY-MM-DD")}`)
+      setselectedDate(`${moment().startOf("week").format("YYYY-MMM-DD")} - ${moment().endOf("week").format("YYYY-MMM-DD")}`)
     }
     if (date === "Thismonth") {
       sethideshow(false)
       setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
       setselectend(moment().endOf("month").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().startOf("month").format("YYYY-MM-DD")} - ${moment().endOf("month").format("YYYY-MM-DD")}`)
+      setselectedDate(`${moment().startOf("month").format("YYYY-MMM-DD")} - ${moment().endOf("month").format("YYYY-MMM-DD")}`)
     }
   }
-
-
+  const styles = {
+    
+  backgroundColor  : color
+  };
+  
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -335,14 +340,15 @@ function ProjectDashboard() {
                   <Col span={8}>
                     <div style={{ margin: "10px", display: "flex" }}>
                       <div style={{ position: 'relative', width: "80%" }}>
-                        <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px" }}> {selectedDate}</div>
+                        <div className="selectedDate" onClick={hideshowdiv}  style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px",   }}> {selectedDate}</div>
                         {hideshow ?
-                          <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer" }} className="dateptions">
-                            <p onClick={(e) => { onDateRange("Today") }}>Today</p>
-                            <p onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
-                           <p onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
-                            <p onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
-                            <p onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
+                          <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer","&:hover": { background: "#efefef"
+                          } }} className="dateptions">
+                            <p  className="dateRange"   onClick={(e) => { onDateRange("Today") }}>Today</p>
+                            <p   className="dateRange"   onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
+                           <p   className="dateRange"   onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
+                            <p   className="dateRange"  onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
+                            <p   className="dateRange"   onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
                           </div>
                           : ' '}
                       </div>
