@@ -194,6 +194,11 @@ const LabelStudioWrapper = () => {
   // we're running an effect on component mount and rendering LSF inside rootRef node
   useEffect(() => {
     showLoader();
+    if (localStorage.getItem('rtl') === "true") {
+      var style = document.createElement('style');
+      style.innerHTML = 'input, textarea { direction: RTL; }'
+      document.head.appendChild(style);
+    }
     if (
       typeof labelConfig === "undefined" &&
       typeof taskData === "undefined" &&
