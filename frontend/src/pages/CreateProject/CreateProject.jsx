@@ -14,6 +14,7 @@ import {
 import Title from "antd/lib/typography/Title";
 
 import UserContext from "../../context/User/UserContext";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 import {
   getDomains,
@@ -35,6 +36,7 @@ function CreateProject() {
   const [datasetType, setDatasetType] = useState(null);
   const [columnFields, setColumnFields] = useState(null);
   const [instanceIds, setInstanceIds] = useState(null);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   //Form related state variables
   const [title, setTitle] = useState("");
@@ -172,6 +174,7 @@ function CreateProject() {
   const handleGetData = () => {
     if (selectedInstances) {
       setConfirmed(true);
+      showLoader();
       getData(selectedInstances, datasetType[selectedType]).then((res) => {
         let key = 1;
         for (const data in res) {
@@ -179,6 +182,7 @@ function CreateProject() {
           key++;
         }
         setTableData(res);
+        hideLoader();
       });
     } else {
       message.info("You haven't selected any sources");
@@ -199,6 +203,7 @@ function CreateProject() {
   };
 
   const handleCreateProject = () => {
+    showLoader();
     createProject({
       title: title,
       description: description,
@@ -219,9 +224,11 @@ function CreateProject() {
       required_annotators_per_task: selectedAnnotatorsNum,
     })
       .then((data) => {
+        hideLoader();
         navigate(`/projects/${data.id}`, { replace: true });
       })
       .catch(() => {
+        hideLoader();
         message.error("Error creating project");
       });
   };
@@ -390,6 +397,7 @@ function CreateProject() {
         )}
       </Col>
       <Col span={2} />
+      {loader}
     </Row>
   );
 }

@@ -14,7 +14,8 @@ import {
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
-import {MembersTab} from './MembersTab'
+import useFullPageLoader from "../../hooks/useFullPageLoader";
+import {MembersTab} from './MembersTab';
 
 const { TabPane } = Tabs;
 
@@ -28,10 +29,10 @@ function ProjectDashboard() {
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
-  const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const initFilters = ["skipped", "accepted", "unlabeled"];
   const [selectedFilters, setFilters] = useState(initFilters);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
     { label: "unlabeled", value: "unlabeled",},
     { label: "skipped", value: "skipped", },
@@ -39,51 +40,64 @@ function ProjectDashboard() {
   ];
 
   function handleTableChange() {
+    showLoader();
     getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      hideLoader();
     });
   }
 
   function handleFilterChange(checkedValue){
+    showLoader();
     if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
     getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      hideLoader();
     });
   }
 
   useEffect(() => {
     if (project_id) {
+      showLoader();
       getProject(project_id).then((res) => {
         setProject(res);
+        hideLoader();
       });
+      showLoader();
       getTasks(project_id, 1, 10,selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
         pagination.pageSize = 10;
         setPagination(pagination);
+        hideLoader();
       });
+      showLoader();
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
+        hideLoader();
       });
     }
   }, [project_id]);
 
   useEffect(() => {
     if (project) {
+      showLoader();
       getVariableParams(project).then((res) => {
         setVariableParams(res);
+        hideLoader();
       });
     }
   }, [project]);
 
   useEffect(() => {
     if (tasks) {
+      showLoader();
       getDataSource(
         tasks,
         project_id,
@@ -91,12 +105,14 @@ function ProjectDashboard() {
         project.is_published
       ).then((res) => {
         setDataSource(res);
+        hideLoader();
       });
     }
   }, [tasks]);
 
   useEffect(() => {
     if (dataSource) {
+      showLoader();
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -106,9 +122,9 @@ function ProjectDashboard() {
           res[i].title = res[i].title.replaceAll("_", " ");
         }
         setColumns(res);
+        hideLoader();
       });
     }
-    setLoading(false);
   }, [dataSource]);
 
   const labelAllTasks = async (project_id) => {
@@ -130,10 +146,6 @@ function ProjectDashboard() {
       }
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -236,6 +248,7 @@ function ProjectDashboard() {
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }
