@@ -202,7 +202,7 @@ function ProjectDashboard() {
 
   }
   const onDateRange = (date) => {
-    if (date === "today") {
+    if (date === "Today") {
       sethideshow(false)
       setselectstart(moment().format("YYYY-MM-DD"))
       setselectend(moment().format("YYYY-MM-DD"))
@@ -213,12 +213,8 @@ function ProjectDashboard() {
       setselectend(moment().add(-1, "days").format("YYYY-MM-DD"))
       setselectedDate(`${moment().add(-1, "days").format("YYYY-MM-DD")} - ${moment().add(-1, "days").format("YYYY-MM-DD")}`)
 
-    } if (date === "thismonth") {
-      sethideshow(false)
-      setselectstart(moment().startOf("Month").format("YYYY-MM-DD"))
-      setselectend(moment().format("YYYY-MM-DD"))
-      setselectedDate(`${moment().startOf("Month").format("YYYY-MM-DD")} - ${moment().endOf("Month").format("YYYY-MM-DD")}`)
-    } if (date === "lastWeek") {
+     
+    } if (date === "LastWeek") {
       sethideshow(false)
       setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
@@ -229,6 +225,12 @@ function ProjectDashboard() {
       setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
       setselectedDate(`${moment().startOf("week").format("YYYY-MM-DD")} - ${moment().endOf("week").format("YYYY-MM-DD")}`)
+    }
+    if (date === "Thismonth") {
+      sethideshow(false)
+      setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
+      setselectend(moment().endOf("month").format("YYYY-MM-DD"))
+      setselectedDate(`${moment().startOf("month").format("YYYY-MM-DD")} - ${moment().endOf("month").format("YYYY-MM-DD")}`)
     }
   }
 
@@ -336,10 +338,10 @@ function ProjectDashboard() {
                         <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px" }}> {selectedDate}</div>
                         {hideshow ?
                           <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer" }} className="dateptions">
-                            <p onClick={(e) => { onDateRange("today") }}>Today</p>
+                            <p onClick={(e) => { onDateRange("Today") }}>Today</p>
                             <p onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
                            <p onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
-                            <p onClick={(e) => { onDateRange("lastWeek") }}>lastWeek</p>
+                            <p onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
                             <p onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
                           </div>
                           : ' '}

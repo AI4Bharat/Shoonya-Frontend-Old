@@ -4,6 +4,7 @@ import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
+  addAnnotatorsToProject,
   publishProject,
   getProject,
   updateProject,
@@ -16,9 +17,10 @@ import { CSVDownload } from "react-csv";
 function ProjectSettings() {
   const { id } = useParams();
   let navigate = useNavigate();
+  const { TextArea } = Input;
 
   const [basicSettingsForm] = Form.useForm();
-
+   const [data, setData] = useState(true);
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
@@ -37,6 +39,11 @@ function ProjectSettings() {
       setLoading(false);
     });
   }, []);
+  const onFinishAddAnnotator = async (values) => {
+    const emails = values.emails.split(",").map((email) => email.trim());
+
+    await addAnnotatorsToProject(id, emails);
+  };
 
   const onExport = async (id)=>{
     showLoader();
