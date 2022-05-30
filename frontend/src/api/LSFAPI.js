@@ -37,13 +37,14 @@ const fetchAnnotation = async (taskID) => {
   }
 };
 
-const postAnnotation = async (result, task, completed_by, load_time, lead_time) => {
+const postAnnotation = async (result, task, completed_by, load_time, lead_time, task_status) => {
   try {
     await axiosInstance.post(`/annotation/`, {
       result: result,
       task: task,
       completed_by: completed_by,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
+      task_status: task_status
     },
     )
     .then((res)=> {
@@ -86,17 +87,6 @@ const updateTask = async (taskID) => {
   }
 };
 
-const draftTask = async (taskID) => {
-  try {
-    let response = await axiosInstance.patch(`/task/${taskID}/`, {
-      task_status: "draft",
-    });
-    return response.data;
-  } catch {
-    message.error("Error saving draft.");
-  }
-};
-
 const getNextProject = async (projectID, taskID) => {
   try {
     let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
@@ -125,7 +115,6 @@ export {
   getProjectsandTasks,
   postAnnotation,
   updateTask,
-  draftTask,
   getNextProject,
   patchAnnotation,
   deleteAnnotation,

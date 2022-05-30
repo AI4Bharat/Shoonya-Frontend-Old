@@ -6,7 +6,6 @@ import {
   getProjectsandTasks,
   postAnnotation,
   updateTask,
-  draftTask,
   getNextProject,
   patchAnnotation,
   deleteAnnotation
@@ -15,6 +14,9 @@ import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
 import { Button } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
+
+//used just in postAnnotation to support draft status update.
+let task_status = "labeled";
 
 const LabelStudioWrapper = () => {
   // we need a reference to a DOM node here so LSF knows where to render
@@ -128,6 +130,7 @@ const LabelStudioWrapper = () => {
               userContext.user.id,
               load_time,
               annotation.lead_time,
+              task_status
             )
           }
           else message.error("Task is freezed");
@@ -227,13 +230,10 @@ const LabelStudioWrapper = () => {
   }, [labelConfig, userContext]);
 
   const onDraftAnnotation = async() => {
-    await lsfRef.current.store.submitAnnotation();
-    setDraftStatus();
+    task_status = "draft";
+    lsfRef.current.store.submitAnnotation();
   }
 
-  function setDraftStatus(){
-    draftTask(task_id).then((res)=> console.log(res));
-  }
 
   return (
   <div>
