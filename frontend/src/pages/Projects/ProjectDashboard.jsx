@@ -134,7 +134,6 @@ function ProjectDashboard() {
           res[i].title = res[i].title.replaceAll("_", " ");
         }
         setColumns(res);
-        console.log(res, "abcd")
       });
     }
     setLoading(false);
@@ -228,7 +227,7 @@ function ProjectDashboard() {
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
       setselectedDate(`${moment().startOf("week").format("YYYY-MMM-DD")} - ${moment().endOf("week").format("YYYY-MMM-DD")}`)
     }
-    if (date === "Thismonth") {
+    if (date === "ThisMonth") {
       sethideshow(false)
       setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
       setselectend(moment().endOf("month").format("YYYY-MM-DD"))
