@@ -10,6 +10,7 @@ import {
   fetchWorkspaceProjects,
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
+import { MembersTab } from "./MembersTab";
 const { TabPane } = Tabs;
 
 function Workspace() {
@@ -17,7 +18,6 @@ function Workspace() {
   let navigate = useNavigate();
 
   const [workspace, setWorkspace] = useState(undefined);
-  const [inviteData, setInviteData] = useState({ visible: false, users: [] });
   const [users, setUsers] = useState([]);
   const [project, setProject] = useState({
     projects: [],
@@ -51,9 +51,7 @@ function Workspace() {
             <Paragraph>
               Created by: {workspace && workspace.created_by?.username}
             </Paragraph>
-            <Paragraph>
-              {/* Put relevant text later */}
-            </Paragraph>
+            <Paragraph>{/* Put relevant text later */}</Paragraph>
             {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
               <>
                 <Tabs defaultActiveKey="1">
@@ -97,39 +95,7 @@ function Workspace() {
                     />
                   </TabPane>
                   <TabPane tab="Members" key="2">
-                    <Button
-                      style={{ width: "100%", marginBottom: "1%" }}
-                      onClick={() =>
-                        setInviteData({ ...inviteData, visible: true })
-                      }
-                      type="primary"
-                    >
-                      Invite new members to workspace
-                    </Button>
-                    <Modal
-                      visible={inviteData.visible}
-                      onCancel={() =>
-                        setInviteData({ ...inviteData, visible: false })
-                      }
-                      // //   onOk={() =>
-                      //     inviteUsers(
-                      //       inviteData.users,
-                      //       userContext.user.organization.id
-                      //     ).then(() =>
-                      //       setInviteData({ ...inviteData, visible: false })
-                      //     )
-                      // //   }
-                    >
-                      <Title level={5}>Enter emails to be invited</Title>
-                      <Select
-                        mode="tags"
-                        style={{ width: "100%", marginTop: "5%" }}
-                        onChange={(e) =>
-                          setInviteData({ ...inviteData, users: e })
-                        }
-                      />
-                    </Modal>
-                    <Table columns={memberColumns} dataSource={users} />
+                    <MembersTab workspaceMembers={users} orgId={workspace?.organization} workspaceId={workspace?.id} />
                   </TabPane>
                   {(userContext.user?.role === 3 ||
                     userContext.user?.role === 2) && (
