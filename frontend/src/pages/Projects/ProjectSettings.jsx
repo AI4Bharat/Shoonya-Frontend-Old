@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card,Space } from "antd";
+import { Button, Col, Form, Input, Row, Card, Space } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
@@ -13,18 +13,21 @@ import {
   downloadProject,
 } from "../../api/ProjectAPI";
 import { CSVDownload } from "react-csv";
+import { Select } from 'antd';
+
 
 function ProjectSettings() {
   const { id } = useParams();
   let navigate = useNavigate();
   const { TextArea } = Input;
-
+  const { Option } = Select;
   const [basicSettingsForm] = Form.useForm();
-   const [data, setData] = useState(true);
+  const [data, setData] = useState(true);
   const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [options, setOptions] = useState("CSV");
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -45,25 +48,51 @@ function ProjectSettings() {
     await addAnnotatorsToProject(id, emails);
   };
 
-  const onExport = async (id)=>{
+  const onExport = async (id) => {
     showLoader();
-    let projects =  await exportProject(id)
+    let projects = await exportProject(id)
     hideLoader();
   }
-   
-    const onPullData = async () => {
-      showLoader();
-      await PullNewData(id);
-      hideLoader();
-    };
 
-    const onDownload =async (id) =>{
+  const onPullData = async () => {
+    showLoader();
+    await PullNewData(id);
+    hideLoader();
+  };
 
-      let download =await downloadProject(id)
-      console.log(download)
-      setData( download.data)
+
+  const onDownload = async (id) => {
+
+    let download = await downloadProject(id)
+    console.log(download)
+    if (download.status == 200) {
+      setData(download.data)
+
     }
-  
+
+  }
+
+
+  const exportData = () => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(data)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "data.json";
+
+    link.click();
+  };
+  const handleChange = (e) => {
+    if (e === "CSV") {
+      setOptions(e)
+
+    }
+    else {
+      setOptions(e)
+    }
+
+  }
 
   const onEditProjectForm = async (values) => {
     showLoader();
@@ -191,38 +220,55 @@ function ProjectSettings() {
                   </Button>
                 </div>
                 <Title level={3}> Advanced Operation</Title>
-                
+
                 <div style={{ display: "flex" }}>
-               
+
                   <Form.Item
                     wrapperCol={{ span: 16 }}
                     style={{ marginRight: "10px" }}
                   >
-                   <Button type="primary"  onClick={() =>onExport(id)}>
-                   Export Project into Dataset
+                    <Button type="primary" onClick={() => onExport(id)}>
+                      Export Project into Dataset
                     </Button>
                   </Form.Item>
-                  
-                  <Button type="primary" onClick={()=>onPullData(id)}>
-                  Pull New Data Items from Source Dataset
+
+                  <Button type="primary" onClick={() => onPullData(id)}>
+                    Pull New Data Items from Source Dataset
                   </Button>
-               
+
                   <Form.Item
                     wrapperCol={{ span: 16 }}
-                   >
-                  <Button   style={{ marginLeft: "10px" }} type="primary"  onClick={()=>onDownload(id)}>
-                  Download project
-                  {data?.length &&
-                   <CSVDownload
-              filename={"Expense_Table.csv"}
-              data={data}
-              target="_blank"
-            >
-             
-            </CSVDownload> 
-}
-                  </Button>
+                  >
+                    <Select
+                      defaultValue="CSV"
+                      style={{
+                        width: 120,
+                        marginLeft: "10px"
+                      }}
+                      onChange={handleChange}
+                    >
+                      <Option value="CSV">CSV</Option>
+                      <Option value="JSON">JSON</Option>
+
+                    </Select>
                   </Form.Item>
+                  <Form.Item
+                    wrapperCol={{ span: 16 }}
+                  >
+                    <Button type="primary" onClick={() => onDownload(id)}>
+                      Download project
+
+                    </Button>
+                  </Form.Item>
+                  {data?.length && (options == "CSV" ? <CSVDownload
+                    filename={"Expense_Table.csv"}
+                    data={data}
+                    target="_blank"
+                  >
+
+                  </CSVDownload> : exportData())
+
+                  }
                 </div>
               </div>
             </Form>
