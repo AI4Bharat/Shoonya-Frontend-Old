@@ -35,12 +35,3 @@
     transform: rotate(360deg);
   }
 }
-
-.dateRange{
-  padding: 1px 8px;
-}
-p.dateRange:hover {
-  background-color: gray !important;
-  color: white !important;
-  
-}
