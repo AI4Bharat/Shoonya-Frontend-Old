@@ -57,7 +57,7 @@ const memberColumns = [
     title: "Actions",
     render: (item) => (
       <>
-        <a href={`profile/${item.id}`}>
+        <a href={`/profile/${item.id}`}>
           <Button type={"primary"} style={{ marginRight: "1%" }}>
             View
           </Button>
