@@ -13,6 +13,18 @@ import axiosInstance from "../utils/apiInstance";
 //   }
 // };
 
+const addUsersToWorkspace = async (workspaceID, users) => {
+  try {
+    let response = await axiosInstance.post(
+      `workspaces/${workspaceID}/addusers/`,
+      { user_id: users?.join() }
+    );
+    return response.data;
+  } catch {
+    message.error("Error adding users");
+  }
+};
+
 const fetchUsersInWorkspace = async (workspaceID) => {
   try {
     let response = await axiosInstance.get(`workspaces/${workspaceID}/users/`);
@@ -43,7 +55,7 @@ const fetchWorkspaceData = async (workspaceID) => {
 
 const fetchWorkspaces = async (page) => {
   try {
-    let response = await axiosInstance.get(`/workspaces/?page=`+page);
+    let response = await axiosInstance.get(`/workspaces/?page=` + page);
     return response.data;
   } catch {
     message.error("Error fetching workspaces");
@@ -65,4 +77,5 @@ export {
   fetchUsersInWorkspace,
   fetchWorkspaceData,
   fetchWorkspaceProjects,
+  addUsersToWorkspace,
 };
