@@ -9,24 +9,21 @@ import {
   Modal,
   Select,
   Input,
-  Form,
 } from "antd";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import UserContext from "../../context/User/UserContext";
 import { fetchUsers, inviteUsers } from "../../api/OrganizationAPI";
 import { memberColumns, workspaceColumns } from "./TableColumns";
-import FormItem from "antd/lib/form/FormItem";
-import { createWorkspace, fetchWorkspaces } from "../../api/WorkspaceAPI";
-import { useForm } from "antd/lib/form/Form";
+import { fetchWorkspaces } from "../../api/WorkspaceAPI";
 import { OrganizationSettings } from "./OrganizationSettings";
+import {AddNewWorkspace} from './AddNewWorkspace'
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 function Organization() {
   const { TextArea } = Input;
-  const [workspaceForm] = useForm();
   const [organization, setOrganization] = useState(undefined);
   const [inviteData, setInviteData] = useState({
     visible: false,
@@ -48,17 +45,6 @@ function Organization() {
       setWorkspace({ ...workspace, workspaces: res });
     })
   }
-
-  const onCreateWorkspace = (data) => {
-    createWorkspace({
-      organization: userContext.user.organization.id,
-      workspace_name: data.workspace_name,
-      managers: data.managers,
-      created_by: userContext.user.id,
-    }).then(() => setWorkspace({ ...workspace, visible: false })).then(()=>window.location.reload())
-  };
-
-  
 
   useEffect(() => {
     if (userContext.user) {
@@ -87,53 +73,8 @@ function Organization() {
             <Paragraph>Created by: {organization?.created_by.first_name + " " + organization?.created_by.last_name}</Paragraph>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Workspaces" key="1">
-                {userContext.user?.role === 3 && (
-                    <>
-                      <Button
-                        style={{ width: "100%", marginBottom: "1%" }}
-                        onClick={() =>
-                          setWorkspace({ ...workspace, visible: true })
-                        }
-                        type="primary"
-                      >
-                        Add new workspace
-                      </Button>
-                      <Modal
-                        visible={workspace.visible}
-                        onCancel={() =>
-                          setWorkspace({ ...workspace, visible: false })
-                        }
-                        onOk={() => workspaceForm.submit()}
-                      >
-                        <Title level={5}>Enter workspace details</Title>
-                        <Form
-                          form={workspaceForm}
-                          labelCol={{ span: 4 }}
-                          wrapperCol={{ span: 14 }}
-                          onFinish={(data) => onCreateWorkspace(data)}
-                        >
-                          <FormItem
-                            label="Workspace Name"
-                            name="workspace_name"
-                          >
-                            <Input />
-                          </FormItem>
-                          <FormItem label="Managers" name="managers">
-                            <Select mode="multiple" placeholder="Please Select">
-                              {users.map((e) => {
-                                if (e.role === 2) {
-                                  return (
-                                    <Option key={e.id}>{e.username}</Option>
-                                  );
-                                }
-                              })}
-                            </Select>
-                          </FormItem>
-                        </Form>
-                      </Modal>
-                    </>
-                  )}
-
+                {userContext.user?.role === 3 && 
+                <AddNewWorkspace organizationId={userContext.user?.organization.id}/>}
                 <Table
                   pagination={{
                     total: pagination.total,

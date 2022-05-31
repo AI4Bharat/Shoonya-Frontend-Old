@@ -56,6 +56,7 @@ const createWorkspace = async (data) => {
     return response.data;
   } catch {
     message.error("Error creating workspace");
+    return false;
   }
 };
 
