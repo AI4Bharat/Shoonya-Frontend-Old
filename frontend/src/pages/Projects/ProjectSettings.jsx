@@ -107,6 +107,7 @@ function ProjectSettings() {
 
   prefilBasicForm();
 
+
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -197,7 +198,7 @@ function ProjectSettings() {
                   }
             </div>
             <Title level={3}>Read-only Configurations</Title>
-            {project.sampling_mode && (
+            {project && project.sampling_mode && (
               <div>
                 <Title level={4}>Sampling Parameters</Title>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
@@ -224,7 +225,7 @@ function ProjectSettings() {
                 ))}
               </div>
             )}
-            {Object.keys(project.variable_parameters).length !==0 && (
+            {project && project.variable_parameters && Object.keys(project.variable_parameters).length !==0 && (
               <div>
               <Title level={4}>Variable Parameters</Title>
               {Object.keys(project.variable_parameters).map((key, i) => (
