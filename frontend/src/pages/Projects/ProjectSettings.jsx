@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card, Space } from "antd";
+import { Button, Col, Form, Input, Row, Card } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
-  addAnnotatorsToProject,
   publishProject,
   getProject,
   updateProject,
@@ -20,11 +19,9 @@ import { snakeToTitleCase } from "../../utils/stringConversions";
 function ProjectSettings() {
   const { id } = useParams();
   let navigate = useNavigate();
-  const { TextArea } = Input;
   const { Option } = Select;
   const [basicSettingsForm] = Form.useForm();
   const [data, setData] = useState(true);
-  const [isLoading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
@@ -38,16 +35,12 @@ function ProjectSettings() {
   };
 
   useEffect(() => {
+    showLoader();
     getProject(id).then((res) => {
       setProject(res);
-      setLoading(false);
+      hideLoader();
     });
   }, []);
-  const onFinishAddAnnotator = async (values) => {
-    const emails = values.emails.split(",").map((email) => email.trim());
-
-    await addAnnotatorsToProject(id, emails);
-  };
 
   const onExport = async (id) => {
     showLoader();
@@ -63,14 +56,12 @@ function ProjectSettings() {
 
 
   const onDownload = async (id) => {
-
+    showLoader();
     let download = await downloadProject(id)
-    console.log(download)
     if (download.status == 200) {
       setData(download.data)
-
     }
-
+    hideLoader();
   }
 
 
@@ -87,12 +78,10 @@ function ProjectSettings() {
   const handleChange = (e) => {
     if (e === "CSV") {
       setOptions(e)
-
     }
     else {
       setOptions(e)
     }
-
   }
 
   const onEditProjectForm = async (values) => {
@@ -117,10 +106,6 @@ function ProjectSettings() {
   };
 
   prefilBasicForm();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
