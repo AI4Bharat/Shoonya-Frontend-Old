@@ -175,93 +175,33 @@ function ProjectSettings() {
                 </Button>
               </Form.Item>
             </Form>
-            <Title level={3}>Add Annotators To The Project</Title>
-            <Form
-              name="basic"
-              layout="vertical"
-              onFinish={onFinishAddAnnotator}
-              autoComplete="off"
-            >
-              <div
+            <Title level={3}>Advanced Operations</Title>
+            <div style={{width:'70%', display:'flex', justifyContent:'space-between', marginBottom: '24px', flexWrap: 'wrap', rowGap: '16px'}}>
+              <Button type="primary" disabled={published} onClick={handlePublishProject}>
+                Publish Project
+              </Button>
+              <Button type="primary" onClick={() => onExport(id)}>
+                Export Project into Dataset
+              </Button>
+              <Button type="primary" onClick={() => onPullData(id)}>
+                Pull New Data Items from Source Dataset
+              </Button>
+              <Select
+                defaultValue="CSV"
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "start",
-                  width: "100%",
+                  width: 120,
+                  marginLeft: "10px"
                 }}
+                onChange={handleChange}
               >
-                <Form.Item
-                  label="Emails"
-                  name="emails"
-                  rules={[
-                    {
-                      message: "Please enter annotator email",
-                    },
-                  ]}
-                  className="full-textarea"
-                  required="true"
-                >
-                  <TextArea
-                    rows={4}
-                    placeholder="Enter emails of Annotators separated by commas(,)"
-                  />
-                </Form.Item>
+                <Option value="CSV">CSV</Option>
+                <Option value="JSON">JSON</Option>
 
-                <div style={{ display: "flex" }}>
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <Button type="primary" htmlType="submit">
-                      Add Annotators
-                    </Button>
-                  </Form.Item>
-                  <Button type="primary" disabled={published} onClick={handlePublishProject}>
-                    Publish Project
-                  </Button>
-                </div>
-                <Title level={3}> Advanced Operation</Title>
-
-                <div style={{ display: "flex" }}>
-
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <Button type="primary" onClick={() => onExport(id)}>
-                      Export Project into Dataset
-                    </Button>
-                  </Form.Item>
-
-                  <Button type="primary" onClick={() => onPullData(id)}>
-                    Pull New Data Items from Source Dataset
-                  </Button>
-
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                  >
-                    <Select
-                      defaultValue="CSV"
-                      style={{
-                        width: 120,
-                        marginLeft: "10px"
-                      }}
-                      onChange={handleChange}
-                    >
-                      <Option value="CSV">CSV</Option>
-                      <Option value="JSON">JSON</Option>
-
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                  >
-                    <Button type="primary" onClick={() => onDownload(id)}>
-                      Download project
-
-                    </Button>
-                  </Form.Item>
-                  {data?.length && (options == "CSV" ? <CSVDownload
+              </Select>
+              <Button type="primary" onClick={() => onDownload(id)}>
+                Download project
+              </Button>
+              {data?.length && (options == "CSV" ? <CSVDownload
                     filename={"Expense_Table.csv"}
                     data={data}
                     target="_blank"
@@ -270,9 +210,7 @@ function ProjectSettings() {
                   </CSVDownload> : exportData())
 
                   }
-                </div>
-              </div>
-            </Form>
+            </div>
             <Title level={3}>Read-only Configurations</Title>
             {project.sampling_mode && (
               <div>
