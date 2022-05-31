@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   getColumnNames,
   getDataSource,
@@ -16,12 +18,14 @@ import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
-import {MembersTab} from './MembersTab';
+import { MembersTab } from './MembersTab';
 import "../../../src/App.css";
+// import DownOutlined from "@ant-design/icons"
 
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
+  const defultvalue = `${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
   const { project_id } = useParams();
@@ -45,19 +49,52 @@ function ProjectDashboard() {
   ];
   const [selectedDate, setselectedDate] = useState("");
   const [hideshow, sethideshow] = useState(false);
+  const [show, setShow] = useState(false);
   const [selectstart, setselectstart] = useState("");
   const [selectend, setselectend] = useState("");
   const [apidata, setapidata] = useState("");
   const [color, setColor] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
-  useEffect(() => {
-    localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
-  }, [selectedDate]);
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+    setselectstart(moment(start).format("YYYY-MM-DD") )
+    setselectend(moment(end).format("YYYY-MM-DD") )
 
+   
+   
+  };
+  console.log(selectstart,selectend,"startDate,endDate")
+  // useEffect(() => {
+  //   localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
+  // }, [selectedDate]);
+
+  useEffect(()=>{
+    setselectedDate(defultvalue)
+    setselectstart(moment().format("YYYY-MM-DD") )
+    setselectend(moment().format("YYYY-MM-DD") )
+    
+
+  },[])
+  console.log(selectstart,selectend,"startDate,endDate")
+  
   const hideshowdiv = () => {
     sethideshow(true)
   }
+  const onDatepicker =() =>{
+    setShow(true)
+  }
+ const handleClose =() =>{
+  sethideshow(false)
+ }
+ const applyDate =()=>{
+  setselectedDate(`${moment(startDate).format("YYYY-MM-DD")} - ${moment(endDate).format("YYYY-MM-DD")}`)
+  sethideshow(false)
 
+ }
   function handleTableChange() {
     showLoader();
     getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
@@ -79,9 +116,9 @@ function ProjectDashboard() {
     });
   }
 
-  const items = JSON.parse(localStorage.getItem('selectedDate'));
+  // const items = JSON.parse(localStorage.getItem('selectedDate'));
 
-  console.log(items, "itemsin prent")
+  // console.log(items, "itemsin prent")
 
 
   useEffect(() => {
@@ -201,7 +238,7 @@ function ProjectDashboard() {
     return arr.join(" ");
 
   }
-  
+
   const onDateRange = (date) => {
     if (date === "Today") {
       sethideshow(false)
@@ -212,9 +249,9 @@ function ProjectDashboard() {
     } if (date === "Yesterday") {
       sethideshow(false), setselectstart(moment().add(-1, "days").format("YYYY-MM-DD"))
       setselectend(moment().add(-1, "days").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().add(-1, "days").format("YYYY-MMM-DD")} - ${moment().add(-1, "days").format("YYYY-MMM-DD")}`)
+      setselectedDate(`${moment().add(-1, "days").format("YYYY-MMM-DD")}-${moment().add(-1, "days").format("YYYY-MMM-DD")} `)
 
-     
+
     } if (date === "LastWeek") {
       sethideshow(false)
       setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
@@ -235,10 +272,10 @@ function ProjectDashboard() {
     }
   }
   const styles = {
-    
-  backgroundColor  : color
+
+    backgroundColor: color
   };
-  
+console.log()
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -336,21 +373,42 @@ function ProjectDashboard() {
                   <Col>  <Title level={5}>Select date range</Title></Col>
                 </Row>
                 <Row>
-                  <Col span={8}>
+                  <Col span={9}>
                     <div style={{ margin: "10px", display: "flex" }}>
-                      <div style={{ position: 'relative', width: "80%" }}>
-                        <div className="selectedDate" onClick={hideshowdiv}  style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px",   }}> {selectedDate}</div>
+                      <div style={{ position: 'relative', width: "100%" }}>
+                        <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px", }} defaultValue="Today"> {selectedDate}</div>
                         {hideshow ?
-                          <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer","&:hover": { background: "#efefef"
-                          } }} className="dateptions">
-                            <p  className="dateRange"   onClick={(e) => { onDateRange("Today") }}>Today</p>
-                            <p   className="dateRange"   onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
-                           <p   className="dateRange"   onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
-                            <p   className="dateRange"  onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
-                            <p   className="dateRange"   onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
+                          <div style={{
+                            position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer", "&:hover": {
+                              background: "#efefef"
+                            }
+                          }} className="dateptions">
+                            <div style={{float:'left',boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}} >
+                            <p className="dateRange" onClick={(e) => { onDateRange("Today") }} >Today</p>
+                            <p className="dateRange" onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
+                            <p className="dateRange" onClick={(e) => { onDateRange("ThisWeek") }}>This Week</p>
+                            <p className="dateRange" onClick={(e) => { onDateRange("LastWeek") }}>Last Week</p>
+                            <p className="dateRange" onClick={(e) => { onDateRange("ThisMonth") }}>This Month</p>
+                            <p className="dateRange" onClick={(e) => { onDatepicker("ThisMonth") }}>Custom Range</p>
+                            <button style={{backgroundColor:"green",color:"white",border:"1px solid white"}} onClick={applyDate} >Apply</button>
+                            <button style={{border:"1px solid white"}} onClick={handleClose}>Cancel</button>
+                            </div>
+                            
+                            {show ?
+                            <div style={{float:'left', marginLeft:"20px"}}>  <DatePicker
+                           selected={startDate}
+                           onChange={onChange}
+                           startDate={startDate}
+                           endDate={endDate}
+                           selectsRange
+                           inline
+                         /></div>
+                          :' '}
                           </div>
+                          
                           : ' '}
                       </div>
+                     
                     </div>
                   </Col>
                   <Col span={12}>
@@ -359,6 +417,7 @@ function ProjectDashboard() {
                       onClick={() => onDisplayTable(project_id)}
                       type="primary"
                       style={{ width: "15%", margin: "20px 10px 10px 10px" }}
+                      
                     >
                       Submit
                     </Button>
@@ -371,7 +430,8 @@ function ProjectDashboard() {
                     </Title>
                   </Col>
                 </Row> */}
-                <Table 
+                <Table
+                style={{ margin: "80px 10px 10px 10px"}}
                   columns={keys}
                   dataSource={resultsource}
                 />
