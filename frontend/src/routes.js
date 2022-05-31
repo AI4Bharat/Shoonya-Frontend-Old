@@ -19,6 +19,7 @@ import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProje
 import ProjectSettings from "./pages/Projects/ProjectSettings";
 import AddCollectionData from "./components/AddCollectionData";
 import Landing from "./pages/Landing/Landing";
+import DatasetDashboard from "./pages/Dataset/DatasetDashboard";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -152,6 +153,14 @@ function GlobalRoutes() {
           }
         />
       </Route>
+      <Route
+          path="dataset/:dataset_id"
+          element={
+            <RequireAuth>
+              <DatasetDashboard />
+            </RequireAuth>
+          }
+        />
     </Routes>
   );
 }
