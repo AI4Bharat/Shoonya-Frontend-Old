@@ -37,13 +37,14 @@ const fetchAnnotation = async (taskID) => {
   }
 };
 
-const postAnnotation = async (result, task, completed_by, load_time, lead_time) => {
+const postAnnotation = async (result, task, completed_by, load_time, lead_time, task_status) => {
   try {
     await axiosInstance.post(`/annotation/`, {
       result: result,
       task: task,
       completed_by: completed_by,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
+      task_status: task_status
     },
     )
     .then((res)=> {

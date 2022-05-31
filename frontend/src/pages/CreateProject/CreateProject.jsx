@@ -189,6 +189,12 @@ function CreateProject() {
     }
   };
 
+  useEffect(() => {
+    if(tableData){
+      document.getElementById('sampling').scrollIntoView({behavior: "smooth"});
+    }
+  }, [tableData])
+
   const handleChangeInstances = () => {
     setConfirmed(false);
     setTableData(null);
@@ -329,7 +335,7 @@ function CreateProject() {
         )}
         {selectedType && columns && tableData && selectedInstances.length > 0 && (
           <>
-            <h1 className="margin-top-heading">Select Sampling Type:</h1>
+            <h1 id="sampling" className="margin-top-heading">Select Sampling Type:</h1>
             <Select
               placeholder="Select Sampling Type"
               onChange={handleSamplingChange}
