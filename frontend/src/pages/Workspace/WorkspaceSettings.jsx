@@ -1,12 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Layout, Select, Typography, message } from "antd";
 
-import { fetchWorkspaceData, unAssignManagers } from "../../api/WorkspaceAPI";
+import {
+	assignManager,
+	fetchWorkspaceData,
+	unAssignManagers,
+} from "../../api/WorkspaceAPI";
+import { fetchUsers } from "../../api/OrganizationAPI";
 
-export function WorkspaceSettings({ workspaceId }) {
+export function WorkspaceSettings({ workspaceId, organizationId }) {
+	const [availableUsers, setAvailableUsers] = useState([]);
+	const [newAssignedManager, setNewAssignedManager] = useState(null);
+
 	const [currentManagers, setCurrentManagers] = useState([]);
 	const [removeManagers, setRemoveManagers] = useState([]);
+
+	useEffect(() => {
+		if (!organizationId) {
+			return;
+		}
+
+		fetchUsers(organizationId).then((users) => {
+			if (users && Array.isArray(users)) {
+				setAvailableUsers(users);
+			}
+		});
+	}, [organizationId, setAvailableUsers]);
 
 	useEffect(() => {
 		fetchWorkspaceData(workspaceId).then((data) => {
@@ -16,8 +36,36 @@ export function WorkspaceSettings({ workspaceId }) {
 		});
 	}, [setCurrentManagers]);
 
+	// filter managers from being displayed in assign managers
+	useEffect(() => {
+		setAvailableUsers((users) =>
+			users.filter(
+				(user) =>
+					currentManagers.findIndex(
+						(manager) => manager.id === user.id
+					) === -1
+			)
+		);
+	}, [currentManagers, setAvailableUsers]);
+
+	const handleAssignSelectChange = (username) => {
+		setNewAssignedManager(username);
+	};
+
 	const handleUnassignSelectChange = (usernames) => {
 		setRemoveManagers(usernames);
+	};
+
+	const handleAssignClick = async () => {
+		if (!newAssignedManager) {
+			message.error("Please select manager to assign");
+			return;
+		}
+
+		const result = await assignManager(workspaceId, newAssignedManager);
+		if (result) {
+			window.location.reload();
+		}
 	};
 
 	const handleUnassignClick = async () => {
@@ -59,6 +107,34 @@ export function WorkspaceSettings({ workspaceId }) {
 							Archive Workspace
 						</Button>
 					</Card>
+					{availableUsers.length > 0 && (
+						<Card
+							bordered="false"
+							style={{ width: "75%", marginBottom: "3%" }}
+						>
+							<Typography.Title level={5}>
+								Assign Manager
+							</Typography.Title>
+							<Select
+								allowClear
+								bordered
+								placeholder="Select managers to assign"
+								options={availableUsers.map((user) => ({
+									label: user.username,
+									value: user.username,
+								}))}
+								style={{ width: "100%", marginTop: "1%" }}
+								onChange={handleAssignSelectChange}
+							/>
+							<Button
+								type="primary"
+								style={{ marginTop: "1%" }}
+								onClick={handleAssignClick}
+							>
+								Assign
+							</Button>
+						</Card>
+					)}
 					{currentManagers.length > 0 && (
 						<Card
 							bordered="false"
@@ -96,4 +172,5 @@ export function WorkspaceSettings({ workspaceId }) {
 
 WorkspaceSettings.propTypes = {
 	workspaceId: PropTypes.string,
+	organizationId: PropTypes.number,
 };

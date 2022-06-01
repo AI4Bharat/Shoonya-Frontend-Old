@@ -62,12 +62,22 @@ const createWorkspace = async (data) => {
 	}
 };
 
+const assignManager = async (workspaceId, username) => {
+	return axiosInstance
+		.post(`/workspaces/${workspaceId}/assign_manager/`, { username })
+		.then((response) => response.status === 200)
+		.catch(() => {
+			message.error("Error assigning manager");
+			return false;
+		});
+};
+
 const unAssignManagers = async (workspaceId, usernames) => {
 	return axiosInstance
 		.post(`/workspaces/${workspaceId}/unassign_manager/`, { usernames })
 		.then((response) => response.status === 200)
 		.catch(() => {
-			message.error('Error unassigning managers');
+			message.error("Error unassigning managers");
 			return false;
 		});
 };
@@ -78,5 +88,6 @@ export {
 	fetchUsersInWorkspace,
 	fetchWorkspaceData,
 	fetchWorkspaceProjects,
-  unAssignManagers
+	assignManager,
+	unAssignManagers,
 };

@@ -141,7 +141,7 @@ function Workspace() {
                   )}
                   {(userContext.user?.role === 3 &&
                     <TabPane tab="Settings" key="3">
-                      <WorkspaceSettings workspaceId={workspaceId}/>
+                      <WorkspaceSettings workspaceId={workspaceId} organizationId={userContext.user?.organization?.id} />
                     </TabPane>
                   )}
                 </Tabs>
