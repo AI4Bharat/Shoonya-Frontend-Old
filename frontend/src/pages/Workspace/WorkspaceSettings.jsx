@@ -124,63 +124,65 @@ export function WorkspaceSettings({ workspaceId, organizationId }) {
 							Archive Workspace
 						</Button>
 					</Card>
-					{availableUsers.length > 0 && (
-						<Card
-							bordered="false"
-							style={{ width: "75%", marginBottom: "3%" }}
-						>
-							<Typography.Title level={5}>
-								Assign Manager
-							</Typography.Title>
-							<Select
-								allowClear
-								bordered
-								placeholder="Select managers to assign"
-								options={availableUsers.map((user) => ({
-									label: user.username,
-									value: user.username,
-								}))}
-								style={{ width: "100%", marginTop: "1%" }}
-								onChange={handleAssignSelectChange}
-							/>
-							<Button
-								type="primary"
-								style={{ marginTop: "1%" }}
-								onClick={handleAssignClick}
+					{!workspaceDetais?.is_archived &&
+						availableUsers.length > 0 && (
+							<Card
+								bordered="false"
+								style={{ width: "75%", marginBottom: "3%" }}
 							>
-								Assign
-							</Button>
-						</Card>
-					)}
-					{currentManagers.length > 0 && (
-						<Card
-							bordered="false"
-							style={{ width: "75%", marginBottom: "3%" }}
-						>
-							<Typography.Title level={5}>
-								Unassign Managers
-							</Typography.Title>
-							<Select
-								mode="multiple"
-								allowClear
-								bordered
-								placeholder="Select managers to unassign"
-								options={currentManagers.map((user) => ({
-									label: user.username,
-									value: user.username,
-								}))}
-								style={{ width: "100%", marginTop: "1%" }}
-								onChange={handleUnassignSelectChange}
-							/>
-							<Button
-								type="primary"
-								style={{ marginTop: "1%" }}
-								onClick={handleUnassignClick}
+								<Typography.Title level={5}>
+									Assign Manager
+								</Typography.Title>
+								<Select
+									allowClear
+									bordered
+									placeholder="Select managers to assign"
+									options={availableUsers.map((user) => ({
+										label: user.username,
+										value: user.username,
+									}))}
+									style={{ width: "100%", marginTop: "1%" }}
+									onChange={handleAssignSelectChange}
+								/>
+								<Button
+									type="primary"
+									style={{ marginTop: "1%" }}
+									onClick={handleAssignClick}
+								>
+									Assign
+								</Button>
+							</Card>
+						)}
+					{!workspaceDetais?.is_archived &&
+						currentManagers.length > 0 && (
+							<Card
+								bordered="false"
+								style={{ width: "75%", marginBottom: "3%" }}
 							>
-								Unassign
-							</Button>
-						</Card>
-					)}
+								<Typography.Title level={5}>
+									Unassign Managers
+								</Typography.Title>
+								<Select
+									mode="multiple"
+									allowClear
+									bordered
+									placeholder="Select managers to unassign"
+									options={currentManagers.map((user) => ({
+										label: user.username,
+										value: user.username,
+									}))}
+									style={{ width: "100%", marginTop: "1%" }}
+									onChange={handleUnassignSelectChange}
+								/>
+								<Button
+									type="primary"
+									style={{ marginTop: "1%" }}
+									onClick={handleUnassignClick}
+								>
+									Unassign
+								</Button>
+							</Card>
+						)}
 				</Layout.Content>
 			</Layout>
 		</Card>
