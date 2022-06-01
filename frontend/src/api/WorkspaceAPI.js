@@ -62,6 +62,16 @@ const createWorkspace = async (data) => {
 	}
 };
 
+const archiveWorkspace = async (workspaceID) => {
+	return axiosInstance
+		.post(`/workspaces/${workspaceID}/archive/`)
+		.then((response) => response.data === 200)
+		.catch(() => {
+			message.error("Error archiving workspace");
+			return false;
+		});
+};
+
 const assignManager = async (workspaceId, username) => {
 	return axiosInstance
 		.post(`/workspaces/${workspaceId}/assign_manager/`, { username })
@@ -88,6 +98,7 @@ export {
 	fetchUsersInWorkspace,
 	fetchWorkspaceData,
 	fetchWorkspaceProjects,
+  archiveWorkspace,
 	assignManager,
 	unAssignManagers,
 };

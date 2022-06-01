@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Card, Button, Layout, Select, Typography, message } from "antd";
 
 import {
+	archiveWorkspace,
 	assignManager,
 	fetchWorkspaceData,
 	unAssignManagers,
@@ -10,6 +11,8 @@ import {
 import { fetchUsers } from "../../api/OrganizationAPI";
 
 export function WorkspaceSettings({ workspaceId, organizationId }) {
+	const [workspaceDetais, setWorkspaceDetails] = useState(null);
+
 	const [availableUsers, setAvailableUsers] = useState([]);
 	const [newAssignedManager, setNewAssignedManager] = useState(null);
 
@@ -17,9 +20,15 @@ export function WorkspaceSettings({ workspaceId, organizationId }) {
 	const [removeManagers, setRemoveManagers] = useState([]);
 
 	useEffect(() => {
-		if (!organizationId) {
-			return;
-		}
+		fetchWorkspaceData(workspaceId).then((data) => {
+			if (data && "workspace_name" in data) {
+				setWorkspaceDetails(data);
+			}
+		});
+	}, [workspaceId, setWorkspaceDetails]);
+
+	useEffect(() => {
+		if (!organizationId) return;
 
 		fetchUsers(organizationId).then((users) => {
 			if (users && Array.isArray(users)) {
@@ -29,12 +38,10 @@ export function WorkspaceSettings({ workspaceId, organizationId }) {
 	}, [organizationId, setAvailableUsers]);
 
 	useEffect(() => {
-		fetchWorkspaceData(workspaceId).then((data) => {
-			if (data && Array.isArray(data.managers)) {
-				setCurrentManagers(data.managers);
-			}
-		});
-	}, [setCurrentManagers]);
+		if (workspaceDetais && Array.isArray(workspaceDetais.managers)) {
+			setCurrentManagers(workspaceDetais.managers);
+		}
+	}, [workspaceDetais, setCurrentManagers]);
 
 	// filter managers from being displayed in assign managers
 	useEffect(() => {
@@ -47,6 +54,15 @@ export function WorkspaceSettings({ workspaceId, organizationId }) {
 			)
 		);
 	}, [currentManagers, setAvailableUsers]);
+
+	const handleArchiveWorkspaceClick = async () => {
+		if (!workspaceDetais?.is_archived) {
+			const result = await archiveWorkspace(workspaceId);
+			if (result) {
+				window.location.reload();
+			}
+		}
+	};
 
 	const handleAssignSelectChange = (username) => {
 		setNewAssignedManager(username);
@@ -102,7 +118,8 @@ export function WorkspaceSettings({ workspaceId, organizationId }) {
 								width: "100%",
 							}}
 							type="primary"
-							// onClick={() => {}}
+							disabled={workspaceDetais?.is_archived}
+							onClick={handleArchiveWorkspaceClick}
 						>
 							Archive Workspace
 						</Button>
