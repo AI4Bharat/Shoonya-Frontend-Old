@@ -3,17 +3,17 @@ import Title from "antd/lib/typography/Title";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { fetchUsers } from "../../api/OrganizationAPI";
-import { addUsersToWorkspace } from "../../api/WorkspaceAPI";
+import { addAnnotatorsToWorkspace } from "../../api/WorkspaceAPI";
 import { memberColumns } from "./TableColumns";
 
-export function MembersTab({ workspaceMembers, orgId, workspaceId }) {
+export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [availableUsers, setAvailableUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const addNewUsers = async () => {
       console.log(selectedUsers.join());
-    await addUsersToWorkspace(workspaceId, selectedUsers).then((done) => {
+    await addAnnotatorsToWorkspace(workspaceId, selectedUsers).then((done) => {
       if (done) {
         setSelectedUsers([]);
         setModalOpen(false);
@@ -32,10 +32,10 @@ export function MembersTab({ workspaceMembers, orgId, workspaceId }) {
       let displayUsers = users;
 
       // filter out users which are already present in workspace
-      if (Array.isArray(workspaceMembers) && workspaceMembers.length !== 0) {
+      if (Array.isArray(workspaceAnnotators) && workspaceAnnotators.length !== 0) {
         displayUsers = displayUsers.filter(
           (displayUser) =>
-            workspaceMembers.findIndex(
+            workspaceAnnotators.findIndex(
               (workspaceUser) => displayUser.id === workspaceUser.id
             ) === -1
         );
@@ -58,14 +58,14 @@ export function MembersTab({ workspaceMembers, orgId, workspaceId }) {
         onClick={() => setModalOpen(true)}
         type="primary"
       >
-        Invite new members to workspace
+        Add Annotators to Workspace
       </Button>
       <Modal
         visible={modalOpen}
         onCancel={() => setModalOpen(false)}
         onOk={() => addNewUsers()}
       >
-        <Title level={5}>Enter emails to be invited</Title>
+        <Title level={5}>Enter Usernames to be added</Title>
         <Select
           mode="multiple"
           allowClear
@@ -79,13 +79,13 @@ export function MembersTab({ workspaceMembers, orgId, workspaceId }) {
           onChange={handleSelectChange}
         />
       </Modal>
-      <Table columns={memberColumns} dataSource={workspaceMembers} />
+      <Table columns={memberColumns} dataSource={workspaceAnnotators} />
     </>
   );
 }
 
-MembersTab.propTypes = {
-  workspaceMembers: PropTypes.array,
+AnnotatorsTab.propTypes = {
+  workspaceAnnotators: PropTypes.array,
   orgId: PropTypes.number,
   workspaceId: PropTypes.number,
 };
