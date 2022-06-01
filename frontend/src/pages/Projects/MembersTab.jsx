@@ -8,6 +8,7 @@ import { addAnnotatorsToProject, getProject } from "../../api/ProjectAPI";
 import { fetchUsersInWorkspace } from "../../api/WorkspaceAPI";
 import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 export function MembersTab({ projectMembers }) {
 	const [modalOpen, setModalOpen] = useState(false);
@@ -15,21 +16,27 @@ export function MembersTab({ projectMembers }) {
 	const userContext = useContext(UserContext);
 	const [availableUsers, setAvailableUsers] = useState([]);
 	const [selectedUsers, setSelectedUsers] = useState([]);
+	const [loader, showLoader, hideLoader] = useFullPageLoader();
 
 	const addNewUsers = async () => {
+		showLoader();
 		await addAnnotatorsToProject(projectId, selectedUsers).then((done) => {
 			if (done) {
 				setSelectedUsers([]);
 				setModalOpen(false);
+				hideLoader();
 				location.reload();
 			}
 		});
+		hideLoader();
 	};
 
 	useEffect(() => {
+		showLoader();
 		const populateAvailableUsers = async () => {
 			const projectDetails = await getProject(projectId);
 			if (!projectDetails || !projectDetails.workspace_id) {
+				hideLoader();
 				return;
 			}
 
@@ -37,6 +44,7 @@ export function MembersTab({ projectMembers }) {
 				projectDetails.workspace_id
 			);
 			if (!users || !Array.isArray(users) || users.length === 0) {
+				hideLoader();
 				return;
 			}
 
@@ -53,6 +61,7 @@ export function MembersTab({ projectMembers }) {
 			}
 
 			setAvailableUsers(displayUsers);
+			hideLoader();
 		};
 
 		populateAvailableUsers();
@@ -95,6 +104,7 @@ export function MembersTab({ projectMembers }) {
 				</>
 			)}
 			<Table columns={memberColumns} dataSource={projectMembers} />
+			{loader}
 		</>
 	);
 }
