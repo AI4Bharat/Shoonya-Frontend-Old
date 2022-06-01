@@ -196,7 +196,9 @@ function CreateProject() {
     setSamplingParameters(null);
   };
 
-  const handleCreateProject = () => {
+  localStorage.setItem("selectboxvalue" ,samplingMode);
+  
+   const handleCreateProject = () => {
     showLoader();
     createProject({
       title: title,

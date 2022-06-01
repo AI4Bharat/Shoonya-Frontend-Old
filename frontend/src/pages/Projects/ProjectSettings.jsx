@@ -14,6 +14,7 @@ import {
 } from "../../api/ProjectAPI";
 import { CSVDownload } from "react-csv";
 import { Select } from 'antd';
+import { message } from "antd";
 
 
 function ProjectSettings() {
@@ -28,6 +29,7 @@ function ProjectSettings() {
   const [published, setPublished] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
+  const [pulldata, setPulldata] = useState();
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -48,15 +50,24 @@ function ProjectSettings() {
     await addAnnotatorsToProject(id, emails);
   };
 
+  
+ 
   const onExport = async (id) => {
     showLoader();
-    let projects = await exportProject(id)
+     await exportProject(id)
     hideLoader();
   }
-
-  const onPullData = async () => {
+  
+ 
+  let pulldatavalue = localStorage.getItem('pulldata');
+  let selectboxvalue = localStorage.getItem('selectboxvalue');
+    const onPullData = async () => {
     showLoader();
-    await PullNewData(id);
+    if(selectboxvalue == "f" ){
+   await PullNewData(id);
+      message.info(pulldatavalue)
+    }
+    
     hideLoader();
   };
 

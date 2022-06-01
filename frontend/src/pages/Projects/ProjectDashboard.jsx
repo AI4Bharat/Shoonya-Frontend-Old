@@ -61,40 +61,40 @@ function ProjectDashboard() {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
-    setselectstart(moment(start).format("YYYY-MM-DD") )
-    setselectend(moment(end).format("YYYY-MM-DD") )
+    setselectstart(moment(start).format("YYYY-MM-DD"))
+    setselectend(moment(end).format("YYYY-MM-DD"))
 
-   
-   
+
+
   };
-  console.log(selectstart,selectend,"startDate,endDate")
+
   // useEffect(() => {
   //   localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
   // }, [selectedDate]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setselectedDate(defultvalue)
-    setselectstart(moment().format("YYYY-MM-DD") )
-    setselectend(moment().format("YYYY-MM-DD") )
-    
+    setselectstart(moment().format("YYYY-MM-DD"))
+    setselectend(moment().format("YYYY-MM-DD"))
+  }, [])
 
-  },[])
-  console.log(selectstart,selectend,"startDate,endDate")
-  
+
   const hideshowdiv = () => {
     sethideshow(true)
   }
-  const onDatepicker =() =>{
+  const onDatepicker = () => {
     setShow(true)
   }
- const handleClose =() =>{
-  sethideshow(false)
- }
- const applyDate =()=>{
-  setselectedDate(`${moment(startDate).format("YYYY-MM-DD")} - ${moment(endDate).format("YYYY-MM-DD")}`)
-  sethideshow(false)
+  const handleClose = () => {
+    sethideshow(false)
+    setShow(false)
+  }
+  const applyDate = () => {
+    setselectedDate(`${moment(startDate).format("YYYY-MM-DD")} - ${moment(endDate).format("YYYY-MM-DD")}`)
+    sethideshow(false)
+    setShow(false)
 
- }
+  }
   function handleTableChange() {
     showLoader();
     getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
@@ -275,7 +275,7 @@ function ProjectDashboard() {
 
     backgroundColor: color
   };
-console.log()
+  console.log()
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -373,7 +373,7 @@ console.log()
                   <Col>  <Title level={5}>Select date range</Title></Col>
                 </Row>
                 <Row>
-                  <Col span={9}>
+                  <Col span={8}>
                     <div style={{ margin: "10px", display: "flex" }}>
                       <div style={{ position: 'relative', width: "100%" }}>
                         <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px", }} defaultValue="Today"> {selectedDate}</div>
@@ -383,32 +383,32 @@ console.log()
                               background: "#efefef"
                             }
                           }} className="dateptions">
-                            <div style={{float:'left',boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}} >
-                            <p className="dateRange" onClick={(e) => { onDateRange("Today") }} >Today</p>
-                            <p className="dateRange" onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
-                            <p className="dateRange" onClick={(e) => { onDateRange("ThisWeek") }}>This Week</p>
-                            <p className="dateRange" onClick={(e) => { onDateRange("LastWeek") }}>Last Week</p>
-                            <p className="dateRange" onClick={(e) => { onDateRange("ThisMonth") }}>This Month</p>
-                            <p className="dateRange" onClick={(e) => { onDatepicker("ThisMonth") }}>Custom Range</p>
-                            <button style={{backgroundColor:"green",color:"white",border:"1px solid white"}} onClick={applyDate} >Apply</button>
-                            <button style={{border:"1px solid white"}} onClick={handleClose}>Cancel</button>
+                            <div style={{ float: 'left', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }} >
+                              <p className="dateRange" onClick={(e) => { onDateRange("Today") }} >Today</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("ThisWeek") }}>This Week</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("LastWeek") }}>Last Week</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("ThisMonth") }}>This Month</p>
+                              <p className="dateRange" onClick={(e) => { onDatepicker("ThisMonth") }}>Custom Range</p>
+                              <button style={{ backgroundColor: "green", color: "white", border: "1px solid white" }} onClick={applyDate} >Apply</button>
+                              <button style={{ border: "1px solid white" }} onClick={handleClose}>Cancel</button>
                             </div>
-                            
+
                             {show ?
-                            <div style={{float:'left', marginLeft:"20px"}}>  <DatePicker
-                           selected={startDate}
-                           onChange={onChange}
-                           startDate={startDate}
-                           endDate={endDate}
-                           selectsRange
-                           inline
-                         /></div>
-                          :' '}
+                              <div style={{ float: 'left', marginLeft: "20px" }}>  <DatePicker
+                                selected={startDate}
+                                onChange={onChange}
+                                startDate={startDate}
+                                endDate={endDate}
+                                selectsRange
+                                inline
+                              /></div>
+                              : ' '}
                           </div>
-                          
+
                           : ' '}
                       </div>
-                     
+
                     </div>
                   </Col>
                   <Col span={12}>
@@ -417,7 +417,7 @@ console.log()
                       onClick={() => onDisplayTable(project_id)}
                       type="primary"
                       style={{ width: "15%", margin: "20px 10px 10px 10px" }}
-                      
+
                     >
                       Submit
                     </Button>
@@ -431,7 +431,7 @@ console.log()
                   </Col>
                 </Row> */}
                 <Table
-                style={{ margin: "80px 10px 10px 10px"}}
+                  style={{ margin: "80px 10px 10px 10px" }}
                   columns={keys}
                   dataSource={resultsource}
                 />

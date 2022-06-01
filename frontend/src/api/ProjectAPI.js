@@ -99,10 +99,15 @@ const exportProject = async (id) => {
       message.error(error);
     }
 };
+
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
-console.log(response)
+
+let result =  response.data.message
+console.log(result,"result")
+localStorage.setItem('pulldata', result);
+
     if (response.status !== 200)
       return message.error("Unable to pull New Items");
 
