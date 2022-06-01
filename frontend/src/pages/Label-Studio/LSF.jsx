@@ -172,7 +172,8 @@ const LabelStudioWrapper = () => {
                   temp,
                   annotations[i].id,
                   load_time,
-                  annotations[i].lead_time
+                  annotations[i].lead_time,
+                  task_status
                 ).then(() => {
                   hideLoader();
                   location.reload()
