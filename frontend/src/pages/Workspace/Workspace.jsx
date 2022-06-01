@@ -10,10 +10,12 @@ import {
   fetchWorkspaceProjects,
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
+import { WorkspaceSettings } from "./WorkspaceSettings";
+
 const { TabPane } = Tabs;
 
 function Workspace() {
-  const { id } = useParams();
+  const { id: workspaceId } = useParams();
   let navigate = useNavigate();
 
   const [workspace, setWorkspace] = useState(undefined);
@@ -28,13 +30,13 @@ function Workspace() {
 
   useEffect(() => {
     if (userContext.user) {
-      fetchUsersInWorkspace(id).then((res) => {
+      fetchUsersInWorkspace(workspaceId).then((res) => {
         setUsers(res);
       });
-      fetchWorkspaceProjects(id).then((res) => {
+      fetchWorkspaceProjects(workspaceId).then((res) => {
         setProject({ ...project, projects: res });
       });
-      fetchWorkspaceData(id).then((res) => setWorkspace(res));
+      fetchWorkspaceData(workspaceId).then((res) => setWorkspace(res));
     }
   }, [userContext]);
 
@@ -68,7 +70,7 @@ function Workspace() {
                             marginBottom: "1%",
                           }}
                           onClick={() =>
-                            navigate(`/create-annotation-project/${id}`, {
+                            navigate(`/create-annotation-project/${workspaceId}`, {
                               replace: true,
                             })
                           }
@@ -80,7 +82,7 @@ function Workspace() {
                         <Button
                           style={{ width: "48%", marginBottom: "1%" }}
                           onClick={() =>
-                            navigate(`/create-collection-project/${id}`, {
+                            navigate(`/create-collection-project/${workspaceId}`, {
                               replace: true,
                             })
                           }
@@ -137,7 +139,11 @@ function Workspace() {
                       <Table columns={memberColumns} dataSource={users} />
                     </TabPane>
                   )}
-                  <TabPane tab="Settings" key="3"></TabPane>
+                  {(userContext.user?.role === 3 &&
+                    <TabPane tab="Settings" key="3">
+                      <WorkspaceSettings workspaceId={workspaceId} organizationId={userContext.user?.organization?.id} />
+                    </TabPane>
+                  )}
                 </Tabs>
               </>
             )}
