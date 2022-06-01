@@ -176,19 +176,21 @@ function Organization() {
                     setInviteData({ ...inviteData, visible: false })
                   }
                   onOk={() => {
-                    showLoader();
-                    const emails = inviteData.users
-                      .split(",")
-                      .map((email) => email.trim());
+                    if (inviteData.users.length > 0) {
+                      showLoader();
+                      const emails = inviteData.users
+                        .split(",")
+                        .map((email) => email.trim());
 
-                    inviteUsers(
-                      emails,
-                      userContext.user.organization.id,
-                      inviteData.role
-                    ).then(() =>{
-                      setInviteData({ ...inviteData, visible: false })
-                      hideLoader();
-                    });
+                      inviteUsers(
+                        emails,
+                        userContext.user.organization.id,
+                        inviteData.role
+                      ).then(() =>{
+                        setInviteData({ ...inviteData, visible: false })
+                        hideLoader();
+                      });
+                    }
                   }}
                 >
                   <Title level={2}>Invite Users</Title>
