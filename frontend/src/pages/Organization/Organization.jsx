@@ -24,6 +24,7 @@ import { useForm } from "antd/lib/form/Form";
 import { Content } from "antd/lib/layout/layout";
 import { UserOutlined } from '@ant-design/icons';
 import axiosInstance from "../../utils/apiInstance";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 const { TabPane } = Tabs;
 const { Option } = Select;
 
@@ -44,6 +45,7 @@ function Organization() {
   });
   const userContext = useContext(UserContext);
   const [pagination, setPagination] = useState({});
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   function handleTableChange() {
     fetchWorkspaces(pagination.current).then((res) => {
@@ -59,7 +61,9 @@ function Organization() {
       workspace_name: data.workspace_name,
       managers: data.managers,
       created_by: userContext.user.id,
-    }).then(() => setWorkspace({ ...workspace, visible: false }));
+    }).then(() => {
+      setWorkspace({ ...workspace, visible: false });
+    });
   };
 
   const editOrganization = () => {
@@ -172,6 +176,7 @@ function Organization() {
                     setInviteData({ ...inviteData, visible: false })
                   }
                   onOk={() => {
+                    showLoader();
                     const emails = inviteData.users
                       .split(",")
                       .map((email) => email.trim());
@@ -180,9 +185,10 @@ function Organization() {
                       emails,
                       userContext.user.organization.id,
                       inviteData.role
-                    ).then(() =>
+                    ).then(() =>{
                       setInviteData({ ...inviteData, visible: false })
-                    );
+                      hideLoader();
+                    });
                   }}
                 >
                   <Title level={2}>Invite Users</Title>
@@ -216,7 +222,7 @@ function Organization() {
                   })}
                 />
               </TabPane>
-              {userContext.user?.role === 3 && userContext.user?.role === 2 && (
+              {(userContext.user?.role === 3 || userContext.user?.role === 2) && (
                 <TabPane tab="Invites">
                   <Table
                     columns={memberColumns}
@@ -267,6 +273,7 @@ function Organization() {
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }
