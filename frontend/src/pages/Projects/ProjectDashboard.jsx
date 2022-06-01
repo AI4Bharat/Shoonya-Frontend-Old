@@ -32,7 +32,6 @@ function ProjectDashboard() {
   const [dataSource, setDataSource] = useState([]);
   const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
-  const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
   const initFilters = ["skipped", "accepted", "unlabeled"];
@@ -124,6 +123,7 @@ function ProjectDashboard() {
   }, [tasks]);
 
   useEffect(() => {
+    showLoader();
     if (dataSource) {
       getColumnNames(
         dataSource[0],
@@ -134,9 +134,9 @@ function ProjectDashboard() {
           res[i].title = res[i].title.replaceAll("_", " ");
         }
         setColumns(res);
+        hideLoader();
       });
     }
-    setLoading(false);
   }, [dataSource]);
 
   const labelAllTasks = async (project_id) => {
@@ -158,11 +158,6 @@ function ProjectDashboard() {
       }
     }
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
 
   const dateRange = {
     from_date: selectstart,
