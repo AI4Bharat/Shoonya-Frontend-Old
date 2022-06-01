@@ -65,7 +65,7 @@ const createWorkspace = async (data) => {
 const archiveWorkspace = async (workspaceID) => {
 	return axiosInstance
 		.post(`/workspaces/${workspaceID}/archive/`)
-		.then((response) => response.data === 200)
+		.then((response) => response.status === 200)
 		.catch(() => {
 			message.error("Error archiving workspace");
 			return false;
