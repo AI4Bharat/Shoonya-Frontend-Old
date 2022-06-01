@@ -124,7 +124,6 @@ const LabelStudioWrapper = () => {
         onSubmitAnnotation: function (ls, annotation) {
           showLoader();
           if (taskData.task_status != "freezed") {
-            // console.log(task_status)
             postAnnotation(
               annotation.serializeAnnotation(),
               taskData.id,
@@ -143,7 +142,7 @@ const LabelStudioWrapper = () => {
             })
           else {
             hideLoader();
-            // window.location.reload();
+            window.location.reload();
           }
         },
 
@@ -232,7 +231,6 @@ const LabelStudioWrapper = () => {
 
   const onDraftAnnotation = async () => {
     task_status = "draft";
-    // console.log(task_status)
     lsfRef.current.store.submitAnnotation();
   }
 
