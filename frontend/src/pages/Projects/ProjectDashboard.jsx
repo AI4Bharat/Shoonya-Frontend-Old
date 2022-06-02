@@ -53,6 +53,10 @@ function ProjectDashboard() {
     localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
   }, [selectedDate]);
 
+  useEffect(() => {
+    localStorage.setItem('labellingMode', selectedFilter);
+  }, [selectedFilter]);
+
   const hideshowdiv = () => {
     sethideshow(true)
   }
@@ -140,7 +144,7 @@ function ProjectDashboard() {
 
   const labelAllTasks = async (project_id) => {
     try {
-      let response = await axiosInstance.post(`/projects/${project_id}/next/`, {
+      let response = await axiosInstance.post(`/projects/${project_id}/next/?task_status=${selectedFilter}`, {
         id: project_id,
       });
       if (response.status === 204) {
