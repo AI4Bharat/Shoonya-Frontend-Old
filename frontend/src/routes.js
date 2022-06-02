@@ -152,8 +152,7 @@ function GlobalRoutes() {
             />
           }
         />
-      </Route>
-      <Route
+        <Route
           path="dataset/:dataset_id"
           element={
             <RequireAuth>
@@ -161,6 +160,7 @@ function GlobalRoutes() {
             </RequireAuth>
           }
         />
+      </Route>
     </Routes>
   );
 }

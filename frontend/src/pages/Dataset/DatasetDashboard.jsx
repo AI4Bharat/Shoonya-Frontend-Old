@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
 import { Col, Row, Card, Table, Button, Checkbox, Popover } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
-import { fetchDataitems } from "../../api/DatasetAPI";
+import { fetchDataitems, getData } from "../../api/DatasetAPI";
 import { snakeToTitleCase } from "../../utils/stringConversions";
 
 function DatasetDashboard() {
   const { dataset_id } = useParams();
+  const [details, setDetails] = useState();
   const [dataset, setDataset] = useState();
   const [columns, setColumns] = useState([]);
   const [checkOptions, setCheckOptions] = useState([]);
@@ -27,6 +29,10 @@ function DatasetDashboard() {
   useEffect(() => {
     if (dataset_id) {
       showLoader();
+      getData(dataset_id).then((data) => {
+        console.log(data);
+        setDetails(data);
+      });
       fetchDataitems(dataset_id, 1, DEFAULT_PAGE_SIZE).then((res) => {
         setDataset(res.results);
         pagination.total = res.count;
@@ -93,7 +99,18 @@ function DatasetDashboard() {
           style={{ width: "100%", rowGap: "0px", marginBottom: "20px" }}
         >
           <Card style={{ width: "100%" }}>
-            <Title>Dataset Details</Title>
+            <Title>{details?.instance_name}</Title>
+            <Paragraph>
+              <b>Instance ID:</b> {details?.instance_id}
+            </Paragraph>
+            {details?.instance_description && (
+              <Paragraph>
+                <b>Description:</b> {details?.instance_description} 
+              </Paragraph>
+            )}
+            <Paragraph>
+              <b>Dataset Type:</b> {details?.dataset_type}
+            </Paragraph>
             <Popover
               content={
                 <Checkbox.Group
