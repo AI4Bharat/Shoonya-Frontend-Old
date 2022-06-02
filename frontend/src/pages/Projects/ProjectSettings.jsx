@@ -31,6 +31,10 @@ function ProjectSettings() {
   const [options, setOptions] = useState("CSV");
   const [pulldata, setPulldata] = useState();
 
+  
+  let selectboxvalue = localStorage.getItem('selectboxvalue');
+  
+  
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
       title: project.title,
@@ -58,18 +62,12 @@ function ProjectSettings() {
     hideLoader();
   }
   
- 
-  let pulldatavalue = localStorage.getItem('pulldata');
-  let selectboxvalue = localStorage.getItem('selectboxvalue');
-    const onPullData = async () => {
-    showLoader();
-    if(selectboxvalue == "f" ){
+  const onPullData = async () => {
+   showLoader();
    await PullNewData(id);
-      message.info(pulldatavalue)
-    }
-    
     hideLoader();
   };
+  
 
 
   const onDownload = async (id) => {
@@ -242,10 +240,10 @@ function ProjectSettings() {
                       Export Project into Dataset
                     </Button>
                   </Form.Item>
-
-                  <Button type="primary" onClick={() => onPullData(id)}>
+               {selectboxvalue == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
                     Pull New Data Items from Source Dataset
-                  </Button>
+                  </Button>: " "}
+                  
 
                   <Form.Item
                     wrapperCol={{ span: 16 }}
