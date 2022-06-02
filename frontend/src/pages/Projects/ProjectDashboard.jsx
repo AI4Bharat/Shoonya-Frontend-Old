@@ -49,6 +49,7 @@ function ProjectDashboard() {
   const [selectend, setselectend] = useState("");
   const [apidata, setapidata] = useState("");
   const [color, setColor] = useState("");
+  const DEFAULT_PAGE_SIZE = 10;
 
   useEffect(() => {
     localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
@@ -89,11 +90,11 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, 10, selectedFilters).then((res) => {
+      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilters).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
-        pagination.pageSize = 10;
+        pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
       });
       getProjectMembers(project_id).then((res) => {
@@ -318,6 +319,7 @@ function ProjectDashboard() {
                   pagination={{
                     total: pagination.total,
                     pageSize: pagination.pageSize,
+                    showSizeChanger: pagination.total > DEFAULT_PAGE_SIZE,
                     onChange: (page, pageSize) => {
                       pagination.current = page;
                       pagination.pageSize = pageSize;
