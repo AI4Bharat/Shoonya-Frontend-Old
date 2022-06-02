@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Tag } from "antd";
+import { Button, Popconfirm, Tag } from "antd";
+import { removeAnnotatorsFromWorkspace } from "../../api/WorkspaceAPI";
 const projectColumns = [
   {
     title: "Name",
@@ -30,7 +31,7 @@ const projectColumns = [
     ),
   },
 ];
-const memberColumns = [
+const getMemberColumns = (workspaceID) => [
   {
     title: "Name",
     dataIndex: "username",
@@ -58,13 +59,30 @@ const memberColumns = [
     render: (item) => (
       <>
         <a href={`/profile/${item.id}`}>
-          <Button type={"primary"} style={{ marginRight: "1%" }}>
+          <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
         </a>
+        <Popconfirm
+          title="Remove user from workspace?"
+          okText="Remove"
+          onConfirm={async () => {
+            await removeAnnotatorsFromWorkspace(workspaceID, [item.id]);
+            location.reload();
+          }}
+        >
+          <Button
+            type={"default"}
+            danger
+            size="small"
+            style={{ marginRight: "1%" }}
+          >
+            Remove
+          </Button>
+        </Popconfirm>
       </>
     ),
   },
 ];
 
-export { projectColumns, memberColumns };
+export { projectColumns, getMemberColumns };
