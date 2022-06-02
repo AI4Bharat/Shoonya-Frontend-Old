@@ -285,7 +285,7 @@ function ProjectDashboard() {
                 <Col span={9}>
                 {project.project_mode == "Annotation" ? (
                   <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center" }}>
-                    Filter by:
+                    Filter by Status:
                     <Radio.Group
                       value={selectedFilter}
                       onChange={handleFilterChange}
