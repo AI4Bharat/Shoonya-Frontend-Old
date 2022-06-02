@@ -34,7 +34,6 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const initFilters = ["skipped", "accepted", "unlabeled"];
   const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
@@ -88,7 +87,6 @@ function ProjectDashboard() {
         setProject(res);
       });
       getTasks(project_id, 1, 10, selectedFilter).then((res) => {
-        console.log(res, "res");
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
@@ -125,8 +123,6 @@ function ProjectDashboard() {
   useEffect(() => {
     if (dataSource?.length > 0) {
       showLoader();
-      console.log(dataSource, "dataSource");
-      console.log(project, "project");
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -169,9 +165,7 @@ function ProjectDashboard() {
   const onDisplayTable = async (id) => {
     try {
       let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
-      console.log(response)
       setResultsource(response.data)
-      console.log(response.data, "data")
       return;
     } catch (error) {
       message.error(error);
@@ -189,7 +183,6 @@ function ProjectDashboard() {
     }
 
   }
-  console.log(keys)
   function camelize(str) {
     const arr = str.toString().split("_");
     for (var i = 0; i < arr.length; i++) {
