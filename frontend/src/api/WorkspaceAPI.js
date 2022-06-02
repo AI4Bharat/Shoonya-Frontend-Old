@@ -25,6 +25,18 @@ const addAnnotatorsToWorkspace = async (workspaceID, users) => {
   }
 };
 
+const removeAnnotatorsFromWorkspace = async (workspaceID, users) => {
+  try {
+    let response = await axiosInstance.post(
+      `workspaces/${workspaceID}/removeannotators/`,
+      { user_id: users?.join() }
+    );
+    return response.data;
+  } catch {
+    message.error("Error adding users");
+  }
+};
+
 const fetchUsersInWorkspace = async (workspaceID) => {
   try {
     let response = await axiosInstance.get(`workspaces/${workspaceID}/users/`);
@@ -112,4 +124,5 @@ export {
   assignManager,
   unAssignManagers,
   addAnnotatorsToWorkspace,
+  removeAnnotatorsFromWorkspace,
 };

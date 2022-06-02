@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { fetchUsers } from "../../api/OrganizationAPI";
 import { addAnnotatorsToWorkspace } from "../../api/WorkspaceAPI";
-import { memberColumns } from "./TableColumns";
+import { getMemberColumns, memberColumns } from "./TableColumns";
 
 export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -12,7 +12,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const addNewUsers = async () => {
-      console.log(selectedUsers.join());
+    console.log(selectedUsers.join());
     await addAnnotatorsToWorkspace(workspaceId, selectedUsers).then((done) => {
       if (done) {
         setSelectedUsers([]);
@@ -32,7 +32,10 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
       let displayUsers = users;
 
       // filter out users which are already present in workspace
-      if (Array.isArray(workspaceAnnotators) && workspaceAnnotators.length !== 0) {
+      if (
+        Array.isArray(workspaceAnnotators) &&
+        workspaceAnnotators.length !== 0
+      ) {
         displayUsers = displayUsers.filter(
           (displayUser) =>
             workspaceAnnotators.findIndex(
@@ -64,6 +67,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
         visible={modalOpen}
         onCancel={() => setModalOpen(false)}
         onOk={() => addNewUsers()}
+        okButtonProps={{ disabled: selectedUsers.length === 0 }}
       >
         <Title level={5}>Enter Usernames to be added</Title>
         <Select
@@ -79,7 +83,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
           onChange={handleSelectChange}
         />
       </Modal>
-      <Table columns={memberColumns} dataSource={workspaceAnnotators} />
+      <Table columns={getMemberColumns(workspaceId)} dataSource={workspaceAnnotators} />
     </>
   );
 }
