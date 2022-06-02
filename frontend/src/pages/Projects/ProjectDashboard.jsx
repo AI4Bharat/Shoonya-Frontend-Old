@@ -297,10 +297,13 @@ function ProjectDashboard() {
                   <div style={{ display: "inline-flex", width: "50%", justifyContent: "space-evenly" }}>
                     Filter by:
                     <Radio.Group
-                      options={filters}
                       value={selectedFilter}
                       onChange={handleFilterChange}
-                    />
+                    >
+                    {filters.map((filter, i) => (
+                      <Radio.Button key={i} value={filter.value}>{filter.label}</Radio.Button>
+                    ))}
+                    </Radio.Group>
                   </div>
                 ) : (<div></div>)
                 }
