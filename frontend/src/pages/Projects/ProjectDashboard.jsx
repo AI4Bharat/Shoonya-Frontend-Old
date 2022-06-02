@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { Col, Row, Card, Table, Button, Tabs, Checkbox } from "antd";
+import { Col, Row, Card, Table, Button, Tabs, Radio, Select } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -36,12 +36,11 @@ function ProjectDashboard() {
   const [dataSource, setDataSource] = useState([]);
   const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
-  const [isLoading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const initFilters = ["skipped", "accepted", "unlabeled"];
-  const [selectedFilters, setFilters] = useState(initFilters);
+  const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
     { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
@@ -57,15 +56,14 @@ function ProjectDashboard() {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const onChange = (dates) => {
+  const DEFAULT_PAGE_SIZE = 10;
+  
+  const onChangeDate = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
     setselectstart(moment(start).format("YYYY-MM-DD"))
     setselectend(moment(end).format("YYYY-MM-DD"))
-
-
-
   };
 
   // useEffect(() => {
@@ -78,6 +76,10 @@ function ProjectDashboard() {
     setselectend(moment().format("YYYY-MM-DD"))
   }, [])
 
+
+  useEffect(() => {
+    localStorage.setItem('labellingMode', selectedFilter);
+  }, [selectedFilter]);
 
   const hideshowdiv = () => {
     sethideshow(true)
@@ -97,7 +99,7 @@ function ProjectDashboard() {
   }
   function handleTableChange() {
     showLoader();
-    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
+    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilter).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -105,10 +107,21 @@ function ProjectDashboard() {
     });
   }
 
-  function handleFilterChange(checkedValue) {
-    if (checkedValue.length === 0) checkedValue = initFilters;
-    setFilters(checkedValue);
-    getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
+  function handleFilterChange(selectedValue) {
+    showLoader();
+    setFilter(selectedValue.target.value);
+    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
+  }
+
+  function handleAnnotatorChange(selectedValue) {
+    showLoader();
+    setAnnotator(selectedValue);
+    getTasks(project_id, 1, pagination.pageSize, selectedFilter, Number(selectedValue)).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -117,7 +130,6 @@ function ProjectDashboard() {
   }
 
   // const items = JSON.parse(localStorage.getItem('selectedDate'));
-
   // console.log(items, "itemsin prent")
 
 
@@ -126,11 +138,11 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, 10, selectedFilters).then((res) => {
+      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
-        pagination.pageSize = 10;
+        pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
       });
       getProjectMembers(project_id).then((res) => {
@@ -161,7 +173,8 @@ function ProjectDashboard() {
   }, [tasks]);
 
   useEffect(() => {
-    if (dataSource) {
+    if (dataSource?.length > 0) {
+      showLoader();
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -171,14 +184,14 @@ function ProjectDashboard() {
           res[i].title = res[i].title.replaceAll("_", " ");
         }
         setColumns(res);
+        hideLoader();
       });
     }
-    setLoading(false);
   }, [dataSource]);
 
   const labelAllTasks = async (project_id) => {
     try {
-      let response = await axiosInstance.post(`/projects/${project_id}/next/`, {
+      let response = await axiosInstance.post(`/projects/${project_id}/next/?task_status=${selectedFilter}`, {
         id: project_id,
       });
       if (response.status === 204) {
@@ -196,11 +209,6 @@ function ProjectDashboard() {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-
   const dateRange = {
     from_date: selectstart,
     to_date: selectend,
@@ -209,9 +217,7 @@ function ProjectDashboard() {
   const onDisplayTable = async (id) => {
     try {
       let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
-      console.log(response)
       setResultsource(response.data)
-      console.log(response.data, "data")
       return;
     } catch (error) {
       message.error(error);
@@ -229,7 +235,6 @@ function ProjectDashboard() {
     }
 
   }
-  console.log(keys)
   function camelize(str) {
     const arr = str.toString().split("_");
     for (var i = 0; i < arr.length; i++) {
@@ -275,7 +280,7 @@ function ProjectDashboard() {
 
     backgroundColor: color
   };
-  console.log()
+
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -311,16 +316,57 @@ function ProjectDashboard() {
             )}
             <Tabs>
               <TabPane tab="Tasks" key="1">
+                <Row gutter={[16,16]}>
+                <Col span={9}>
+                {project.project_mode == "Annotation" ? (
+                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center" }}>
+                    Filter by Status:
+                    <Radio.Group
+                      value={selectedFilter}
+                      onChange={handleFilterChange}
+                    >
+                    {filters.map((filter, i) => (
+                      <Radio.Button key={i} value={filter.value}>{filter.label}</Radio.Button>
+                    ))}
+                    </Radio.Group>
+                  </div>
+                ) : (<div></div>)
+                }
+                </Col>
+                <Col span={9}>
+                {(userContext.user?.role === 2 || userContext.user?.role === 3) && project.project_mode == "Annotation" ? (
+                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
+                    Filter by Annotators:
+                    <Select
+                      showSearch
+                      value={selectedAnnotator}
+                      placeholder="Select an annotator"
+                      optionFilterProp="children"
+                      onChange={handleAnnotatorChange}
+                      style={{ flexGrow: 1, marginLeft: "5%", marginRight: "5%" }}
+                    >
+                      <Select.Option value="-1">All</Select.Option>
+                      {projectMembers.filter(member => member.role === 1).map((member, i) => (
+                        <Select.Option key={i} value={member.id}>
+                          {member.username}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : (<div></div>)
+                }
+                </Col>
+                <Col span={6}>
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
-                    <div style={{ display: "inline-flex", width: "49%", marginBottom: "1%", marginRight: "1%" }}>
+                    <div style={{ display: "inline-flex", width: "100%", marginBottom: "1%", marginRight: "1%", flexWrap: "wrap" }}>
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           labelAllTasks(project_id);
                         }}
                         type="primary"
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
                       >
                         Start Labelling Now
                       </Button>
@@ -328,33 +374,27 @@ function ProjectDashboard() {
                   ) : (
                     <Button
                       type="primary"
-                      style={{ width: "49%", marginBottom: "1%", marginRight: "1%" }}
+                      style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
                     >
                       Disabled
                     </Button>
                   )
                 ) : (
-                  <Button type="primary">
+                  <Button 
+                    type="primary" 
+                    style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}>
                     <Link to={`/add-collection-data/${project.id}`}>
                       Add New Item
                     </Link>
                   </Button>
                 )}
-                {project.project_mode == "Annotation" ? (
-                  <div style={{ display: "inline-flex", width: "50%", justifyContent: "space-evenly" }}>
-                    Filter by:
-                    <Checkbox.Group
-                      options={filters}
-                      value={selectedFilters}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                ) : (<div></div>)
-                }
+                </Col>
+                </Row>
                 <Table
                   pagination={{
                     total: pagination.total,
                     pageSize: pagination.pageSize,
+                    showSizeChanger: pagination.total > DEFAULT_PAGE_SIZE,
                     onChange: (page, pageSize) => {
                       pagination.current = page;
                       pagination.pageSize = pageSize;
@@ -397,7 +437,7 @@ function ProjectDashboard() {
                             {show ?
                               <div style={{ float: 'left', marginLeft: "20px" }}>  <DatePicker
                                 selected={startDate}
-                                onChange={onChange}
+                                onChange={onChangeDate}
                                 startDate={startDate}
                                 endDate={endDate}
                                 selectsRange

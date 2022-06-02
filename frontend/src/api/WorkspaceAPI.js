@@ -13,6 +13,30 @@ import axiosInstance from "../utils/apiInstance";
 //   }
 // };
 
+const addAnnotatorsToWorkspace = async (workspaceID, users) => {
+  try {
+    let response = await axiosInstance.post(
+      `workspaces/${workspaceID}/addannotators/`,
+      { user_id: users?.join() }
+    );
+    return response.data;
+  } catch {
+    message.error("Error adding users");
+  }
+};
+
+const removeAnnotatorsFromWorkspace = async (workspaceID, users) => {
+  try {
+    let response = await axiosInstance.post(
+      `workspaces/${workspaceID}/removeannotators/`,
+      { user_id: users?.join() }
+    );
+    return response.data;
+  } catch {
+    message.error("Error adding users");
+  }
+};
+
 const fetchUsersInWorkspace = async (workspaceID) => {
   try {
     let response = await axiosInstance.get(`workspaces/${workspaceID}/users/`);
@@ -43,7 +67,7 @@ const fetchWorkspaceData = async (workspaceID) => {
 
 const fetchWorkspaces = async (page) => {
   try {
-    let response = await axiosInstance.get(`/workspaces/?page=`+page);
+    let response = await axiosInstance.get(`/workspaces/?page=` + page);
     return response.data;
   } catch {
     message.error("Error fetching workspaces");
@@ -56,7 +80,38 @@ const createWorkspace = async (data) => {
     return response.data;
   } catch {
     message.error("Error creating workspace");
+    return false;
   }
+};
+
+const archiveWorkspace = async (workspaceID) => {
+  return axiosInstance
+    .post(`/workspaces/${workspaceID}/archive/`)
+    .then((response) => response.status === 200)
+    .catch(() => {
+      message.error("Error archiving workspace");
+      return false;
+    });
+};
+
+const assignManager = async (workspaceId, username) => {
+  return axiosInstance
+    .post(`/workspaces/${workspaceId}/assign_manager/`, { username })
+    .then((response) => response.status === 200)
+    .catch(() => {
+      message.error("Error assigning manager");
+      return false;
+    });
+};
+
+const unAssignManagers = async (workspaceId, usernames) => {
+  return axiosInstance
+    .post(`/workspaces/${workspaceId}/unassign_manager/`, { usernames })
+    .then((response) => response.status === 200)
+    .catch(() => {
+      message.error("Error unassigning managers");
+      return false;
+    });
 };
 
 export {
@@ -65,4 +120,9 @@ export {
   fetchUsersInWorkspace,
   fetchWorkspaceData,
   fetchWorkspaceProjects,
+  archiveWorkspace,
+  assignManager,
+  unAssignManagers,
+  addAnnotatorsToWorkspace,
+  removeAnnotatorsFromWorkspace,
 };

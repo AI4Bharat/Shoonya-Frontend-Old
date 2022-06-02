@@ -100,6 +100,22 @@ const exportProject = async (id) => {
     }
 };
 
+const archiveProject = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/archive/`);
+
+    if (response.status !== 200){
+      return message.error("Unable to change archive settings");
+    }
+      if (response.data.is_archived)
+        message.success("Successfully Archived Project");
+      else message.success("Successfully Unarchived Project");
+      return response.data.is_archived;
+  } catch (error) {
+    message.error(error);
+  }
+};
+
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
@@ -145,4 +161,5 @@ export {
   exportProject,
   PullNewData,
   downloadProject,
+  archiveProject,
 };
