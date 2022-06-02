@@ -53,6 +53,10 @@ function ProjectDashboard() {
     localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
   }, [selectedDate]);
 
+  useEffect(() => {
+    localStorage.setItem('labellingMode', selectedFilter);
+  }, [selectedFilter]);
+
   const hideshowdiv = () => {
     sethideshow(true)
   }
