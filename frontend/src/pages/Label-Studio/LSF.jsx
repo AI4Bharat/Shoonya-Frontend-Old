@@ -242,6 +242,7 @@ const LabelStudioWrapper = () => {
           value="Draft"
           type="danger"
           onClick={onDraftAnnotation}
+          style={{minWidth: "160px", background: "white", borderColor:"green", color:"green"}}
         >
           Draft
         </Button>
