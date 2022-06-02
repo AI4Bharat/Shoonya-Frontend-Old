@@ -29,11 +29,11 @@ export function WorkspaceSettings({ workspaceId }) {
 			<Layout>
 				<Layout.Content
 					style={{
-						height: "100vh",
 						justifyContent: "center",
 						alignItems: "center",
 						display: "flex",
 						flexDirection: "column",
+						paddingTop: "5%"
 					}}
 				>
 					<Card
