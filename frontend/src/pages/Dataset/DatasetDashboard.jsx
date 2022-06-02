@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import { Col, Row, Card, Table, Button, Checkbox, Popover } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
-import { getData } from "../../api/CreateProjectAPI";
+import { fetchDataitems } from "../../api/DatasetAPI";
 import { snakeToTitleCase } from "../../utils/stringConversions";
 
 function DatasetDashboard() {
@@ -13,6 +13,7 @@ function DatasetDashboard() {
   const [checkOptions, setCheckOptions] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
   const [trigger, setTrigger] = useState(1);
+  const [pagination, setPagination] = useState({});
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const excludeKeys = [
     "parent_data_id",
@@ -21,24 +22,24 @@ function DatasetDashboard() {
     "datasetbase_ptr_id",
     "key",
   ];
+  const DEFAULT_PAGE_SIZE = 10;
 
   useEffect(() => {
     if (dataset_id) {
       showLoader();
-      getData(dataset_id, "TranslationPair").then((res) => {
-        let key = 1;
-        for (const data in res) {
-          res[data].key = key;
-          key++;
-        }
-        setDataset(res);
+      fetchDataitems(dataset_id, 1, DEFAULT_PAGE_SIZE).then((res) => {
+        setDataset(res.results);
+        pagination.total = res.count;
+        pagination.current = 1;
+        pagination.pageSize = DEFAULT_PAGE_SIZE;
+        setPagination(pagination);
         hideLoader();
       });
     }
   }, []);
 
   useEffect(() => {
-    if (dataset && dataset.length > 0) {
+    if (dataset?.length > 0) {
       let tempColumns = [];
       let tempCheckOptions = [];
       Object.keys(dataset[0]).forEach((key) => {
@@ -73,6 +74,16 @@ function DatasetDashboard() {
     setColumns(columns);
   };
 
+  function handleTableChange() {
+    showLoader();
+    fetchDataitems(dataset_id, pagination.current, pagination.pageSize).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setDataset(res.results);
+      hideLoader();
+    });
+  }
+
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -95,7 +106,7 @@ function DatasetDashboard() {
               trigger="click"
             >
               <Button
-                style={{ float: "right" }}
+                style={{ margin: "auto", display: "block" }}
               >
                 Filter Columns
               </Button>
@@ -104,7 +115,16 @@ function DatasetDashboard() {
             {trigger && <Table
               columns={columns.filter((column) => !column.hidden)}
               dataSource={dataset}
-              pagination={false}
+              pagination={{
+                total: pagination.total,
+                pageSize: pagination.pageSize,
+                showSizeChanger: pagination.total > DEFAULT_PAGE_SIZE,
+                onChange: (page, pageSize) => {
+                  pagination.current = page;
+                  pagination.pageSize = pageSize;
+                },
+              }}
+              onChange={handleTableChange}
               style={{ width: "100%" }}
             />}
           </Card>
