@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { Col, Row, Card, Table, Button, Tabs, Checkbox } from "antd";
+import { Col, Row, Card, Table, Button, Tabs, Radio } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -34,8 +34,7 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const initFilters = ["skipped", "accepted", "unlabeled"];
-  const [selectedFilters, setFilters] = useState(initFilters);
+  const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const filters = [
     { label: "unlabeled", value: "unlabeled", },
@@ -60,7 +59,7 @@ function ProjectDashboard() {
 
   function handleTableChange() {
     showLoader();
-    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilters).then((res) => {
+    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilter).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -68,10 +67,9 @@ function ProjectDashboard() {
     });
   }
 
-  function handleFilterChange(checkedValue) {
-    if (checkedValue.length === 0) checkedValue = initFilters;
-    setFilters(checkedValue);
-    getTasks(project_id, 1, pagination.pageSize, checkedValue).then((res) => {
+  function handleFilterChange(selectedValue) {
+    setFilter(selectedValue.target.value);
+    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -89,7 +87,7 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilters).then((res) => {
+      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = 1;
@@ -124,8 +122,8 @@ function ProjectDashboard() {
   }, [tasks]);
 
   useEffect(() => {
-    showLoader();
-    if (dataSource) {
+    if (dataSource?.length > 0) {
+      showLoader();
       getColumnNames(
         dataSource[0],
         project.project_mode,
@@ -168,9 +166,7 @@ function ProjectDashboard() {
   const onDisplayTable = async (id) => {
     try {
       let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
-      console.log(response)
       setResultsource(response.data)
-      console.log(response.data, "data")
       return;
     } catch (error) {
       message.error(error);
@@ -188,7 +184,6 @@ function ProjectDashboard() {
     }
 
   }
-  console.log(keys)
   function camelize(str) {
     const arr = str.toString().split("_");
     for (var i = 0; i < arr.length; i++) {
@@ -302,11 +297,14 @@ function ProjectDashboard() {
                 {project.project_mode == "Annotation" ? (
                   <div style={{ display: "inline-flex", width: "50%", justifyContent: "space-evenly" }}>
                     Filter by:
-                    <Checkbox.Group
-                      options={filters}
-                      value={selectedFilters}
+                    <Radio.Group
+                      value={selectedFilter}
                       onChange={handleFilterChange}
-                    />
+                    >
+                    {filters.map((filter, i) => (
+                      <Radio.Button key={i} value={filter.value}>{filter.label}</Radio.Button>
+                    ))}
+                    </Radio.Group>
                   </div>
                 ) : (<div></div>)
                 }
