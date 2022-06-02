@@ -11,6 +11,7 @@ import {
 } from "../../api/WorkspaceAPI";
 import { memberColumns, projectColumns } from "./TableColumns";
 import { AnnotatorsTab } from "./AnnotatorsTab";
+import {ManagersTab} from './ManagersTab'
 import { WorkspaceSettings } from "./WorkspaceSettings";
 
 const { TabPane } = Tabs;
@@ -100,7 +101,12 @@ function Workspace() {
                     <AnnotatorsTab workspaceAnnotators={users} orgId={workspace?.organization} workspaceId={workspace?.id} />
                   </TabPane>
                   {(userContext.user?.role === 3 &&
-                    <TabPane tab="Settings" key="3">
+                    <TabPane tab="Managers" key="3">
+                       <ManagersTab workspaceId={workspaceId} />
+                    </TabPane>
+                  )}
+                  {(userContext.user?.role === 3 &&
+                    <TabPane tab="Settings" key="4">
                       <WorkspaceSettings workspaceId={workspaceId} organizationId={userContext.user?.organization?.id} />
                     </TabPane>
                   )}

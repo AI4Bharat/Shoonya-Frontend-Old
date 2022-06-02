@@ -67,4 +67,31 @@ const memberColumns = [
   },
 ];
 
-export { projectColumns, memberColumns };
+const managerColumns = [
+  {
+    title: "Name",
+    dataIndex: "username",
+    key: "name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Remove Manager",
+    dataIndex: "removeAction",
+    render: (item) => (
+      <Button
+        disabled={item.isArchived}
+        danger
+        type="primary"
+        onClick={item.handleClick}
+      >
+        Remove
+      </Button>
+    )
+  }
+]
+
+export { projectColumns, memberColumns, managerColumns };
