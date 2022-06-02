@@ -1,6 +1,9 @@
 import React from "react";
-import { Button, Popconfirm, Tag } from "antd";
+import { Button, Tag } from "antd";
+
 import { removeAnnotatorsFromWorkspace } from "../../api/WorkspaceAPI";
+import {Link} from 'react-router-dom'
+
 const projectColumns = [
   {
     title: "Name",
@@ -58,30 +61,24 @@ const getMemberColumns = (workspaceID, workspaceIsArchived) => [
     title: "Actions",
     render: (item) => (
       <>
-        <a href={`/profile/${item.id}`}>
+        <Link to={`/profile/${item.id}`}>
           <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
-        </a>
-        <Popconfirm
-          title="Remove user from workspace?"
-          okText="Remove"
-          onConfirm={async () => {
+        </Link>
+        <Button
+          type={"default"}
+          danger
+          size="small"
+          style={{ marginRight: "1%" }}
+          disabled={workspaceIsArchived}
+          onClick={async () => {
             await removeAnnotatorsFromWorkspace(workspaceID, [item.id]);
             location.reload();
           }}
-          disabled={workspaceIsArchived}
-          >
-          <Button
-            type={"default"}
-            danger
-            size="small"
-            style={{ marginRight: "1%" }}
-            disabled={workspaceIsArchived}
-          >
-            Remove
-          </Button>
-        </Popconfirm>
+        >
+          Remove
+        </Button>
       </>
     ),
   },
@@ -99,17 +96,25 @@ const managerColumns = [
     key: "email",
   },
   {
-    title: "Remove Manager",
+    title: "Actions",
     dataIndex: "removeAction",
     render: (item) => (
-      <Button
-        disabled={item.isArchived}
-        danger
-        type="primary"
-        onClick={item.handleClick}
-      >
-        Remove
-      </Button>
+      <>
+        <Link to={`/profile/${item.userId}`}>
+          <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
+            View
+          </Button>
+        </Link>
+        <Button
+          disabled={item.isArchived}
+          danger
+          size="small"
+          type="primary"
+          onClick={item.handleClick}
+        >
+          Remove
+        </Button>
+      </>
     )
   }
 ]

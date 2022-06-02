@@ -109,6 +109,7 @@ export function ManagersTab({ workspaceId }) {
 			removeAction: {
 				isArchived: workspaceDetais?.is_archived,
 				handleClick: () => handleUnassignClick(user.username),
+				userId: user.id
 			},
 		}));
 	}, [workspaceDetais]);
