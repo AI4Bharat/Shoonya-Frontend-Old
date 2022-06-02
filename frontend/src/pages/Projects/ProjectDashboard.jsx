@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { Col, Row, Card, Table, Button, Tabs, Radio } from "antd";
+import { Col, Row, Card, Table, Button, Tabs, Radio, Select } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -36,6 +36,7 @@ function ProjectDashboard() {
   const [date, setDate] = useState("");
   const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
     { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
@@ -68,14 +69,27 @@ function ProjectDashboard() {
   }
 
   function handleFilterChange(selectedValue) {
+    showLoader();
     setFilter(selectedValue.target.value);
-    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value).then((res) => {
+    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
     });
   }
+
+  function handleAnnotatorChange(selectedValue) {
+    showLoader();
+    setAnnotator(selectedValue);
+    getTasks(project_id, 1, pagination.pageSize, selectedFilter, Number(selectedValue)).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
+  }
+
 
   const items = JSON.parse(localStorage.getItem('selectedDate'));
 
@@ -229,6 +243,8 @@ function ProjectDashboard() {
     
   backgroundColor  : color
   };
+
+  console.log(projectMembers)
   
   return (
     <>
@@ -265,37 +281,10 @@ function ProjectDashboard() {
             )}
             <Tabs>
               <TabPane tab="Tasks" key="1">
+                <Row gutter={[16,16]}>
+                <Col span={9}>
                 {project.project_mode == "Annotation" ? (
-                  project.is_published ? (
-                    <div style={{ display: "inline-flex", width: "49%", marginBottom: "1%", marginRight: "1%" }}>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          labelAllTasks(project_id);
-                        }}
-                        type="primary"
-                        style={{ width: "100%" }}
-                      >
-                        Start Labelling Now
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      type="primary"
-                      style={{ width: "49%", marginBottom: "1%", marginRight: "1%" }}
-                    >
-                      Disabled
-                    </Button>
-                  )
-                ) : (
-                  <Button type="primary">
-                    <Link to={`/add-collection-data/${project.id}`}>
-                      Add New Item
-                    </Link>
-                  </Button>
-                )}
-                {project.project_mode == "Annotation" ? (
-                  <div style={{ display: "inline-flex", width: "50%", justifyContent: "space-evenly" }}>
+                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center" }}>
                     Filter by:
                     <Radio.Group
                       value={selectedFilter}
@@ -308,6 +297,64 @@ function ProjectDashboard() {
                   </div>
                 ) : (<div></div>)
                 }
+                </Col>
+                <Col span={9}>
+                {(userContext.user?.role === 2 || userContext.user?.role === 3) && project.project_mode == "Annotation" ? (
+                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
+                    Filter by Annotators:
+                    <Select
+                      showSearch
+                      value={selectedAnnotator}
+                      placeholder="Select an annotator"
+                      optionFilterProp="children"
+                      onChange={handleAnnotatorChange}
+                      style={{ flexGrow: 1, marginLeft: "5%", marginRight: "5%" }}
+                    >
+                      <Select.Option value="-1">All</Select.Option>
+                      {projectMembers.filter(member => member.role === 1).map((member, i) => (
+                        <Select.Option key={i} value={member.id}>
+                          {member.username}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : (<div></div>)
+                }
+                </Col>
+                <Col span={6}>
+                {project.project_mode == "Annotation" ? (
+                  project.is_published ? (
+                    <div style={{ display: "inline-flex", width: "100%", marginBottom: "1%", marginRight: "1%", flexWrap: "wrap" }}>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          labelAllTasks(project_id);
+                        }}
+                        type="primary"
+                        style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
+                      >
+                        Start Labelling Now
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      type="primary"
+                      style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
+                    >
+                      Disabled
+                    </Button>
+                  )
+                ) : (
+                  <Button 
+                    type="primary" 
+                    style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}>
+                    <Link to={`/add-collection-data/${project.id}`}>
+                      Add New Item
+                    </Link>
+                  </Button>
+                )}
+                </Col>
+                </Row>
                 <Table
                   pagination={{
                     total: pagination.total,
