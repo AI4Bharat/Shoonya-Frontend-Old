@@ -11,4 +11,14 @@ const getTasks = async (projectID, page, records, filters) => {
     }
 };
 
-export { getTasks }
+const getReviewTasks = async (projectID, page, records) => {
+    try {
+        let urlString = "/task/?project_id=" + projectID+"&page="+page+"&records="+records+"&mode=review";
+        let response = await axiosInstance.get(urlString);
+        return response.data;
+    } catch {
+        message.error("Error fetching tasks.")
+    }
+};
+
+export { getTasks, getReviewTasks }

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTasks } from "../../api/ProjectDashboardAPI";
+import { getTasks, getReviewTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
 import moment from "moment";
 import {
@@ -33,6 +33,7 @@ function ProjectDashboard() {
   const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
+  const [paginationReview, setPaginationReview] = useState({});
   const [date, setDate] = useState("");
   const initFilters = ["skipped", "accepted", "unlabeled", "draft"];
   const [selectedFilters, setFilters] = useState(initFilters);
@@ -68,6 +69,21 @@ function ProjectDashboard() {
     });
   }
 
+  function handleTableChangeReview() {
+    showLoader();
+    getReviewTasks(project_id, paginationReview.current, paginationReview.pageSize).then((res) => {
+      paginationReview.total = res.count;
+      setPaginationReview(paginationReview);
+      setTasks(res.results);
+      hideLoader();
+    });
+  }
+
+  function handleTabChange(activeKey){
+    if(activeKey == '4')
+      handleTableChangeReview()
+  }
+
   function handleFilterChange(checkedValue) {
     if (checkedValue.length === 0) checkedValue = initFilters;
     setFilters(checkedValue);
@@ -81,7 +97,6 @@ function ProjectDashboard() {
 
   const items = JSON.parse(localStorage.getItem('selectedDate'));
 
-  console.log(items, "itemsin prent")
 
 
   useEffect(() => {
@@ -188,7 +203,6 @@ function ProjectDashboard() {
     }
 
   }
-  console.log(keys)
   function camelize(str) {
     const arr = str.toString().split("_");
     for (var i = 0; i < arr.length; i++) {
@@ -268,7 +282,9 @@ function ProjectDashboard() {
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-            <Tabs>
+            <Tabs
+            onTabClick={handleTabChange}
+            >
               <TabPane tab="Tasks" key="1">
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
@@ -370,6 +386,21 @@ function ProjectDashboard() {
                 <Table 
                   columns={keys}
                   dataSource={resultsource}
+                />
+              </TabPane>
+              <TabPane tab="Review" key="4" onChange={handleTableChangeReview}>
+                <Table
+                  pagination={{
+                    total: paginationReview.total,
+                    pageSize: paginationReview.pageSize,
+                    onChange: (page, pageSize) => {
+                      paginationReview.current = page;
+                      paginationReview.pageSize = pageSize;
+                    },
+                  }}
+                  onChange={handleTableChangeReview}
+                  columns={columns}
+                  dataSource={dataSource}
                 />
               </TabPane>
             </Tabs>
