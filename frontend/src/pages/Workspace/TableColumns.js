@@ -31,7 +31,7 @@ const projectColumns = [
     ),
   },
 ];
-const getMemberColumns = (workspaceID) => [
+const getMemberColumns = (workspaceID, workspaceIsArchived) => [
   {
     title: "Name",
     dataIndex: "username",
@@ -70,12 +70,14 @@ const getMemberColumns = (workspaceID) => [
             await removeAnnotatorsFromWorkspace(workspaceID, [item.id]);
             location.reload();
           }}
-        >
+          disabled={workspaceIsArchived}
+          >
           <Button
             type={"default"}
             danger
             size="small"
             style={{ marginRight: "1%" }}
+            disabled={workspaceIsArchived}
           >
             Remove
           </Button>

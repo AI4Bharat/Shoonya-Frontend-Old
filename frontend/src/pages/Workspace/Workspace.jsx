@@ -9,7 +9,7 @@ import {
   fetchWorkspaceData,
   fetchWorkspaceProjects,
 } from "../../api/WorkspaceAPI";
-import { memberColumns, projectColumns } from "./TableColumns";
+import { projectColumns } from "./TableColumns";
 import { AnnotatorsTab } from "./AnnotatorsTab";
 import {ManagersTab} from './ManagersTab'
 import { WorkspaceSettings } from "./WorkspaceSettings";
@@ -98,7 +98,12 @@ function Workspace() {
                     />
                   </TabPane>
                   <TabPane tab="Annotators" key="2">
-                    <AnnotatorsTab workspaceAnnotators={users} orgId={workspace?.organization} workspaceId={workspace?.id} />
+                  <AnnotatorsTab
+                    workspaceAnnotators={users}
+                    orgId={workspace?.organization}
+                    workspaceId={workspace?.id}
+                    isArchived={workspace?.is_archived}
+                  />;
                   </TabPane>
                   {(userContext.user?.role === 3 &&
                     <TabPane tab="Managers" key="3">

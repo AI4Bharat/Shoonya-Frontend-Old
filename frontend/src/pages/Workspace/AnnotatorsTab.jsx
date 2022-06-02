@@ -6,7 +6,7 @@ import { fetchUsers } from "../../api/OrganizationAPI";
 import { addAnnotatorsToWorkspace } from "../../api/WorkspaceAPI";
 import { getMemberColumns, memberColumns } from "./TableColumns";
 
-export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
+export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId, isArchived }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [availableUsers, setAvailableUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -60,6 +60,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
         style={{ width: "100%", marginBottom: "1%" }}
         onClick={() => setModalOpen(true)}
         type="primary"
+        disabled={isArchived}
       >
         Add Annotators to Workspace
       </Button>
@@ -83,7 +84,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId }) {
           onChange={handleSelectChange}
         />
       </Modal>
-      <Table columns={getMemberColumns(workspaceId)} dataSource={workspaceAnnotators} />
+      <Table columns={getMemberColumns(workspaceId, isArchived)} dataSource={workspaceAnnotators} />
     </>
   );
 }
@@ -92,4 +93,5 @@ AnnotatorsTab.propTypes = {
   workspaceAnnotators: PropTypes.array,
   orgId: PropTypes.number,
   workspaceId: PropTypes.number,
+  isArchived: PropTypes.bool
 };
