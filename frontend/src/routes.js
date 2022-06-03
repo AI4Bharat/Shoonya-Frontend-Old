@@ -19,6 +19,7 @@ import CreateCollectionProject from "./pages/CreateProject/CreateCollectionProje
 import ProjectSettings from "./pages/Projects/ProjectSettings";
 import AddCollectionData from "./components/AddCollectionData";
 import Landing from "./pages/Landing/Landing";
+import DatasetDashboard from "./pages/Dataset/DatasetDashboard";
 
 function RequireAuth({ children }) {
   let location = useLocation();
@@ -149,6 +150,14 @@ function GlobalRoutes() {
               subTitle="Sorry, the page you visited does not exist."
               extra={<Button type="primary">Back Home</Button>}
             />
+          }
+        />
+        <Route
+          path="dataset/:dataset_id"
+          element={
+            <RequireAuth>
+              <DatasetDashboard />
+            </RequireAuth>
           }
         />
       </Route>

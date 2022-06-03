@@ -61,7 +61,7 @@ function Landing() {
             </a>
           )}
         </Title>
-        {projects && (
+        {projects?.length > 0 && (
           <List
             grid={{ gutter: 24, column: 4 }}
             dataSource={projects}
@@ -79,6 +79,7 @@ function Landing() {
             )}
           />
         )}
+        {projects?.length == 0 && <p style={{ fontSize: "1.2rem", textAlign: "center" }}>No projects have been assigned to you yet, please contact your language lead</p>}
 
         <Divider />
         {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
