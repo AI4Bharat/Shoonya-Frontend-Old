@@ -172,12 +172,18 @@ const LabelStudioWrapper = () => {
                   temp,
                   annotations[i].id,
                   load_time,
-                  annotations[i].lead_time,
-                  task_status
-                ).then(() => {
-                  hideLoader();
-                  location.reload()
-                });
+                  annotations[i].lead_time
+                  ).then(() => {
+                    if (localStorage.getItem("labelAll"))
+                      getNextProject(project_id, taskData.id).then((res) => {
+                        hideLoader();
+                        window.location.href = `/projects/${project_id}/task/${res.id}`;
+                      })
+                    else{
+                      hideLoader();
+                      window.location.reload();
+                    }
+                  });
               }
             }
           } else message.error("Task is freezed");
