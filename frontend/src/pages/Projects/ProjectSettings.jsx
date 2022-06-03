@@ -28,6 +28,8 @@ function ProjectSettings() {
   const [isArchived, setIsArchived] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
+  const [pulldata, setPulldata] = useState();
+  let selectboxvalue = localStorage.getItem('selectboxvalue');
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -47,7 +49,7 @@ function ProjectSettings() {
 
   const onExport = async (id) => {
     showLoader();
-    let projects = await exportProject(id)
+    await exportProject(id)
     hideLoader();
   }
 
@@ -187,14 +189,14 @@ function ProjectSettings() {
                 Publish Project
               </Button>
               <Button type="primary" onClick={() => onExport(id)}>
-                Export Project
+              Export Project into Dataset
               </Button>
               <Button type="primary" onClick={() => onArchive(id)}>
                 {isArchived ? "Unarchive Project" : "Archive Project"}
               </Button>
-              <Button type="primary" onClick={() => onPullData(id)}>
-                Pull New Data Items
-              </Button>
+              {selectboxvalue == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
+                    Pull New Data Items from Source Dataset
+                  </Button>: " "}
               <Select
                 defaultValue="CSV"
                 style={{
