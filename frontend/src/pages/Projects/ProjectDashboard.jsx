@@ -124,10 +124,10 @@ function ProjectDashboard() {
       handleTableChangeReview()
   }
 
-  function handleFilterChange(checkedValue) {
-    if (checkedValue.length === 0) checkedValue = initFilters;
-    setFilter(checkedValue);
-    getTasks(project_id, 1, pagination.pageSize, checkedValue, Number(selectedAnnotator)).then((res) => {
+  function handleFilterChange(selectedValue) {
+    showLoader();
+    setFilter(selectedValue.target.value);
+    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
