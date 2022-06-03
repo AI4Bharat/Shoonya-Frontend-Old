@@ -37,8 +37,7 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const initFilters = ["skipped", "accepted", "unlabeled", "draft"];
-  const [selectedFilters, setFilters] = useState(initFilters);
+  const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
