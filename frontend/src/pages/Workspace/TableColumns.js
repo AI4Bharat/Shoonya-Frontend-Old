@@ -1,5 +1,9 @@
 import React from "react";
 import { Button, Tag } from "antd";
+
+import { removeAnnotatorsFromWorkspace } from "../../api/WorkspaceAPI";
+import {Link} from 'react-router-dom'
+
 const projectColumns = [
   {
     title: "Name",
@@ -30,7 +34,7 @@ const projectColumns = [
     ),
   },
 ];
-const memberColumns = [
+const getMemberColumns = (workspaceID, workspaceIsArchived) => [
   {
     title: "Name",
     dataIndex: "username",
@@ -57,14 +61,62 @@ const memberColumns = [
     title: "Actions",
     render: (item) => (
       <>
-        <a href={`profile/${item.id}`}>
-          <Button type={"primary"} style={{ marginRight: "1%" }}>
+        <Link to={`/profile/${item.id}`}>
+          <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
-        </a>
+        </Link>
+        <Button
+          type={"default"}
+          danger
+          size="small"
+          style={{ marginRight: "1%" }}
+          disabled={workspaceIsArchived}
+          onClick={async () => {
+            await removeAnnotatorsFromWorkspace(workspaceID, [item.id]);
+            location.reload();
+          }}
+        >
+          Remove
+        </Button>
       </>
     ),
   },
 ];
 
-export { projectColumns, memberColumns };
+const managerColumns = [
+  {
+    title: "Name",
+    dataIndex: "username",
+    key: "name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Actions",
+    dataIndex: "removeAction",
+    render: (item) => (
+      <>
+        <Link to={`/profile/${item.userId}`}>
+          <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
+            View
+          </Button>
+        </Link>
+        <Button
+          disabled={item.isArchived}
+          danger
+          size="small"
+          type="primary"
+          onClick={item.handleClick}
+        >
+          Remove
+        </Button>
+      </>
+    )
+  }
+]
+
+export { projectColumns, getMemberColumns, managerColumns };

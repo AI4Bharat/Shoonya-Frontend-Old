@@ -99,16 +99,30 @@ const exportProject = async (id) => {
       message.error(error);
     }
 };
+const archiveProject = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/archive/`);
+
+    if (response.status !== 200){
+      return message.error("Unable to change archive settings");
+    }
+      if (response.data.is_archived)
+        message.success("Successfully Archived Project");
+      else message.success("Successfully Unarchived Project");
+      return response.data.is_archived;
+  } catch (error) {
+    message.error(error);
+  }
+};
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
-console.log(response)
-    if (response.status !== 200)
-      return message.error("Unable to pull New Items");
-
-    if (response.data.message === "This project is pulled")
+    let result =  response.data.message
+    if (response.status !== 200){
+      return message.error("Unable to pull New Items Add more Annotators");
+    }
       message.success("This Project is pulled");
-    else message.success("This Project has already been pulled ");
+      message.info(result);
 
     return;
   } catch (error) {
@@ -141,4 +155,5 @@ export {
   exportProject,
   PullNewData,
   downloadProject,
+  archiveProject,
 };

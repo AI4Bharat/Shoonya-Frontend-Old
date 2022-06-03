@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card } from "antd";
+import { Button, Col, Form, Input, Row, Card, Modal } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
@@ -10,6 +10,7 @@ import {
   exportProject,
   PullNewData,
   downloadProject,
+  archiveProject,
 } from "../../api/ProjectAPI";
 import { CSVDownload } from "react-csv";
 import { Select } from 'antd';
@@ -24,8 +25,11 @@ function ProjectSettings() {
   const [data, setData] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
+  const [pulldata, setPulldata] = useState();
+  let selectboxvalue = localStorage.getItem('selectboxvalue');
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -38,14 +42,32 @@ function ProjectSettings() {
     showLoader();
     getProject(id).then((res) => {
       setProject(res);
+      setIsArchived(res.is_archived);
       hideLoader();
     });
   }, []);
 
   const onExport = async (id) => {
     showLoader();
-    let projects = await exportProject(id)
+    await exportProject(id)
     hideLoader();
+  }
+
+  const onArchive = async (id) => {
+    Modal.confirm({
+      title: isArchived ? "Are you sure you want to unarchive this project?" : "Are you sure you want to archive this project?",
+      OkText: "Yes",
+      CancelText: "No",
+      width: "400px",
+      onOk: async () => {
+        showLoader();
+        let res = await archiveProject(id)
+        if (res != undefined) {
+          setIsArchived(res);
+        }
+        hideLoader();
+      }
+    });
   }
 
   const onPullData = async () => {
@@ -162,16 +184,19 @@ function ProjectSettings() {
               </Form.Item>
             </Form>
             <Title level={3}>Advanced Operations</Title>
-            <div style={{width:'70%', display:'flex', justifyContent:'space-between', marginBottom: '24px', flexWrap: 'wrap', rowGap: '16px'}}>
+            <div style={{display:'flex', marginBottom: '24px', flexWrap: 'wrap', rowGap: '16px', columnGap: '8px'}}>
               <Button type="primary" disabled={published} onClick={handlePublishProject}>
                 Publish Project
               </Button>
               <Button type="primary" onClick={() => onExport(id)}>
-                Export Project into Dataset
+              Export Project into Dataset
               </Button>
-              <Button type="primary" onClick={() => onPullData(id)}>
-                Pull New Data Items from Source Dataset
+              <Button type="primary" onClick={() => onArchive(id)}>
+                {isArchived ? "Unarchive Project" : "Archive Project"}
               </Button>
+              {selectboxvalue == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
+                    Pull New Data Items from Source Dataset
+                  </Button>: " "}
               <Select
                 defaultValue="CSV"
                 style={{

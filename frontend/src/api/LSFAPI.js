@@ -90,7 +90,9 @@ const updateTask = async (taskID) => {
 
 const getNextProject = async (projectID, taskID) => {
   try {
-    let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
+    let labellingMode= localStorage.getItem("labellingMode");
+    let requestUrl = labellingMode ? `/projects/${projectID}/next/?current_task_id=${taskID}&task_status=${labellingMode}` : `/projects/${projectID}/next/?current_task_id=${taskID}`;
+    let response = await axiosInstance.post(requestUrl, {
       id: projectID,
     });
     if (response.status === 204) {
