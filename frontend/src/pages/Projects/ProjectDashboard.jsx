@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTasks } from "../../api/ProjectDashboardAPI";
+import { getTasks, getReviewTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
 import moment from "moment";
 import DatePicker from "react-datepicker";
@@ -36,6 +36,7 @@ function ProjectDashboard() {
   const [resultsource, setResultsource] = useState([]);
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
+  const [paginationReview, setPaginationReview] = useState({});
   const [date, setDate] = useState("");
   const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
@@ -44,6 +45,7 @@ function ProjectDashboard() {
     { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
     { label: "accepted", value: "accepted", },
+    { label: "draft", value: "draft", },
   ];
   const [selectedDate, setselectedDate] = useState("");
   const [hideshow, sethideshow] = useState(false);
@@ -107,10 +109,25 @@ function ProjectDashboard() {
     });
   }
 
-  function handleFilterChange(selectedValue) {
+  function handleTableChangeReview() {
     showLoader();
-    setFilter(selectedValue.target.value);
-    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
+    getReviewTasks(project_id, paginationReview.current, paginationReview.pageSize).then((res) => {
+      paginationReview.total = res.count;
+      setPaginationReview(paginationReview);
+      setTasks(res.results);
+      hideLoader();
+    });
+  }
+
+  function handleTabChange(activeKey){
+    if(activeKey == '4')
+      handleTableChangeReview()
+  }
+
+  function handleFilterChange(checkedValue) {
+    if (checkedValue.length === 0) checkedValue = initFilters;
+    setFilter(checkedValue);
+    getTasks(project_id, 1, pagination.pageSize, checkedValue, Number(selectedAnnotator)).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -132,7 +149,6 @@ function ProjectDashboard() {
 
   const items = JSON.parse(localStorage.getItem('selectedDate'));
 
-  console.log(items, "itemsin prent")
 
 
   useEffect(() => {
@@ -318,7 +334,9 @@ function ProjectDashboard() {
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-            <Tabs>
+            <Tabs
+            onTabClick={handleTabChange}
+            >
               <TabPane tab="Tasks" key="1">
                 <Row gutter={[16,16]}>
                 <Col span={9}>
@@ -477,6 +495,21 @@ function ProjectDashboard() {
                  style={{ margin: "80px 10px 10px 10px" }}
                   columns={keys}
                   dataSource={resultsource}
+                />
+              </TabPane>
+              <TabPane tab="Review" key="4" onChange={handleTableChangeReview}>
+                <Table
+                  pagination={{
+                    total: paginationReview.total,
+                    pageSize: paginationReview.pageSize,
+                    onChange: (page, pageSize) => {
+                      paginationReview.current = page;
+                      paginationReview.pageSize = pageSize;
+                    },
+                  }}
+                  onChange={handleTableChangeReview}
+                  columns={columns}
+                  dataSource={dataSource}
                 />
               </TabPane>
             </Tabs>
