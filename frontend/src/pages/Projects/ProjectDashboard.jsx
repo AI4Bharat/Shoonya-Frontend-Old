@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   getColumnNames,
   getDataSource,
@@ -22,6 +24,7 @@ import "../../../src/App.css";
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
+  const defultvalue = `${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
   const { project_id } = useParams();
@@ -44,10 +47,13 @@ function ProjectDashboard() {
   ];
   const [selectedDate, setselectedDate] = useState("");
   const [hideshow, sethideshow] = useState(false);
+  const [show, setShow] = useState(false);
   const [selectstart, setselectstart] = useState("");
   const [selectend, setselectend] = useState("");
   const [apidata, setapidata] = useState("");
   const [color, setColor] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const DEFAULT_PAGE_SIZE = 10;
 
   useEffect(() => {
@@ -58,8 +64,37 @@ function ProjectDashboard() {
     localStorage.setItem('labellingMode', selectedFilter);
   }, [selectedFilter]);
 
+  useEffect(() => {
+    setselectedDate(defultvalue)
+    setselectstart(moment().format("YYYY-MM-DD"))
+    setselectend(moment().format("YYYY-MM-DD"))
+  }, [])
+
+
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+    setselectstart(moment(start).format("YYYY-MM-DD"))
+    setselectend(moment(end).format("YYYY-MM-DD"))
+  };
+
   const hideshowdiv = () => {
     sethideshow(true)
+  }
+
+  const onDatepicker = () => {
+    setShow(true)
+  }
+
+  const handleClose = () => {
+    sethideshow(false)
+    setShow(false)
+  }
+  const applyDate = () => {
+    setselectedDate(`${moment(startDate).format("YYYY-MM-DD")} - ${moment(endDate).format("YYYY-MM-DD")}`)
+    sethideshow(false)
+    setShow(false)
   }
 
   function handleTableChange() {
@@ -236,7 +271,7 @@ function ProjectDashboard() {
       setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
       setselectedDate(`${moment().startOf("week").format("YYYY-MMM-DD")} - ${moment().endOf("week").format("YYYY-MMM-DD")}`)
     }
-    if (date === "Thismonth") {
+    if (date === "ThisMonth") {
       sethideshow(false)
       setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
       setselectend(moment().endOf("month").format("YYYY-MM-DD"))
@@ -382,21 +417,42 @@ function ProjectDashboard() {
                   <Col>  <Title level={5}>Select date range</Title></Col>
                 </Row>
                 <Row>
-                  <Col span={8}>
+                <Col span={8}>
                     <div style={{ margin: "10px", display: "flex" }}>
-                      <div style={{ position: 'relative', width: "80%" }}>
-                        <div className="selectedDate" onClick={hideshowdiv}  style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px",   }}> {selectedDate}</div>
+                      <div style={{ position: 'relative', width: "100%" }}>
+                        <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px", }} defaultValue="Today"> {selectedDate}</div>
                         {hideshow ?
-                          <div style={{ position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer","&:hover": { background: "#efefef"
-                          } }} className="dateptions">
-                            <p  className="dateRange"   onClick={(e) => { onDateRange("Today") }}>Today</p>
-                            <p   className="dateRange"   onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
-                           <p   className="dateRange"   onClick={(e) => { onDateRange("ThisWeek") }}>ThisWeek</p>
-                            <p   className="dateRange"  onClick={(e) => { onDateRange("LastWeek") }}>LastWeek</p>
-                            <p   className="dateRange"   onClick={(e) => { onDateRange("ThisMonth") }}>ThisMonth</p>
+                          <div style={{
+                            position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer", "&:hover": {
+                              background: "#efefef"
+                            }
+                          }} className="dateptions">
+                            <div style={{ float: 'left', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }} >
+                              <p className="dateRange" onClick={(e) => { onDateRange("Today") }} >Today</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("ThisWeek") }}>This Week</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("LastWeek") }}>Last Week</p>
+                              <p className="dateRange" onClick={(e) => { onDateRange("ThisMonth") }}>This Month</p>
+                              <p className="dateRange" onClick={ onDatepicker }>Custom Range</p>
+                              <button style={{ backgroundColor: "green", color: "white", border: "1px solid white" }} onClick={applyDate} >Apply</button>
+                              <button style={{ border: "1px solid white" }} onClick={handleClose}>Cancel</button>
+                            </div>
+
+                            {show ?
+                              <div style={{ float: 'left', marginLeft: "20px" }}>  <DatePicker
+                                selected={startDate}
+                                onChange={onChange}
+                                startDate={startDate}
+                                endDate={endDate}
+                                selectsRange
+                                inline
+                              /></div>
+                              : ' '}
                           </div>
+
                           : ' '}
                       </div>
+
                     </div>
                   </Col>
                   <Col span={12}>
@@ -418,6 +474,7 @@ function ProjectDashboard() {
                   </Col>
                 </Row> */}
                 <Table 
+                 style={{ margin: "80px 10px 10px 10px" }}
                   columns={keys}
                   dataSource={resultsource}
                 />
