@@ -56,7 +56,7 @@ function CreateProject() {
   const [columns, setColumns] = useState(null);
   const [tableData, setTableData] = useState(null);
   const [pagination, setPagination] = useState({});
-  const DEFAULT_PAGE_SIZE = 5;
+  const DEFAULT_PAGE_SIZE = 10;
 
   useEffect(() => {
     if (userContext.user) {
@@ -182,17 +182,13 @@ function CreateProject() {
         pagination.current = 1;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
-        // let key = 1;
-        // for (const data in res.results) {
-        //   res[data].key = key;
-        //   key++;
-        // }
-        setTableData(res.results);
+        let tableData = res.results;
         let key = 1;
         for (const data in tableData){
           tableData[data]["key"] = key;
           key++;
         }
+        setTableData(tableData);
         hideLoader();
       });
     } else {
