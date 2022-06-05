@@ -117,13 +117,12 @@ const archiveProject = async (id) => {
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
-console.log(response)
-    if (response.status !== 200)
-      return message.error("Unable to pull New Items");
-
-    if (response.data.message === "This project is pulled")
+    let result =  response.data.message
+    if (response.status !== 200){
+      return message.error("Unable to pull New Items Add more Annotators");
+    }
       message.success("This Project is pulled");
-    else message.success("This Project has already been pulled ");
+      message.info(result);
 
     return;
   } catch (error) {
