@@ -55,6 +55,8 @@ function CreateProject() {
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
   const [tableData, setTableData] = useState(null);
+  const [pagination, setPagination] = useState({});
+  const DEFAULT_PAGE_SIZE = 10;
 
   useEffect(() => {
     if (userContext.user) {
@@ -175,13 +177,18 @@ function CreateProject() {
     if (selectedInstances) {
       setConfirmed(true);
       showLoader();
-      getData(selectedInstances, datasetType[selectedType]).then((res) => {
+      getData(selectedInstances, datasetType[selectedType], 1, DEFAULT_PAGE_SIZE).then((res) => {
+        pagination.total = res.count;
+        pagination.current = 1;
+        pagination.pageSize = DEFAULT_PAGE_SIZE;
+        setPagination(pagination);
+        let tableData = res.results;
         let key = 1;
-        for (const data in res) {
-          res[data].key = key;
+        for (const data in tableData){
+          tableData[data]["key"] = key;
           key++;
         }
-        setTableData(res);
+        setTableData(tableData);
         hideLoader();
       });
     } else {
@@ -228,6 +235,16 @@ function CreateProject() {
         message.error("Error creating project");
       });
   };
+
+  function handleTableChange() {
+    showLoader();
+    getData(selectedInstances, datasetType[selectedType], pagination.current, pagination.pageSize).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTableData(res.results);
+      hideLoader();
+    });
+  }
 
   return (
     <Row style={{ width: "100%", height: "100%" }}>
@@ -326,7 +343,20 @@ function CreateProject() {
         {selectedType && columns && tableData && selectedInstances.length > 0 && (
           <>
             <h1 className="margin-top-heading">Dataset Rows:</h1>
-            <Table dataSource={tableData} columns={columns} />
+            <Table 
+              dataSource={tableData} 
+              columns={columns} 
+              pagination={{
+                total: pagination.total,
+                pageSize: pagination.pageSize,
+                showSizeChanger: pagination.total > DEFAULT_PAGE_SIZE,
+                onChange: (page, pageSize) => {
+                  pagination.current = page;
+                  pagination.pageSize = pageSize;
+                },
+              }}
+              onChange={handleTableChange}
+            />
           </>
         )}
         {selectedType && columns && tableData && selectedInstances.length > 0 && (
