@@ -255,6 +255,7 @@ const LabelStudioWrapper = () => {
         </Button>
       </div>
       <div className="label-studio-root" ref={rootRef}></div>
+      {loader}
     </div>
   );
 };
