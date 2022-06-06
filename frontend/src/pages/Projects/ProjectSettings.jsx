@@ -29,8 +29,7 @@ function ProjectSettings() {
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
   const [pulldata, setPulldata] = useState();
-  let selectboxvalue = localStorage.getItem('selectboxvalue');
-
+ 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
       title: project.title,
@@ -194,7 +193,7 @@ function ProjectSettings() {
               <Button type="primary" onClick={() => onArchive(id)}>
                 {isArchived ? "Unarchive Project" : "Archive Project"}
               </Button>
-              {selectboxvalue == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
+              {project.sampling_mode == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
                     Pull New Data Items from Source Dataset
                   </Button>: " "}
               <Select
