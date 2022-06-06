@@ -71,7 +71,6 @@ function CreateProject() {
         const tempDatasetTypes = {};
         const tempColumnFields = {};
         let tempVariableParameters = {};
-        console.log(res);
         for (const domain in res) {
           tempDomains.push(domain);
           const tempTypesArr = [];
@@ -152,7 +151,7 @@ function CreateProject() {
             setSelectedVariableParameters(temp);
           })
           .catch((err) => {
-            console.log(err);
+            message.error("Error getting variable parameters");
           });
       } else {
         setSelectedVariableParameters([]);
@@ -290,7 +289,6 @@ function CreateProject() {
         element.value = value;
       }
     });
-    console.log(temp);
     setSelectedVariableParameters(temp);
   };
   function handleTableChange() {
@@ -315,9 +313,6 @@ function CreateProject() {
     });
     return temp;
   }
-  useEffect(() => {
-    console.log(tableData, selectedInstances);
-  }, [tableData, selectedInstances]);
   return (
     <Row style={{ width: "100%", height: "100%" }}>
       <Col span={2} />
