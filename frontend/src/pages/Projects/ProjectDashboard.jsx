@@ -44,6 +44,7 @@ function ProjectDashboard() {
     { label: "unlabeled", value: "unlabeled", },
     { label: "skipped", value: "skipped", },
     { label: "accepted", value: "accepted", },
+    { label: "draft", value: "draft", },
   ];
   const [selectedDate, setselectedDate] = useState("");
   const [hideshow, sethideshow] = useState(false);
