@@ -16,7 +16,7 @@ import { Button } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 //used just in postAnnotation to support draft status update.
-let task_status = "labeled";
+let task_status = "accepted";
 
 const LabelStudioWrapper = () => {
   // we need a reference to a DOM node here so LSF knows where to render
