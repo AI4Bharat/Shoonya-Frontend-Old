@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Row, Card, Table, Button, Tabs, Radio, Select } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
@@ -6,13 +6,10 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTasks } from "../../api/ProjectDashboardAPI";
 import { getProject, getProjectMembers } from "../../api/ProjectAPI";
-import moment from "moment";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   getColumnNames,
   getDataSource,
-  getVariableParams,
 } from "./TasksTableContent";
 import { message } from "antd";
 import axiosInstance from "../../utils/apiInstance";
@@ -20,11 +17,11 @@ import UserContext from "../../context/User/UserContext";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {MembersTab} from './MembersTab';
 import "../../../src/App.css";
+import { ReportsTab } from "./ReportsTab";
 
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
-  const defultvalue = `${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
   const { project_id } = useParams();
@@ -33,10 +30,7 @@ function ProjectDashboard() {
   const [tasks, setTasks] = useState([]);
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
-  const [resultsource, setResultsource] = useState([]);
-  const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
-  const [date, setDate] = useState("");
   const [selectedFilter, setFilter] = useState("unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
@@ -46,57 +40,11 @@ function ProjectDashboard() {
     { label: "accepted", value: "accepted", },
     { label: "draft", value: "draft", },
   ];
-  const [selectedDate, setselectedDate] = useState("");
-  const [hideshow, sethideshow] = useState(false);
-  const [show, setShow] = useState(false);
-  const [selectstart, setselectstart] = useState("");
-  const [selectend, setselectend] = useState("");
-  const [apidata, setapidata] = useState("");
-  const [color, setColor] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
   const DEFAULT_PAGE_SIZE = 10;
-
-  useEffect(() => {
-    localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
-  }, [selectedDate]);
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
   }, [selectedFilter]);
-
-  useEffect(() => {
-    setselectedDate(defultvalue)
-    setselectstart(moment().format("YYYY-MM-DD"))
-    setselectend(moment().format("YYYY-MM-DD"))
-  }, [])
-
-
-  const onChange = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    setselectstart(moment(start).format("YYYY-MM-DD"))
-    setselectend(moment(end).format("YYYY-MM-DD"))
-  };
-
-  const hideshowdiv = () => {
-    sethideshow(true)
-  }
-
-  const onDatepicker = () => {
-    setShow(true)
-  }
-
-  const handleClose = () => {
-    sethideshow(false)
-    setShow(false)
-  }
-  const applyDate = () => {
-    setselectedDate(`${moment(startDate).format("YYYY-MM-DD")} - ${moment(endDate).format("YYYY-MM-DD")}`)
-    sethideshow(false)
-    setShow(false)
-  }
 
   function handleTableChange() {
     showLoader();
@@ -130,12 +78,6 @@ function ProjectDashboard() {
     });
   }
 
-
-  const items = JSON.parse(localStorage.getItem('selectedDate'));
-
-  console.log(items, "itemsin prent")
-
-
   useEffect(() => {
     if (project_id) {
       getProject(project_id).then((res) => {
@@ -153,14 +95,6 @@ function ProjectDashboard() {
       });
     }
   }, [project_id]);
-
-  useEffect(() => {
-    if (project) {
-      getVariableParams(project).then((res) => {
-        setVariableParams(res);
-      });
-    }
-  }, [project]);
 
   useEffect(() => {
     if (tasks) {
@@ -212,80 +146,6 @@ function ProjectDashboard() {
     }
   };
 
-  const dateRange = {
-    from_date: selectstart,
-    to_date: selectend,
-  }
-
-  const onDisplayTable = async (id) => {
-    try {
-      let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
-      setResultsource(response.data)
-      return;
-    } catch (error) {
-      message.error(error);
-    }
-
-  };
-  var keys = [];
-  if (resultsource?.length > 0) {
-    for (var key in resultsource[0]) {
-      let obj = {}
-      obj['title'] = camelize(key)
-      obj['dataIndex'] = key
-      obj['key'] = key
-      keys.push(obj);
-    }
-
-  }
-  function camelize(str) {
-    const arr = str.toString().split("_");
-    for (var i = 0; i < arr.length; i++) {
-      arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
-    }
-    return arr.join(" ");
-
-  }
-  
-  const onDateRange = (date) => {
-    if (date === "Today") {
-      sethideshow(false)
-      setselectstart(moment().format("YYYY-MM-DD"))
-      setselectend(moment().format("YYYY-MM-DD"))
-      setselectedDate(`${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`)
-
-    } if (date === "Yesterday") {
-      sethideshow(false), setselectstart(moment().add(-1, "days").format("YYYY-MM-DD"))
-      setselectend(moment().add(-1, "days").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().add(-1, "days").format("YYYY-MMM-DD")} - ${moment().add(-1, "days").format("YYYY-MMM-DD")}`)
-
-     
-    } if (date === "LastWeek") {
-      sethideshow(false)
-      setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
-      setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().subtract(1, "weeks").startOf("week").format("YYYY-MMM-DD")} - ${moment().subtract(1, "weeks").endOf("week").format("YYYY-MMM-DD")}`)
-    }
-    if (date === "ThisWeek") {
-      sethideshow(false)
-      setselectstart(moment().subtract(1, "weeks").startOf("week").format("YYYY-MM-DD"))
-      setselectend(moment().subtract(1, "weeks").endOf("week").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().startOf("week").format("YYYY-MMM-DD")} - ${moment().endOf("week").format("YYYY-MMM-DD")}`)
-    }
-    if (date === "ThisMonth") {
-      sethideshow(false)
-      setselectstart(moment().startOf("month").format("YYYY-MM-DD"))
-      setselectend(moment().endOf("month").format("YYYY-MM-DD"))
-      setselectedDate(`${moment().startOf("month").format("YYYY-MMM-DD")} - ${moment().endOf("month").format("YYYY-MMM-DD")}`)
-    }
-  }
-  const styles = {
-    
-  backgroundColor  : color
-  };
-
-  console.log(projectMembers)
-  
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -414,71 +274,7 @@ function ProjectDashboard() {
                 <MembersTab projectMembers={projectMembers} />
               </TabPane>
               <TabPane tab=" Reports" key="3">
-                <Row>
-                  <Col>  <Title level={5}>Select date range</Title></Col>
-                </Row>
-                <Row>
-                <Col span={8}>
-                    <div style={{ margin: "10px", display: "flex" }}>
-                      <div style={{ position: 'relative', width: "100%" }}>
-                        <div className="selectedDate" onClick={hideshowdiv} style={{ borderBottom: '1px solid #000', padding: '5px', width: "100%", textAlign: "center", height: '40px', fontSize: "18px", }} defaultValue="Today"> {selectedDate}</div>
-                        {hideshow ?
-                          <div style={{
-                            position: 'absolute', top: '40px', left: '5px', zIndex: 8, backgroundColor: "#fff", boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '10px', cursor: "pointer", "&:hover": {
-                              background: "#efefef"
-                            }
-                          }} className="dateptions">
-                            <div style={{ float: 'left', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }} >
-                              <p className="dateRange" onClick={(e) => { onDateRange("Today") }} >Today</p>
-                              <p className="dateRange" onClick={(e) => { onDateRange("Yesterday") }}>Yesterday</p>
-                              <p className="dateRange" onClick={(e) => { onDateRange("ThisWeek") }}>This Week</p>
-                              <p className="dateRange" onClick={(e) => { onDateRange("LastWeek") }}>Last Week</p>
-                              <p className="dateRange" onClick={(e) => { onDateRange("ThisMonth") }}>This Month</p>
-                              <p className="dateRange" onClick={ onDatepicker }>Custom Range</p>
-                              <button style={{ backgroundColor: "green", color: "white", border: "1px solid white" }} onClick={applyDate} >Apply</button>
-                              <button style={{ border: "1px solid white" }} onClick={handleClose}>Cancel</button>
-                            </div>
-
-                            {show ?
-                              <div style={{ float: 'left', marginLeft: "20px" }}>  <DatePicker
-                                selected={startDate}
-                                onChange={onChange}
-                                startDate={startDate}
-                                endDate={endDate}
-                                selectsRange
-                                inline
-                              /></div>
-                              : ' '}
-                          </div>
-
-                          : ' '}
-                      </div>
-
-                    </div>
-                  </Col>
-                  <Col span={12}>
-
-                    <Button
-                      onClick={() => onDisplayTable(project_id)}
-                      type="primary"
-                      style={{ width: "15%", margin: "20px 10px 10px 10px" }}
-                    >
-                      Submit
-                    </Button>
-                  </Col>
-                </Row>
-                {/* <Row>
-                  <Col >
-                    <Title level={3} style={{ margin: "50px 10px 10px 10px" }}  >
-                      PROJECT REPORT
-                    </Title>
-                  </Col>
-                </Row> */}
-                <Table 
-                 style={{ margin: "80px 10px 10px 10px" }}
-                  columns={keys}
-                  dataSource={resultsource}
-                />
+                <ReportsTab />
               </TabPane>
             </Tabs>
           </Card>

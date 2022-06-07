@@ -13,4 +13,14 @@ const getTasks = async (projectID, page, records, filter, userFilter=-1) => {
     }
 };
 
-export { getTasks }
+const getReportsWithinRange = async (projectID, fromDate, toDate) => {
+	return axiosInstance.post(`/projects/${projectID}/get_analytics/`, {
+		from_date: fromDate,
+		to_date: toDate,
+	}).then((response)=>response.data).catch(()=>{
+        message.error('Error fetching report.')
+        return false;
+    })
+};
+
+export { getTasks, getReportsWithinRange }

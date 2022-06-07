@@ -87,4 +87,37 @@ const memberColumns = [
   },
 ];
 
-export { getColumnNames, getDataSource, getVariableParams, memberColumns };
+const reportResultsColumns = [
+	{
+		title: "Name",
+		dataIndex: "username",
+		key: "name",
+	},
+	{
+		title: "Email",
+		dataIndex: "mail",
+		key: "email",
+	},
+	{
+		title: "Skipped Tasks",
+		dataIndex: "skipped_tasks",
+		key: "skipped_tasks",
+	},
+	{
+		title: "Annoted Tasks",
+		dataIndex: "total_annoted_tasks",
+		key: "total_annoted_tasks",
+	},
+	{
+		title: "Assigned Tasks",
+		dataIndex: "total_assigned_tasks",
+		key: "total_assigned_tasks",
+	},
+	{
+		title: "Pending Tasks",
+		dataIndex: "total_pending_tasks",
+		key: "total_pending_tasks",
+	},
+];
+
+export { getColumnNames, getDataSource, getVariableParams, memberColumns, reportResultsColumns };
