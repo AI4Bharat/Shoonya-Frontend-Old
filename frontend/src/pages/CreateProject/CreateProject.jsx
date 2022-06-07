@@ -21,7 +21,9 @@ import {
   getInstanceIds,
   getData,
   createProject,
+  getFieldTypes,
 } from "../../api/CreateProjectAPI";
+import { element } from "prop-types";
 
 const { Option } = Select;
 
@@ -51,7 +53,10 @@ function CreateProject() {
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
   const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(1);
-
+  const [variableParameters, setVariableParameters] = useState(null);
+  const [selectedVariableParameters, setSelectedVariableParameters] = useState(
+    []
+  );
   //Table related state variables (do we need states here?)
   const [columns, setColumns] = useState(null);
   const [tableData, setTableData] = useState(null);
@@ -65,6 +70,7 @@ function CreateProject() {
         const tempTypes = {};
         const tempDatasetTypes = {};
         const tempColumnFields = {};
+        let tempVariableParameters = {};
         for (const domain in res) {
           tempDomains.push(domain);
           const tempTypesArr = [];
@@ -86,10 +92,24 @@ function CreateProject() {
                   "fields"
                 ];
             }
+            let temp =
+              res[domain]["project_types"][project_type]["output_dataset"][
+                "fields"
+              ]["variable_parameters"];
+            if (temp) {
+              tempVariableParameters[project_type] = {
+                variable_parameters: temp,
+                output_dataset:
+                  res[domain]["project_types"][project_type]["output_dataset"][
+                    "class"
+                  ],
+              };
+            }
           }
           tempTypes[domain] = tempTypesArr;
         }
         setDomains(tempDomains);
+        setVariableParameters(tempVariableParameters);
         setTypes(tempTypes);
         setDatasetType(tempDatasetTypes);
         setColumnFields(tempColumnFields);
@@ -118,6 +138,25 @@ function CreateProject() {
     setSamplingParameters(null);
     setConfirmed(false);
     setTableData(false);
+    if (selectedType) {
+      if (variableParameters[selectedType] !== undefined) {
+        getFieldTypes(variableParameters[selectedType]["output_dataset"])
+          .then((res) => {
+            let temp = [];
+            variableParameters[selectedType]["variable_parameters"].forEach(
+              (element) => {
+                temp.push({ name: element, data: res[element], value: null });
+              }
+            );
+            setSelectedVariableParameters(temp);
+          })
+          .catch((err) => {
+            message.error("Error getting variable parameters");
+          });
+      } else {
+        setSelectedVariableParameters([]);
+      }
+    }
   }, [selectedType]);
 
   const handleDomainChange = (value) => {
@@ -133,7 +172,6 @@ function CreateProject() {
         dataIndex: columnFields[value][column],
         key: columnFields[value][column],
         ellipsis: true,
-
       });
     }
     setColumns(tempColumns);
@@ -177,14 +215,19 @@ function CreateProject() {
     if (selectedInstances) {
       setConfirmed(true);
       showLoader();
-      getData(selectedInstances, datasetType[selectedType], 1, DEFAULT_PAGE_SIZE).then((res) => {
+      getData(
+        selectedInstances,
+        datasetType[selectedType],
+        1,
+        DEFAULT_PAGE_SIZE
+      ).then((res) => {
         pagination.total = res.count;
         pagination.current = 1;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
         let tableData = res.results;
         let key = 1;
-        for (const data in tableData){
+        for (const data in tableData) {
           tableData[data]["key"] = key;
           key++;
         }
@@ -209,9 +252,13 @@ function CreateProject() {
     setSamplingParameters(null);
   };
 
-  let abc=localStorage.setItem("selectboxvalue" ,samplingMode);
+  let abc = localStorage.setItem("selectboxvalue", samplingMode);
 
   const handleCreateProject = () => {
+    let temp = {};
+    selectedVariableParameters.forEach((element) => {
+      temp[element.name] = element.value;
+    });
     showLoader();
     createProject({
       title: title,
@@ -228,7 +275,7 @@ function CreateProject() {
       project_type: selectedType,
       dataset_id: selectedInstances,
       label_config: "string",
-      variable_parameters: {},
+      variable_parameters: temp,
       project_mode: "Annotation",
       required_annotators_per_task: selectedAnnotatorsNum,
     })
@@ -241,10 +288,23 @@ function CreateProject() {
         message.error("Error creating project");
       });
   };
-
+  const handleVariableParametersChange = (key, value) => {
+    let temp = [...selectedVariableParameters];
+    temp.forEach((element) => {
+      if (element.name === key) {
+        element.value = value;
+      }
+    });
+    setSelectedVariableParameters(temp);
+  };
   function handleTableChange() {
     showLoader();
-    getData(selectedInstances, datasetType[selectedType], pagination.current, pagination.pageSize).then((res) => {
+    getData(
+      selectedInstances,
+      datasetType[selectedType],
+      pagination.current,
+      pagination.pageSize
+    ).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTableData(res.results);
@@ -252,6 +312,13 @@ function CreateProject() {
     });
   }
 
+  function processNameString(string) {
+    let temp = "";
+    string.split("_").forEach((element) => {
+      temp += element.charAt(0).toUpperCase() + element.slice(1) + " ";
+    });
+    return temp;
+  }
   return (
     <Row style={{ width: "100%", height: "100%" }}>
       <Col span={2} />
@@ -315,6 +382,52 @@ function CreateProject() {
         )}
         {instanceIds && (
           <>
+            {selectedVariableParameters.map((parameter, index) => (
+              <div key={parameter["name"]}>
+                <h1 className="margin-top-heading">
+                  {processNameString(parameter["name"])}
+                </h1>
+                {parameter.data["choices"] !== undefined ? (
+                  <>
+                    <Select
+                      style={{ width: "100%" }}
+                      placeholder={`Select ${processNameString(
+                        parameter["name"]
+                      )}`}
+                      value={parameter["value"]}
+                      onChange={(e) =>
+                        handleVariableParametersChange(parameter["name"], e)
+                      }
+                    >
+                      {parameter.data["choices"].map((element) => (
+                        <Option key={element[0]} value={element[0]}>
+                          {element[0]}
+                        </Option>
+                      ))}
+                    </Select>
+                  </>
+                ) : (
+                  <>
+                    {parameter.data["name"] === "DecimalField" ||
+                    parameter.data["name"] === "IntegerField" ? (
+                      <InputNumber
+                        onChange={(e) =>
+                          handleVariableParametersChange(parameter["name"], e)
+                        }
+                        value={parameter["value"]}
+                      />
+                    ) : (
+                      <Input
+                        onChange={(e) =>
+                          handleVariableParametersChange(parameter["name"], e)
+                        }
+                        value={parameter["value"]}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
             <h1 className="margin-top-heading">
               Select sources to fetch data from:
             </h1>
@@ -349,9 +462,9 @@ function CreateProject() {
         {selectedType && columns && tableData && selectedInstances.length > 0 && (
           <>
             <h1 className="margin-top-heading">Dataset Rows:</h1>
-            <Table 
-              dataSource={tableData} 
-              columns={columns} 
+            <Table
+              dataSource={tableData}
+              columns={columns}
               pagination={{
                 total: pagination.total,
                 pageSize: pagination.pageSize,
