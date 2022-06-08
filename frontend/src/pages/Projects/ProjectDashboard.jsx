@@ -116,6 +116,9 @@ function ProjectDashboard() {
     showLoader();
     setFilter(selectedValue.target.value);
     getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
+      if(res.count === 0) {
+        message.info("No more tasks in this filter", [2]);
+      }
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -146,6 +149,7 @@ function ProjectDashboard() {
         setProject(res);
       });
       getTasks(project_id, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
+        message.info("No more tasks in this filter", [2]);
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = DEFAULT_PAGE_NUMBER;
