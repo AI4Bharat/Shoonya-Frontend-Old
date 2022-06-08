@@ -24,7 +24,8 @@ import "../../../src/App.css";
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
-  const pageState = sessionStorage.getItem(window.location.pathname) ? JSON.parse(sessionStorage.getItem(window.location.pathname)): null;
+  const pathName = window.location.pathname;
+  const pageState = sessionStorage.getItem(pathName) ? JSON.parse(sessionStorage.getItem(pathName)): null;
   const defultvalue = `${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
@@ -294,7 +295,7 @@ function ProjectDashboard() {
       prevFilter: selectedFilter,
       prevTab: currentTab,
     }
-    sessionStorage.setItem(window.location.pathname, JSON.stringify(newPageState));
+    sessionStorage.setItem(pathName, JSON.stringify(newPageState));
   };
 
   
