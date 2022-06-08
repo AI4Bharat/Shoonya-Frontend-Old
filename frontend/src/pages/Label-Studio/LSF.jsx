@@ -241,18 +241,37 @@ const LabelStudioWrapper = () => {
     lsfRef.current.store.submitAnnotation();
   }
 
+  const onNextAnnotation = async () => {
+    showLoader();
+    getNextProject(project_id, task_id).then((res) => {
+      hideLoader();
+      window.location.href = `/projects/${project_id}/task/${res.id}`;
+    });
+  }
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           value="Draft"
-          type="danger"
+          type="default"
           onClick={onDraftAnnotation}
-          style={{minWidth: "160px", background: "white", borderColor:"green", color:"green"}}
+          style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#fc0", fontWeight: "500"}}
         >
           Draft
         </Button>
+        {localStorage.getItem("labelAll") != "true" ? (
+          <Button
+            value="Next"
+            ype="default"
+            onClick={onNextAnnotation}
+            style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+          >
+            Next
+          </Button>
+        ) : (
+          <div style={{minWidth: "160px"}}/>
+        )}
       </div>
       <div className="label-studio-root" ref={rootRef}></div>
       {loader}
