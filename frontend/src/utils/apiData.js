@@ -1,3 +1,3 @@
 export const apiData = {
-    url: process.env.API_URL,
+    url: "http://dev.backend.shoonya.ai4bharat.org/",
 }
