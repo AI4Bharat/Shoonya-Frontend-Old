@@ -374,7 +374,7 @@ function ProjectDashboard() {
                 ) : (<div></div>)
                 }
                 </Col>
-                <Col span={6}>
+                {userContext.user?.role == 1 && <Col span={6}>
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
                     <div style={{ display: "inline-flex", width: "100%", marginBottom: "1%", marginRight: "1%", flexWrap: "wrap" }}>
@@ -406,7 +406,7 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
-                </Col>
+                </Col>}
                 </Row>
                 <Table
                   pagination={{
