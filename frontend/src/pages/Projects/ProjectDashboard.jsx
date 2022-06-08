@@ -24,6 +24,8 @@ import "../../../src/App.css";
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
+  const pathName = window.location.pathname;
+  const pageState = sessionStorage.getItem(pathName) ? JSON.parse(sessionStorage.getItem(pathName)): null;
   const defultvalue = `${moment().format("YYYY-MMM-DD")} - ${moment().format("YYYY-MMM-DD")}`
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
@@ -37,7 +39,7 @@ function ProjectDashboard() {
   const [variableParams, setVariableParams] = useState([]);
   const [pagination, setPagination] = useState({});
   const [date, setDate] = useState("");
-  const [selectedFilter, setFilter] = useState("unlabeled");
+  const [selectedFilter, setFilter] = useState(pageState?.prevFilter ? pageState.prevFilter : "unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
@@ -55,7 +57,9 @@ function ProjectDashboard() {
   const [color, setColor] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const DEFAULT_PAGE_SIZE = 10;
+  const [currentTab, setTab] = useState(pageState?.prevTab ? pageState.prevTab : "1");
+  const DEFAULT_PAGE_SIZE = pageState?.prevPageSize ? pageState.prevPageSize : 10;
+  const DEFAULT_PAGE_NUMBER = pageState?.prevPage ? pageState.prevPage : 1;
 
   useEffect(() => {
     localStorage.setItem('selectedDate', JSON.stringify(selectedDate));
@@ -141,10 +145,10 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
+      getTasks(project_id, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
-        pagination.current = 1;
+        pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
       });
@@ -284,7 +288,16 @@ function ProjectDashboard() {
   backgroundColor  : color
   };
 
-  console.log(projectMembers)
+  window.onunload = function () {
+    let newPageState = {
+      prevPage: pagination.current,
+      prevPageSize: pagination.pageSize,
+      prevFilter: selectedFilter,
+      prevTab: currentTab,
+    }
+    sessionStorage.setItem(pathName, JSON.stringify(newPageState));
+  };
+
   
   return (
     <>
@@ -319,7 +332,7 @@ function ProjectDashboard() {
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-            <Tabs>
+            <Tabs defaultActiveKey={currentTab} onChange={(key)=>setTab(key)}>
               <TabPane tab="Tasks" key="1">
                 <Row gutter={[16,16]}>
                 <Col span={9}>
