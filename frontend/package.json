@@ -24,8 +24,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "BUILD_NO_CHUNKS=true react-scripts --max-old-space-size=4096 build",
+    "start": "cmd-env -f .env react-scripts start",
+    "build": "BUILD_NO_CHUNKS=true react-scripts --max-old-space-size=4096 cmd-env -f .env build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
