@@ -1,3 +1,3 @@
 export const apiData = {
-    url: "http://localhost:8000",
+    url: process.env.API_URL,
 }
