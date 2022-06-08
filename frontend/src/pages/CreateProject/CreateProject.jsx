@@ -253,7 +253,7 @@ function CreateProject() {
     setSamplingParameters(null);
   };
 
-  let abc = localStorage.setItem("selectboxvalue", samplingMode);
+ 
 
   const handleCreateProject = () => {
     let temp = {};
