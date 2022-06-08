@@ -104,7 +104,7 @@ const reportResultsColumns = [
 		key: "skipped_tasks",
 	},
 	{
-		title: "Annoted Tasks",
+		title: "Annotated Tasks",
 		dataIndex: "total_annoted_tasks",
 		key: "total_annoted_tasks",
 	},
@@ -118,6 +118,11 @@ const reportResultsColumns = [
 		dataIndex: "total_pending_tasks",
 		key: "total_pending_tasks",
 	},
+  {
+    title: "Average Annotation Time",
+    dataIndex: "avg_lead_time",
+    key: "avg_lead_time"
+  }
 ];
 
 export { getColumnNames, getDataSource, getVariableParams, memberColumns, reportResultsColumns };

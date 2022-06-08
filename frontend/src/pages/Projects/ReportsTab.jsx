@@ -22,35 +22,10 @@ export function ReportsTab() {
 		);
 
 		if (result) {
-			console.log(result);
+			console.log('the result was', result);
 			setReportResults(result);
 		}
 	};
-
-	// date format is YYYY-MM-DD
-
-	//     var keys = [];
-	//   if (resultsource?.length > 0) {
-	//     for (var key in resultsource[0]) {
-	//       let obj = {}
-	//       obj['title'] = camelize(key)
-	//       obj['dataIndex'] = key
-	//       obj['key'] = key
-	//       keys.push(obj);
-	//     }
-
-	//   }
-
-	//     const onDisplayTable = async (id) => {
-	//         try {
-	//           let response = await axiosInstance.post(`/projects/${id}/get_analytics/`, dateRange);
-	//           setResultsource(response.data)
-	//           return;
-	//         } catch (error) {
-	//           message.error(error);
-	//         }
-
-	//       };
 
 	return (
 		<>
@@ -61,9 +36,9 @@ export function ReportsTab() {
 				}}
 			>
 				<Input.Group style={{ display: "flex", alignItems: "center" }}>
-					<Typography style={{ marginRight: "2%" }}>
+					<Typography.Text strong={true} style={{ marginRight: "2%" }}>
 						Select From Date:
-					</Typography>
+					</Typography.Text>
 					<DatePicker
 						value={fromDate}
 						onChange={(value) => setFromDate(value)}
@@ -71,9 +46,9 @@ export function ReportsTab() {
 					/>
 				</Input.Group>
 				<Input.Group style={{ display: "flex", alignItems: "center" }}>
-					<Typography style={{ marginRight: "2%" }}>
+					<Typography.Text strong={true} style={{ marginRight: "2%" }}>
 						Select To Date:
-					</Typography>
+					</Typography.Text>
 					<DatePicker
 						value={toDate}
 						onChange={(value) => setToDate(value)}
