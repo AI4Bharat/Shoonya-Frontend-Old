@@ -32,9 +32,9 @@ const getInstanceIds = async (datasetType) => {
   }
 };
 
-const getData = async (instanceIds, datasetType) => {
+const getData = async (instanceIds, datasetType, page=1, records=10) => {
   try {
-    let response = await axiosInstance.post(`/data/dataitems/get_data_items/`, {
+    let response = await axiosInstance.post(`/data/dataitems/get_data_items/?page=${page}&records=${records}`, {
       instance_ids: instanceIds,
       dataset_type: datasetType,
     });

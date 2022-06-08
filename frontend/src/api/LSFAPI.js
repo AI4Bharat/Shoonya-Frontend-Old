@@ -37,13 +37,14 @@ const fetchAnnotation = async (taskID) => {
   }
 };
 
-const postAnnotation = async (result, task, completed_by, load_time, lead_time) => {
+const postAnnotation = async (result, task, completed_by, load_time, lead_time, task_status) => {
   try {
     await axiosInstance.post(`/annotation/`, {
       result: result,
       task: task,
       completed_by: completed_by,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
+      task_status: task_status
     },
     )
     .then((res)=> {
@@ -56,11 +57,12 @@ const postAnnotation = async (result, task, completed_by, load_time, lead_time) 
   }
 };
 
-const patchAnnotation = async (result, annotationID, load_time, lead_time) => {
+const patchAnnotation = async (result, annotationID, load_time, lead_time, task_status) => {
   try {
     await axiosInstance.patch(`/annotation/${annotationID}/`, {
       result: result,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
+      task_status: task_status
     });
   } catch {
     message.error("Error updating annotations");
@@ -88,7 +90,9 @@ const updateTask = async (taskID) => {
 
 const getNextProject = async (projectID, taskID) => {
   try {
-    let response = await axiosInstance.post(`/projects/${projectID}/next/?current_task_id=${taskID}`, {
+    let labellingMode= localStorage.getItem("labellingMode");
+    let requestUrl = labellingMode ? `/projects/${projectID}/next/?current_task_id=${taskID}&task_status=${labellingMode}` : `/projects/${projectID}/next/?current_task_id=${taskID}`;
+    let response = await axiosInstance.post(requestUrl, {
       id: projectID,
     });
     if (response.status === 204) {

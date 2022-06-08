@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card } from "antd";
+import { Button, Col, Form, Input, Row, Card, Modal } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 import {
-  addAnnotatorsToProject,
   publishProject,
   getProject,
   updateProject,
   exportProject,
   PullNewData,
+  downloadProject,
+  archiveProject,
 } from "../../api/ProjectAPI";
+import { CSVDownload } from "react-csv";
+import { Select } from 'antd';
+import { snakeToTitleCase } from "../../utils/stringConversions";
+
 
 function ProjectSettings() {
   const { id } = useParams();
   let navigate = useNavigate();
-  const { TextArea } = Input;
-
+  const { Option } = Select;
   const [basicSettingsForm] = Form.useForm();
-
-  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState(true);
   const [project, setProject] = useState({});
   const [published, setPublished] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [options, setOptions] = useState("CSV");
+  const [pulldata, setPulldata] = useState();
+  let selectboxvalue = localStorage.getItem('selectboxvalue');
 
   const prefilBasicForm = () => {
     basicSettingsForm.setFieldsValue({
@@ -30,29 +39,75 @@ function ProjectSettings() {
   };
 
   useEffect(() => {
+    showLoader();
     getProject(id).then((res) => {
       setProject(res);
-      setLoading(false);
+      setIsArchived(res.is_archived);
+      hideLoader();
     });
   }, []);
 
-  const onFinishAddAnnotator = async (values) => {
-    const emails = values.emails.split(",").map((email) => email.trim());
+  const onExport = async (id) => {
+    showLoader();
+    await exportProject(id)
+    hideLoader();
+  }
 
-    await addAnnotatorsToProject(id, emails);
+  const onArchive = async (id) => {
+    Modal.confirm({
+      title: isArchived ? "Are you sure you want to unarchive this project?" : "Are you sure you want to archive this project?",
+      OkText: "Yes",
+      CancelText: "No",
+      width: "400px",
+      onOk: async () => {
+        showLoader();
+        let res = await archiveProject(id)
+        if (res != undefined) {
+          setIsArchived(res);
+        }
+        hideLoader();
+      }
+    });
+  }
+
+  const onPullData = async () => {
+    showLoader();
+    await PullNewData(id);
+    hideLoader();
   };
-  const onExport =(id)=>{
-    let projects =  exportProject(id)
-   
+
+
+  const onDownload = async (id) => {
+    showLoader();
+    let download = await downloadProject(id)
+    if (download.status == 200) {
+      setData(download.data)
     }
-   
-    const onPullData = async () => {
-      await PullNewData(id);
-     
-    };
-  
+    hideLoader();
+  }
+
+
+  const exportData = () => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(data)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "data.json";
+
+    link.click();
+  };
+  const handleChange = (e) => {
+    if (e === "CSV") {
+      setOptions(e)
+    }
+    else {
+      setOptions(e)
+    }
+  }
 
   const onEditProjectForm = async (values) => {
+    showLoader();
     const { project_mode, project_type, users } = project;
 
     await updateProject(project.id, {
@@ -61,19 +116,19 @@ function ProjectSettings() {
       project_type,
       users,
     });
+    hideLoader();
   };
 
   const handlePublishProject = async () => {
+    showLoader();
     await publishProject(id);
     setPublished(true);
+    hideLoader();
     navigate(`/projects/${id}`, { replace: true });
   };
 
   prefilBasicForm();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -128,73 +183,93 @@ function ProjectSettings() {
                 </Button>
               </Form.Item>
             </Form>
-            <Title level={3}>Add Annotators To The Project</Title>
-            <Form
-              name="basic"
-              layout="vertical"
-              onFinish={onFinishAddAnnotator}
-              autoComplete="off"
-            >
-              <div
+            <Title level={3}>Advanced Operations</Title>
+            <div style={{display:'flex', marginBottom: '24px', flexWrap: 'wrap', rowGap: '16px', columnGap: '8px'}}>
+              <Button type="primary" disabled={published} onClick={handlePublishProject}>
+                Publish Project
+              </Button>
+              <Button type="primary" onClick={() => onExport(id)}>
+              Export Project into Dataset
+              </Button>
+              <Button type="primary" onClick={() => onArchive(id)}>
+                {isArchived ? "Unarchive Project" : "Archive Project"}
+              </Button>
+              {selectboxvalue == "f" ? <Button type="primary" onClick={() => onPullData(id)}>
+                    Pull New Data Items from Source Dataset
+                  </Button>: " "}
+              <Select
+                defaultValue="CSV"
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "start",
-                  width: "100%",
+                  width: 120,
+                  marginLeft: "10px"
                 }}
+                onChange={handleChange}
               >
-                <Form.Item
-                  label="Emails"
-                  name="emails"
-                  rules={[
-                    {
-                      message: "Please enter annotator email",
-                    },
-                  ]}
-                  className="full-textarea"
-                  required="true"
-                >
-                  <TextArea
-                    rows={4}
-                    placeholder="Enter emails of Annotators separated by commas(,)"
-                  />
-                </Form.Item>
+                <Option value="CSV">CSV</Option>
+                <Option value="JSON">JSON</Option>
 
-                <div style={{ display: "flex" }}>
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                    style={{ marginRight: "10px" }}
+              </Select>
+              <Button type="primary" onClick={() => onDownload(id)}>
+                Download project
+              </Button>
+              {data?.length && (options == "CSV" ? <CSVDownload
+                    filename={"Expense_Table.csv"}
+                    data={data}
+                    target="_blank"
                   >
-                    <Button type="primary" htmlType="submit">
-                      Add Annotators
-                    </Button>
-                  </Form.Item>
-                  <Button type="primary" disabled={published} onClick={handlePublishProject}>
-                    Publish Project
-                  </Button>
-                </div>
-                <Title level={3}> Advanced Operation</Title>
-                
-                <div style={{ display: "flex" }}>
-               
-                  <Form.Item
-                    wrapperCol={{ span: 16 }}
-                    style={{ marginRight: "10px" }}
-                  >
-                   <Button type="primary"  onClick={() =>onExport(id)}>
-                      Export project
-                    </Button>
-                  </Form.Item>
-                  <Button type="primary" onClick={()=>onPullData(id)}>
-                    Pull DataItems
-                  </Button>
-                </div>
+
+                  </CSVDownload> : exportData())
+
+                  }
+            </div>
+            <Title level={3}>Read-only Configurations</Title>
+            {project && project.sampling_mode && (
+              <div>
+                <Title level={4}>Sampling Parameters</Title>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                  <Col xs={12} md={8}>
+                    <p>Sampling Mode:</p>
+                  </Col>
+                  <Col xs={12} md={16}>
+                    <p>
+                      {project.sampling_mode == "b" && "Batch"}
+                      {project.sampling_mode == "r" && "Random"}
+                      {project.sampling_mode == "f" && "Full"}
+                    </p>
+                  </Col>
+                </Row>
+                {Object.keys(project.sampling_parameters_json).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="sampling-params">
+                    <Col xs={12} md={8}>
+                      <p>{snakeToTitleCase(key)}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.sampling_parameters_json[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
               </div>
-            </Form>
+            )}
+            {project && project.variable_parameters && Object.keys(project.variable_parameters).length !==0 && (
+              <div>
+              <Title level={4}>Variable Parameters</Title>
+              {Object.keys(project.variable_parameters).map((key, i) => (
+                  <Row key={i} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className="variable-params">
+                    <Col xs={12} md={8}>
+                      <p>{snakeToTitleCase(key)}:</p>
+                    </Col>
+                    <Col xs={12} md={16}>
+                      <p>{project.variable_parameters[key]}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
           </Card>
         </Col>
         <Col span={1} />
       </Row>
+      {loader}
     </>
   );
 }

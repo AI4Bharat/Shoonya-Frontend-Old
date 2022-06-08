@@ -9,15 +9,18 @@ import {
   fetchWorkspaceData,
   fetchWorkspaceProjects,
 } from "../../api/WorkspaceAPI";
-import { memberColumns, projectColumns } from "./TableColumns";
+import { projectColumns } from "./TableColumns";
+import { AnnotatorsTab } from "./AnnotatorsTab";
+import {ManagersTab} from './ManagersTab'
+import { WorkspaceSettings } from "./WorkspaceSettings";
+
 const { TabPane } = Tabs;
 
 function Workspace() {
-  const { id } = useParams();
+  const { id: workspaceId } = useParams();
   let navigate = useNavigate();
 
   const [workspace, setWorkspace] = useState(undefined);
-  const [inviteData, setInviteData] = useState({ visible: false, users: [] });
   const [users, setUsers] = useState([]);
   const [project, setProject] = useState({
     projects: [],
@@ -28,13 +31,13 @@ function Workspace() {
 
   useEffect(() => {
     if (userContext.user) {
-      fetchUsersInWorkspace(id).then((res) => {
+      fetchUsersInWorkspace(workspaceId).then((res) => {
         setUsers(res);
       });
-      fetchWorkspaceProjects(id).then((res) => {
+      fetchWorkspaceProjects(workspaceId).then((res) => {
         setProject({ ...project, projects: res });
       });
-      fetchWorkspaceData(id).then((res) => setWorkspace(res));
+      fetchWorkspaceData(workspaceId).then((res) => setWorkspace(res));
     }
   }, [userContext]);
 
@@ -51,9 +54,7 @@ function Workspace() {
             <Paragraph>
               Created by: {workspace && workspace.created_by?.username}
             </Paragraph>
-            <Paragraph>
-              {/* Put relevant text later */}
-            </Paragraph>
+            <Paragraph>{/* Put relevant text later */}</Paragraph>
             {(userContext.user?.role === 2 || userContext.user?.role === 3) && (
               <>
                 <Tabs defaultActiveKey="1">
@@ -68,7 +69,7 @@ function Workspace() {
                             marginBottom: "1%",
                           }}
                           onClick={() =>
-                            navigate(`/create-annotation-project/${id}`, {
+                            navigate(`/create-annotation-project/${workspaceId}`, {
                               replace: true,
                             })
                           }
@@ -80,7 +81,7 @@ function Workspace() {
                         <Button
                           style={{ width: "48%", marginBottom: "1%" }}
                           onClick={() =>
-                            navigate(`/create-collection-project/${id}`, {
+                            navigate(`/create-collection-project/${workspaceId}`, {
                               replace: true,
                             })
                           }
@@ -96,48 +97,24 @@ function Workspace() {
                       dataSource={project.projects}
                     />
                   </TabPane>
-                  <TabPane tab="Members" key="2">
-                    <Button
-                      style={{ width: "100%", marginBottom: "1%" }}
-                      onClick={() =>
-                        setInviteData({ ...inviteData, visible: true })
-                      }
-                      type="primary"
-                    >
-                      Invite new members to workspace
-                    </Button>
-                    <Modal
-                      visible={inviteData.visible}
-                      onCancel={() =>
-                        setInviteData({ ...inviteData, visible: false })
-                      }
-                      // //   onOk={() =>
-                      //     inviteUsers(
-                      //       inviteData.users,
-                      //       userContext.user.organization.id
-                      //     ).then(() =>
-                      //       setInviteData({ ...inviteData, visible: false })
-                      //     )
-                      // //   }
-                    >
-                      <Title level={5}>Enter emails to be invited</Title>
-                      <Select
-                        mode="tags"
-                        style={{ width: "100%", marginTop: "5%" }}
-                        onChange={(e) =>
-                          setInviteData({ ...inviteData, users: e })
-                        }
-                      />
-                    </Modal>
-                    <Table columns={memberColumns} dataSource={users} />
+                  <TabPane tab="Annotators" key="2">
+                  <AnnotatorsTab
+                    workspaceAnnotators={users}
+                    orgId={workspace?.organization}
+                    workspaceId={workspace?.id}
+                    isArchived={workspace?.is_archived}
+                  />;
                   </TabPane>
-                  {(userContext.user?.role === 3 ||
-                    userContext.user?.role === 2) && (
-                    <TabPane tab="Invites">
-                      <Table columns={memberColumns} dataSource={users} />
+                  {(userContext.user?.role === 3 &&
+                    <TabPane tab="Managers" key="3">
+                       <ManagersTab workspaceId={workspaceId} />
                     </TabPane>
                   )}
-                  <TabPane tab="Settings" key="3"></TabPane>
+                  {(userContext.user?.role === 3 &&
+                    <TabPane tab="Settings" key="4">
+                      <WorkspaceSettings workspaceId={workspaceId} />
+                    </TabPane>
+                  )}
                 </Tabs>
               </>
             )}

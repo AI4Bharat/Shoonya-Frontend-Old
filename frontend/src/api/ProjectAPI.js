@@ -31,9 +31,11 @@ const getProject = async (project_id) => {
 };
 
 const addAnnotatorsToProject = async (id, emails) => {
-  if (emails[0] === "" && (emails.length === 1 || emails.length === 2)) {
-    return message.error("Unable to add Annotators(s)")
+  if (emails.length === 0) {
+    message.error("Unable to add Annotators(s)")
+    return false;
   }
+
   try {
     let response = await axiosInstance.post(
       `/projects/${id}/add_project_users/`,
@@ -43,11 +45,12 @@ const addAnnotatorsToProject = async (id, emails) => {
     );
 
     if (response.status !== 201) {
-      return message.error("Unable to add Annotator(s)");
+      message.error("Unable to add Annotator(s)");
+      return false;
     }
 
     message.success("Successfully Added Annotator(s)");
-    return;
+    return true;
   } catch (error) {
     message.error(error);
   }
@@ -87,14 +90,26 @@ const exportProject = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/project_export/`);
 
-    if (response.status !== 200)
+    if (response.status !== 200){
       return message.error("Unable to Export Project");
+    }
+      message.success("Successfully Exported Project");
+      return;
+    } catch (error) {
+      message.error(error);
+    }
+};
+const archiveProject = async (id) => {
+  try {
+    let response = await axiosInstance.post(`/projects/${id}/archive/`);
 
-    if (response.data.message === "This project is Exported")
-      message.success("This Project is Exported");
-    else message.success("This Project has already been Exported");
-
-    return;
+    if (response.status !== 200){
+      return message.error("Unable to change archive settings");
+    }
+      if (response.data.is_archived)
+        message.success("Successfully Archived Project");
+      else message.success("Successfully Unarchived Project");
+      return response.data.is_archived;
   } catch (error) {
     message.error(error);
   }
@@ -102,18 +117,32 @@ const exportProject = async (id) => {
 const PullNewData = async (id) => {
   try {
     let response = await axiosInstance.post(`/projects/${id}/pull_new_items/` );
-
-    if (response.status !== 200)
-      return message.error("Unable to pull New Items");
-
-    if (response.data.message === "This project is pulled")
+    let result =  response.data.message
+    if (response.status !== 200){
+      return message.error("Unable to pull New Items Add more Annotators");
+    }
       message.success("This Project is pulled");
-    else message.success("This Project has already been pulled ");
+      message.info(result);
 
     return;
   } catch (error) {
     message.error(error);
   }
+};
+const downloadProject = async (id) => {
+
+  try {
+    let response = await axiosInstance.get(`/projects/${id}/download?export_type=CSV`);
+    console.log(response,"data")
+    if (response.status !== 200){
+      return message.error("Unable to Download Project");
+    }
+      message.success("Successfully Downloaded Project");
+     
+      return response;
+    } catch (error) {
+      message.error(error);
+    }
 };
 
 export {
@@ -125,4 +154,6 @@ export {
   getProjectMembers ,
   exportProject,
   PullNewData,
+  downloadProject,
+  archiveProject,
 };
