@@ -264,7 +264,7 @@ function LSF() {
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
       <div style={{ maxWidth: "100%", display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "inline-flex" }}>
+        <div style={{ display: "flex" }}>
           <Button
             value="Back to Project"
             onClick={() => {
@@ -274,6 +274,9 @@ function LSF() {
             }}
           >
             Back to Project
+          </Button>
+          <Button style={{marginLeft:'20%'}}>
+            Notes
           </Button>
         </div>
       </div>
