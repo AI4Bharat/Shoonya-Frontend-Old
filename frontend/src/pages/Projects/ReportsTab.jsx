@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { getReportsWithinRange } from "../../api/ProjectDashboardAPI";
 import { reportResultsColumns } from "./TasksTableContent";
+import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 const DATE_FORMAT = "YYYY-MM-DD";
 
@@ -13,13 +14,18 @@ export function ReportsTab() {
 	const [fromDate, setFromDate] = useState(moment());
 	const [toDate, setToDate] = useState(moment());
 	const [reportResults, setReportResults] = useState([]);
+	const [loader, showLoader, hideLoader] = useFullPageLoader();
 
 	const handleFetchResults = async () => {
+		showLoader();
 		const results = await getReportsWithinRange(
 			projectId,
 			fromDate.format(DATE_FORMAT),
 			toDate.format(DATE_FORMAT)
-		);
+		).then((results) => {
+			hideLoader();
+			return results;
+		});
 
 		if (results && Array.isArray(results)) {
 			const sanitizedResults = results.map((result) => ({
@@ -73,6 +79,7 @@ export function ReportsTab() {
 				columns={reportResultsColumns}
 				dataSource={reportResults}
 			/>
+			{loader}
 		</>
 	);
 }
