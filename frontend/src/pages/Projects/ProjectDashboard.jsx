@@ -141,7 +141,6 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
-      console.log(1);
     });
   }
 
@@ -160,7 +159,6 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
-      console.log(2)
     });
   }
 
@@ -176,13 +174,12 @@ function ProjectDashboard() {
       pagination.pageSize,
       selectedFilter,
       Number(selectedAnnotator),
-      searchFilters
+      newSearchFilters
     ).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
-      console.log(3)
     });
   };
 
@@ -199,13 +196,12 @@ function ProjectDashboard() {
       pagination.pageSize,
       selectedFilter,
       Number(selectedAnnotator),
-      searchFilters
+      newSearchFilters
     ).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
-      console.log(4)
     });
   };
 
@@ -308,7 +304,6 @@ function ProjectDashboard() {
         pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
-        console.log(5)
       });
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
@@ -372,7 +367,6 @@ function ProjectDashboard() {
         setPagination(pagination);
         setTasks(res.results);
         hideLoader();
-        console.log(6)
       });
       setChangePage(false);
     }
@@ -380,8 +374,14 @@ function ProjectDashboard() {
 
   const labelAllTasks = async (project_id) => {
     try {
+      let urlString = `/projects/${project_id}/next/?task_status=${selectedFilter}`;
+      if(searchFilters) {
+        for (let key in searchFilters) {
+            urlString += "&search_"+key.toLowerCase()+"="+searchFilters[key];
+        }
+      }
       let response = await axiosInstance.post(
-        `/projects/${project_id}/next/?task_status=${selectedFilter}`,
+        urlString,
         {
           id: project_id,
         }
