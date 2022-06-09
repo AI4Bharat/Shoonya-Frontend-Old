@@ -53,6 +53,7 @@ function CreateProject() {
   const [selectedInstances, setSelectedInstances] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
   const [selectedAnnotatorsNum, setSelectedAnnotatorsNum] = useState(1);
+  const [filterString,setFilterString] = useState(null);
   const [variableParameters, setVariableParameters] = useState(null);
   const [selectedVariableParameters, setSelectedVariableParameters] = useState(
     []
@@ -252,7 +253,7 @@ function CreateProject() {
     setSamplingParameters(null);
   };
 
-  let abc = localStorage.setItem("selectboxvalue", samplingMode);
+ 
 
   const handleCreateProject = () => {
     let temp = {};
@@ -269,7 +270,7 @@ function CreateProject() {
       users: [userContext.user?.id],
       workspace_id: id,
       organization_id: userContext.user.organization.id,
-      filter_string: "string",
+      filter_string: filterString,
       sampling_mode: samplingMode,
       sampling_parameters_json: samplingParameters,
       project_type: selectedType,
@@ -489,6 +490,13 @@ function CreateProject() {
               <Option value="f">Full</Option>
               <Option value="b">Batch</Option>
             </Select>
+            <h1 className="margin-top-heading">Filter String :</h1>
+            <Input
+              value={filterString}
+              onChange={(e) => {
+                setFilterString(e.target.value);
+              }}
+            />
           </>
         )}
 
@@ -524,6 +532,7 @@ function CreateProject() {
                 setSelectedAnnotatorsNum(e.target.value);
               }}
             />
+            
           </>
         )}
         {selectedAnnotatorsNum && (
