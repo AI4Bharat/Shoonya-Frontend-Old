@@ -182,17 +182,16 @@ function ProjectDashboard() {
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    showLoader();
     let newSearchFilters = { [dataIndex]: selectedKeys[0], ...searchFilters };
     setSearchFilters(newSearchFilters);
   };
 
-  const handleReset = (clearFilters, dataIndex) => {
-    showLoader();
+  const handleReset = (clearFilters, dataIndex, confirm) => {
     let newSearchFilters = searchFilters;
     delete newSearchFilters[dataIndex];
     setSearchFilters(newSearchFilters);
     clearFilters();
+    confirm();
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -233,7 +232,7 @@ function ProjectDashboard() {
             Search
           </Button>
           <Button
-            onClick={() => clearFilters && handleReset(clearFilters, dataIndex)}
+            onClick={() => clearFilters && handleReset(clearFilters, dataIndex, confirm)}
             size="small"
             style={{
               width: 90,
