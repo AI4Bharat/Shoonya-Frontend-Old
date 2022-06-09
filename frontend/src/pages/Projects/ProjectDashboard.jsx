@@ -22,6 +22,8 @@ import { ReportsTab } from "./ReportsTab";
 const { TabPane } = Tabs;
 
 function ProjectDashboard() {
+  const pathName = window.location.pathname;
+  const pageState = sessionStorage.getItem(pathName) ? JSON.parse(sessionStorage.getItem(pathName)): null;
   const userContext = useContext(UserContext);
   let navigate = useNavigate();
   const { project_id } = useParams();
@@ -31,7 +33,7 @@ function ProjectDashboard() {
   const [columns, setColumns] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [pagination, setPagination] = useState({});
-  const [selectedFilter, setFilter] = useState("unlabeled");
+  const [selectedFilter, setFilter] = useState(pageState?.prevFilter ? pageState.prevFilter : "unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
@@ -40,7 +42,10 @@ function ProjectDashboard() {
     { label: "accepted", value: "accepted", },
     { label: "draft", value: "draft", },
   ];
-  const DEFAULT_PAGE_SIZE = 10;
+
+  const [currentTab, setTab] = useState(pageState?.prevTab ? pageState.prevTab : "1");
+  const DEFAULT_PAGE_SIZE = pageState?.prevPageSize ? pageState.prevPageSize : 10;
+  const DEFAULT_PAGE_NUMBER = pageState?.prevPage ? pageState.prevPage : 1;
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
@@ -83,10 +88,10 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, 1, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
+      getTasks(project_id, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
-        pagination.current = 1;
+        pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
       });
@@ -179,7 +184,7 @@ function ProjectDashboard() {
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-            <Tabs>
+            <Tabs defaultActiveKey={currentTab} onChange={(key)=>setTab(key)}>
               <TabPane tab="Tasks" key="1">
                 <Row gutter={[16,16]}>
                 <Col span={9}>
@@ -221,7 +226,7 @@ function ProjectDashboard() {
                 ) : (<div></div>)
                 }
                 </Col>
-                <Col span={6}>
+                {userContext.user?.role == 1 && <Col span={6}>
                 {project.project_mode == "Annotation" ? (
                   project.is_published ? (
                     <div style={{ display: "inline-flex", width: "100%", marginBottom: "1%", marginRight: "1%", flexWrap: "wrap" }}>
@@ -253,7 +258,7 @@ function ProjectDashboard() {
                     </Link>
                   </Button>
                 )}
-                </Col>
+                </Col>}
                 </Row>
                 <Table
                   pagination={{
