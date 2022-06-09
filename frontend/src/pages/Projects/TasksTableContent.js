@@ -92,36 +92,43 @@ const reportResultsColumns = [
 		title: "Name",
 		dataIndex: "username",
 		key: "name",
+    align: "center"
 	},
 	{
 		title: "Email",
 		dataIndex: "mail",
 		key: "email",
+    align: "center"
 	},
 	{
 		title: "Skipped Tasks",
 		dataIndex: "skipped_tasks",
 		key: "skipped_tasks",
+    align: "center"
 	},
 	{
 		title: "Annotated Tasks",
 		dataIndex: "total_annoted_tasks",
 		key: "total_annoted_tasks",
+    align: "center"
 	},
 	{
 		title: "Assigned Tasks",
 		dataIndex: "total_assigned_tasks",
 		key: "total_assigned_tasks",
+    align: "center"
 	},
 	{
 		title: "Pending Tasks",
 		dataIndex: "total_pending_tasks",
 		key: "total_pending_tasks",
+    align: "center"
 	},
   {
-    title: "Average Annotation Time",
+    title: "Average Annotation Time (in seconds)",
     dataIndex: "avg_lead_time",
-    key: "avg_lead_time"
+    key: "avg_lead_time",
+    align: "center"
   }
 ];
 

@@ -15,15 +15,18 @@ export function ReportsTab() {
 	const [reportResults, setReportResults] = useState([]);
 
 	const handleFetchResults = async () => {
-		const result = await getReportsWithinRange(
+		const results = await getReportsWithinRange(
 			projectId,
 			fromDate.format(DATE_FORMAT),
 			toDate.format(DATE_FORMAT)
 		);
 
-		if (result) {
-			console.log('the result was', result);
-			setReportResults(result);
+		if (results && Array.isArray(results)) {
+			const sanitizedResults = results.map((result) => ({
+				...result,
+				avg_lead_time: parseFloat(result.avg_lead_time).toFixed(2),
+			}));
+			setReportResults(sanitizedResults);
 		}
 	};
 
@@ -36,7 +39,10 @@ export function ReportsTab() {
 				}}
 			>
 				<Input.Group style={{ display: "flex", alignItems: "center" }}>
-					<Typography.Text strong={true} style={{ marginRight: "2%" }}>
+					<Typography.Text
+						strong={true}
+						style={{ marginRight: "2%" }}
+					>
 						Select From Date:
 					</Typography.Text>
 					<DatePicker
@@ -46,7 +52,10 @@ export function ReportsTab() {
 					/>
 				</Input.Group>
 				<Input.Group style={{ display: "flex", alignItems: "center" }}>
-					<Typography.Text strong={true} style={{ marginRight: "2%" }}>
+					<Typography.Text
+						strong={true}
+						style={{ marginRight: "2%" }}
+					>
 						Select To Date:
 					</Typography.Text>
 					<DatePicker
