@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
-import { message } from "antd";
+import { Input, message, Button } from "antd";
+
 import {
   getProjectsandTasks,
   postAnnotation,
@@ -12,8 +13,9 @@ import {
 } from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
-import { Button } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
+
+import styles from './lsf.module.css'
 
 //used just in postAnnotation to support draft status update.
 let task_status = "accepted";
@@ -42,9 +44,6 @@ const LabelStudioWrapper = () => {
     let load_time;
     let interfaces = [];
     if (predictions == null) predictions = [];
-
-    // let annotationdata = annotations.length === 0? predictions: annotations
-    // if(annotations.length == 0) annotations = predictions;
 
     if (taskData.task_status == "freezed") {
       interfaces = [
@@ -236,11 +235,10 @@ const LabelStudioWrapper = () => {
     }
   }, [labelConfig, userContext]);
 
-  const onDraftAnnotation = async () => {
+  const handleDraftAnnotationClick = async () => {
     task_status = "draft";
     lsfRef.current.store.submitAnnotation();
   }
-
 
   return (
     <div>
@@ -248,7 +246,7 @@ const LabelStudioWrapper = () => {
         <Button
           value="Draft"
           type="danger"
-          onClick={onDraftAnnotation}
+          onClick={handleDraftAnnotationClick}
           style={{minWidth: "160px", background: "white", borderColor:"green", color:"green"}}
         >
           Draft
@@ -260,7 +258,17 @@ const LabelStudioWrapper = () => {
   );
 };
 
-function LSF() {
+export default function LSF() {
+  const [collapseHeight, setCollapseHeight] = useState('0');
+  
+  const handleCollapseClick = () => {
+    if(collapseHeight === '0') {
+      setCollapseHeight('auto')
+    } else {
+      setCollapseHeight('0');
+    }
+  }
+  
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
       <div style={{ maxWidth: "100%", display: "flex", justifyContent: "space-between" }}>
@@ -275,14 +283,15 @@ function LSF() {
           >
             Back to Project
           </Button>
-          <Button style={{marginLeft:'20%'}}>
+          <Button type="dashed" style={{marginLeft:'20%'}} onClick={handleCollapseClick}>
             Notes
           </Button>
         </div>
+      </div>
+      <div className={styles.collapse} style={{height:collapseHeight}}>
+        <Input.TextArea placeholder="Place your remarks here ..."/>
       </div>
       <LabelStudioWrapper />
     </div>
   );
 }
-
-export default LSF;
