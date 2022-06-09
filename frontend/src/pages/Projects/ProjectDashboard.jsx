@@ -181,17 +181,46 @@ function ProjectDashboard() {
   }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    showLoader();
     confirm();
-    let newSearchFilters = { [dataIndex]: selectedKeys[0], ...searchFilters };
+    let newSearchFilters = searchFilters;
+    searchFilters[dataIndex] = selectedKeys[0];
     setSearchFilters(newSearchFilters);
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedFilter,
+      Number(selectedAnnotator),
+      searchFilters
+    ).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
   };
 
   const handleReset = (clearFilters, dataIndex, confirm) => {
+    showLoader();
     let newSearchFilters = searchFilters;
     delete newSearchFilters[dataIndex];
     setSearchFilters(newSearchFilters);
     clearFilters();
     confirm();
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedFilter,
+      Number(selectedAnnotator),
+      searchFilters
+    ).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -340,23 +369,6 @@ function ProjectDashboard() {
       });
     }
   }, [dataSource]);
-
-  useEffect(() => {
-    showLoader();
-    getTasks(
-      project_id,
-      1,
-      pagination.pageSize,
-      selectedFilter,
-      Number(selectedAnnotator),
-      searchFilters
-    ).then((res) => {
-      pagination.total = res.count;
-      setPagination(pagination);
-      setTasks(res.results);
-      hideLoader();
-    });
-  }, [searchFilters])
 
   const labelAllTasks = async (project_id) => {
     try {
