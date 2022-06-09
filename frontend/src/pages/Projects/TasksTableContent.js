@@ -129,6 +129,12 @@ const reportResultsColumns = [
     dataIndex: "avg_lead_time",
     key: "avg_lead_time",
     align: "center"
+  },
+  {
+      title: "Draft Tasks",
+      dataIndex: "total_draft_tasks",
+      key: "total_draft_tasks",
+      align: "center"
   }
 ];
 
