@@ -12,7 +12,7 @@ import {
 } from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 //used just in postAnnotation to support draft status update.
@@ -252,23 +252,27 @@ const LabelStudioWrapper = () => {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          value="Draft"
-          type="default"
-          onClick={onDraftAnnotation}
-          style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#fc0", fontWeight: "500"}}
-        >
-          Draft
-        </Button>
-        {localStorage.getItem("labelAll") != "true" ? (
+        <Tooltip title="Save task for later">
           <Button
-            value="Next"
-            ype="default"
-            onClick={onNextAnnotation}
-            style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+            value="Draft"
+            type="default"
+            onClick={onDraftAnnotation}
+            style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
           >
-            Next
+            Draft
           </Button>
+        </Tooltip>
+        {localStorage.getItem("labelAll") != "true" ? (
+          <Tooltip title="Go to next task">
+            <Button
+              value="Next"
+              type="default"
+              onClick={onNextAnnotation}
+              style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+            >
+              Next
+            </Button>
+          </Tooltip>
         ) : (
           <div style={{minWidth: "160px"}}/>
         )}
