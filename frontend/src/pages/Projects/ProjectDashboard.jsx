@@ -240,17 +240,6 @@ function ProjectDashboard() {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({
-                closeDropdown: false,
-              });
-            }}
-          >
-            Filter
-          </Button>
         </Space>
       </div>
     ),
