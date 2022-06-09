@@ -74,14 +74,13 @@ function ProjectDashboard() {
   const [currentTab, setTab] = useState(
     pageState?.prevTab ? pageState.prevTab : "1"
   );
-  const DEFAULT_PAGE_SIZE = pageState?.prevPageSize
-    ? pageState.prevPageSize
-    : 10;
+  const DEFAULT_PAGE_SIZE = pageState?.prevPageSize ? pageState.prevPageSize : 10;
   const DEFAULT_PAGE_NUMBER = pageState?.prevPage ? pageState.prevPage : 1;
 
   const [searchFilters, setSearchFilters] = useState({});
   const searchInput = useRef(null);
   const notSearchable = ["status", "actions"];
+  const [changePage, setChangePage] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("selectedDate", JSON.stringify(selectedDate));
@@ -127,23 +126,6 @@ function ProjectDashboard() {
     setShow(false);
   };
 
-  function handleTableChange() {
-    showLoader();
-    getTasks(
-      project_id,
-      pagination.current,
-      pagination.pageSize,
-      selectedFilter,
-      Number(selectedAnnotator),
-      searchFilters
-    ).then((res) => {
-      pagination.total = res.count;
-      setPagination(pagination);
-      setTasks(res.results);
-      hideLoader();
-    });
-  }
-
   function handleFilterChange(selectedValue) {
     showLoader();
     setFilter(selectedValue.target.value);
@@ -159,6 +141,7 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      console.log(1);
     });
   }
 
@@ -177,6 +160,7 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      console.log(2)
     });
   }
 
@@ -198,6 +182,7 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      console.log(3)
     });
   };
 
@@ -220,6 +205,7 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      console.log(4)
     });
   };
 
@@ -322,6 +308,7 @@ function ProjectDashboard() {
         pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
+        console.log(5)
       });
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
@@ -369,6 +356,27 @@ function ProjectDashboard() {
       });
     }
   }, [dataSource]);
+
+  useEffect(() => {
+    if (changePage) {
+      showLoader();
+      getTasks(
+        project_id,
+        pagination.current,
+        pagination.pageSize,
+        selectedFilter,
+        Number(selectedAnnotator),
+        searchFilters
+      ).then((res) => {
+        pagination.total = res.count;
+        setPagination(pagination);
+        setTasks(res.results);
+        hideLoader();
+        console.log(6)
+      });
+      setChangePage(false);
+    }
+  }, [changePage])
 
   const labelAllTasks = async (project_id) => {
     try {
@@ -671,9 +679,9 @@ function ProjectDashboard() {
                     onChange: (page, pageSize) => {
                       pagination.current = page;
                       pagination.pageSize = pageSize;
+                      setChangePage(true);
                     },
                   }}
-                  onChange={handleTableChange}
                   columns={columns}
                   dataSource={dataSource}
                 />
