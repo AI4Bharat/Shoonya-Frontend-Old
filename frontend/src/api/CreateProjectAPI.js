@@ -38,7 +38,12 @@ const getData = async (instanceIds, datasetType, page=1, records=10) => {
       instance_ids: instanceIds,
       dataset_type: datasetType,
     });
-    return response.data;
+    if (response.status >= 400) {
+      message.error(response.message);
+      return null;
+    } else {
+      return response.data;
+    }
   } catch (e) {
     message.error("Error fetching Data");
   }
