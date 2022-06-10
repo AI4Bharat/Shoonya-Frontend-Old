@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
@@ -9,7 +10,8 @@ import {
   updateTask,
   getNextProject,
   patchAnnotation,
-  deleteAnnotation
+  deleteAnnotation,
+  fetchAnnotation
 } from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
@@ -20,7 +22,7 @@ import styles from './lsf.module.css'
 //used just in postAnnotation to support draft status update.
 let task_status = "accepted";
 
-const LabelStudioWrapper = () => {
+const LabelStudioWrapper = ({notesRef}) => {
   // we need a reference to a DOM node here so LSF knows where to render
   const rootRef = useRef();
   // this reference will be populated when LSF initialized and can be used somewhere else
@@ -39,7 +41,8 @@ const LabelStudioWrapper = () => {
     taskData,
     labelConfig,
     annotations,
-    predictions
+    predictions,
+    notesRef
   ) {
     let load_time;
     let interfaces = [];
@@ -129,7 +132,8 @@ const LabelStudioWrapper = () => {
               userContext.user.id,
               load_time,
               annotation.lead_time,
-              task_status
+              task_status,
+              notesRef.current
             )
           }
           else message.error("Task is freezed");
@@ -172,7 +176,8 @@ const LabelStudioWrapper = () => {
                   annotations[i].id,
                   load_time,
                   annotations[i].lead_time,
-                  task_status
+                  task_status,
+                  notesRef.current
                   ).then(() => {
                     if (localStorage.getItem("labelAll"))
                       getNextProject(project_id, taskData.id).then((res) => {
@@ -227,13 +232,14 @@ const LabelStudioWrapper = () => {
             taskData,
             labelConfig.label_config,
             annotations,
-            predictions
+            predictions,
+            notesRef
           );
           hideLoader();
         }
       );
     }
-  }, [labelConfig, userContext]);
+  }, [labelConfig, userContext, notesRef]);
 
   const handleDraftAnnotationClick = async () => {
     task_status = "draft";
@@ -260,6 +266,9 @@ const LabelStudioWrapper = () => {
 
 export default function LSF() {
   const [collapseHeight, setCollapseHeight] = useState('0');
+  const notesRef = useRef('');
+  const {task_id} = useParams()
+  const [notesValue, setNotesValue] = useState('');
   
   const handleCollapseClick = () => {
     if(collapseHeight === '0') {
@@ -268,6 +277,18 @@ export default function LSF() {
       setCollapseHeight('0');
     }
   }
+
+  useEffect(()=>{
+    fetchAnnotation(task_id).then((data)=>{
+      if(data && Array.isArray(data) && data.length > 0) {
+        setNotesValue(data[0].notes);
+      }
+    })
+  }, [setNotesValue, task_id]);
+
+  useEffect(()=>{
+    notesRef.current = notesValue;
+  }, [notesValue])
   
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
@@ -289,9 +310,11 @@ export default function LSF() {
         </div>
       </div>
       <div className={styles.collapse} style={{height:collapseHeight}}>
-        <Input.TextArea placeholder="Place your remarks here ..."/>
+        <Input.TextArea placeholder="Place your remarks here ..." value={notesValue} onChange={event=>setNotesValue(event.target.value)} />
       </div>
-      <LabelStudioWrapper />
+      <LabelStudioWrapper notesRef={notesRef}/>
     </div>
   );
 }
+
+LabelStudioWrapper.propTypes = PropTypes.object;

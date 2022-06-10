@@ -37,14 +37,15 @@ const fetchAnnotation = async (taskID) => {
   }
 };
 
-const postAnnotation = async (result, task, completed_by, load_time, lead_time, task_status) => {
+const postAnnotation = async (result, task, completed_by, load_time, lead_time, task_status, notes) => {
   try {
     await axiosInstance.post(`/annotation/`, {
       result: result,
       task: task,
       completed_by: completed_by,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
-      task_status: task_status
+      task_status: task_status,
+      notes: notes
     },
     )
     .then((res)=> {
@@ -57,12 +58,13 @@ const postAnnotation = async (result, task, completed_by, load_time, lead_time, 
   }
 };
 
-const patchAnnotation = async (result, annotationID, load_time, lead_time, task_status) => {
+const patchAnnotation = async (result, annotationID, load_time, lead_time, task_status, notes) => {
   try {
     await axiosInstance.patch(`/annotation/${annotationID}/`, {
       result: result,
       lead_time: (new Date() - load_time) / 1000 + Number(lead_time ?? 0),
-      task_status: task_status
+      task_status: task_status,
+      notes: notes
     });
   } catch {
     message.error("Error updating annotations");
@@ -121,4 +123,5 @@ export {
   getNextProject,
   patchAnnotation,
   deleteAnnotation,
+  fetchAnnotation
 };
