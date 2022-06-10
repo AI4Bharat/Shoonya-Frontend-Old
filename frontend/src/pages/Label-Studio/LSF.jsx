@@ -251,42 +251,7 @@ const LabelStudioWrapper = () => {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Tooltip title="Save task for later">
-          <Button
-            value="Draft"
-            type="default"
-            onClick={onDraftAnnotation}
-            style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
-          >
-            Draft
-          </Button>
-        </Tooltip>
-        {localStorage.getItem("labelAll") != "true" ? (
-          <Tooltip title="Go to next task">
-            <Button
-              value="Next"
-              type="default"
-              onClick={onNextAnnotation}
-              style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
-            >
-              Next
-            </Button>
-          </Tooltip>
-        ) : (
-          <div style={{minWidth: "160px"}}/>
-        )}
-      </div>
-      <div className="label-studio-root" ref={rootRef}></div>
-      {loader}
-    </div>
-  );
-};
-
-function LSF() {
-  return (
-    <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
-      <div style={{ maxWidth: "100%", display: "flex", justifyContent: "space-between" }}>
+      {!loader && <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div style={{ display: "inline-flex" }}>
           <Button
             value="Back to Project"
@@ -299,7 +264,42 @@ function LSF() {
             Back to Project
           </Button>
         </div>
-      </div>
+        <div>
+          <Tooltip title="Save task for later">
+            <Button
+              value="Draft"
+              type="default"
+              onClick={onDraftAnnotation}
+              style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
+            >
+              Draft
+            </Button>
+          </Tooltip>
+          {localStorage.getItem("labelAll") != "true" ? (
+            <Tooltip title="Go to next task">
+              <Button
+                value="Next"
+                type="default"
+                onClick={onNextAnnotation}
+                style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+              >
+                Next
+              </Button>
+            </Tooltip>
+          ) : (
+            <div style={{minWidth: "160px"}}/>
+          )}
+        </div>
+      </div>}
+      <div className="label-studio-root" ref={rootRef}></div>
+      {loader}
+    </div>
+  );
+};
+
+function LSF() {
+  return (
+    <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
       <LabelStudioWrapper />
     </div>
   );
