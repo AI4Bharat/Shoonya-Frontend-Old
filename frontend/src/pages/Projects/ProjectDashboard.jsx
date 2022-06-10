@@ -137,6 +137,8 @@ function ProjectDashboard() {
       Number(selectedAnnotator),
       searchFilters
     ).then((res) => {
+      if (res.count === 0)
+        message.info("No more tasks in this filter", [2]);
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
