@@ -2,8 +2,6 @@ import React from "react";
 import { Button, Tag } from "antd";
 
 import { removeAnnotatorsFromWorkspace } from "../../api/WorkspaceAPI";
-import {Link} from 'react-router-dom'
-
 const projectColumns = [
   {
     title: "Name",
@@ -61,11 +59,11 @@ const getMemberColumns = (workspaceID, workspaceIsArchived) => [
     title: "Actions",
     render: (item) => (
       <>
-        <Link to={`/profile/${item.id}`}>
+        <a to={`/profile/${item.id}`}>
           <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
-        </Link>
+        </a>
         <Button
           type={"default"}
           danger
@@ -100,11 +98,11 @@ const managerColumns = [
     dataIndex: "removeAction",
     render: (item) => (
       <>
-        <Link to={`/profile/${item.userId}`}>
+        <a to={`/profile/${item.userId}`}>
           <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
-        </Link>
+        </a>
         <Button
           disabled={item.isArchived}
           danger
