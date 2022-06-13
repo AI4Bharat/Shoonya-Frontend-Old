@@ -23,6 +23,8 @@ import useFullPageLoader from "../../hooks/useFullPageLoader";
 import { MembersTab } from "./MembersTab";
 import "../../../src/App.css";
 import { ReportsTab } from "./ReportsTab";
+import Highlighter from "react-highlight-words";
+import { SearchOutlined } from "@ant-design/icons";
 
 const { TabPane } = Tabs;
 
@@ -61,7 +63,7 @@ function ProjectDashboard() {
     localStorage.setItem('labellingMode', selectedFilter);
   }, [selectedFilter]);
 
-  function handleTableChange() {
+  function handleFilterChange(selectedValue) {
     showLoader();
     setFilter(selectedValue.target.value);
     getTasks(
@@ -118,7 +120,106 @@ function ProjectDashboard() {
       setTasks(res.results);
       hideLoader();
     });
-  }
+  };
+
+  const handleReset = (clearFilters, dataIndex, confirm) => {
+    showLoader();
+    let newSearchFilters = searchFilters;
+    delete newSearchFilters[dataIndex];
+    setSearchFilters(newSearchFilters);
+    clearFilters();
+    confirm();
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedFilter,
+      Number(selectedAnnotator),
+      newSearchFilters
+    ).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters, dataIndex, confirm)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1890ff" : undefined,
+        }}
+      />
+    ),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchFilters[dataIndex] ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchFilters[dataIndex]]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   useEffect(() => {
     if (project_id) {
