@@ -39,6 +39,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error) {
+    console.log(error, 'was the error');
     const originalRequest = error.config;
     if (typeof error.response === "undefined") {
       alert("Unknown server error!");
