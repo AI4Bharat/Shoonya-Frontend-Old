@@ -59,7 +59,7 @@ const getMemberColumns = (workspaceID, workspaceIsArchived) => [
     title: "Actions",
     render: (item) => (
       <>
-        <a to={`/profile/${item.id}`}>
+        <a href={`/profile/${item.id}`}>
           <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
@@ -98,7 +98,7 @@ const managerColumns = [
     dataIndex: "removeAction",
     render: (item) => (
       <>
-        <a to={`/profile/${item.userId}`}>
+        <a href={`/profile/${item.userId}`}>
           <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
