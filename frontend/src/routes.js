@@ -43,7 +43,7 @@ function GlobalRoutes() {
   }, [userContext.refresh]);
 
   return (
-    <Router basename="/">
+    <Router basename="https://staging.shoonya.ai4bharat.org/">
       <Routes>
         <Route index element={<App />} />
         <Route path="login" element={<Login />} />
