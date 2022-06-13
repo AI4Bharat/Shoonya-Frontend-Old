@@ -19,4 +19,25 @@ const getTasks = async (projectID, page, records, filter, userFilter=-1, searchF
     }
 };
 
-export { getTasks }
+const getReportsWithinRange = async (projectID, fromDate, toDate) => {
+	return axiosInstance.post(`/projects/${projectID}/get_analytics/`, {
+		from_date: fromDate,
+		to_date: toDate,
+	}).then((response)=>{
+        if(response.status === 200) {
+            return response.data;
+        }
+
+        if(response.data?.message) {
+            message.error(response.data.message);
+        } else {
+            message.error('An unknown error occurred')
+        }
+        return []
+    }).catch(()=>{
+        message.error('Error fetching report.')
+        return [];
+    })
+};
+
+export { getTasks, getReportsWithinRange }
