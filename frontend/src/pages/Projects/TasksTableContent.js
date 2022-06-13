@@ -89,9 +89,9 @@ const memberColumns = [
 
 const reportResultsColumns = [
 	{
-		title: "Name",
-		dataIndex: "Name",
-		key: "Name",
+		title: "Username",
+		dataIndex: "Username",
+		key: "Username",
     align: "center"
 	},
 	{
