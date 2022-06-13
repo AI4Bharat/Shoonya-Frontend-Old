@@ -222,18 +222,20 @@ function CreateProject() {
         1,
         DEFAULT_PAGE_SIZE
       ).then((res) => {
-        pagination.total = res.count;
-        pagination.current = 1;
-        pagination.pageSize = DEFAULT_PAGE_SIZE;
-        setPagination(pagination);
-        let tableData = res.results;
-        let key = 1;
-        for (const data in tableData) {
-          tableData[data]["key"] = key;
-          key++;
+        if (res) {
+          pagination.total = res.count;
+          pagination.current = 1;
+          pagination.pageSize = DEFAULT_PAGE_SIZE;
+          setPagination(pagination);
+          let tableData = res.results;
+          let key = 1;
+          for (const data in tableData) {
+            tableData[data]["key"] = key;
+            key++;
+          }
+          setTableData(tableData);
+          hideLoader();
         }
-        setTableData(tableData);
-        hideLoader();
       });
     } else {
       message.info("You haven't selected any sources");
@@ -306,10 +308,12 @@ function CreateProject() {
       pagination.current,
       pagination.pageSize
     ).then((res) => {
-      pagination.total = res.count;
-      setPagination(pagination);
-      setTableData(res.results);
-      hideLoader();
+      if (res) {
+        pagination.total = res.count;
+        setPagination(pagination);
+        setTableData(res.results);
+        hideLoader();
+      }
     });
   }
 

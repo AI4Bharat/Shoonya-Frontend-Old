@@ -256,32 +256,35 @@ const LabelStudioWrapper = ({notesRef}) => {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Tooltip title="Save task for later">
-          <Button
-            value="Draft"
-            type="default"
-            onClick={handleDraftAnnotationClick}
-            style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
-          >
-            Draft
-          </Button>
-        </Tooltip>
-        {localStorage.getItem("labelAll") != "true" ? (
-          <Tooltip title="Go to next task">
+      {!loader && <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div/>
+        <div>
+          <Tooltip title="Save task for later">
             <Button
-              value="Next"
+              value="Draft"
               type="default"
-              onClick={onNextAnnotation}
-              style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+              onClick={handleDraftAnnotationClick}
+              style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
             >
-              Next
+              Draft
             </Button>
           </Tooltip>
-        ) : (
-          <div style={{minWidth: "160px"}}/>
-        )}
-      </div>
+          {localStorage.getItem("labelAll") != "true" ? (
+            <Tooltip title="Go to next task">
+              <Button
+                value="Next"
+                type="default"
+                onClick={onNextAnnotation}
+                style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#09f", fontWeight: "500"}}
+              >
+                Next
+              </Button>
+            </Tooltip>
+          ) : (
+            <div style={{minWidth: "160px"}}/>
+          )}
+        </div>
+      </div>}
       <div className="label-studio-root" ref={rootRef}></div>
       {loader}
     </div>
