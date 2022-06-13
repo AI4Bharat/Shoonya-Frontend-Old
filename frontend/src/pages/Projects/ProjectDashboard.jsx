@@ -1,4 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { Col, Row, Card, Table, Button, Tabs, Radio, Select } from "antd";
 import { Link } from "react-router-dom";
 import Title from "antd/lib/typography/Title";
@@ -11,11 +16,11 @@ import {
   getColumnNames,
   getDataSource,
 } from "./TasksTableContent";
-import { message } from "antd";
+import { message, Space, Input } from "antd";
 import axiosInstance from "../../utils/apiInstance";
 import UserContext from "../../context/User/UserContext";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
-import {MembersTab} from './MembersTab';
+import { MembersTab } from "./MembersTab";
 import "../../../src/App.css";
 import { ReportsTab } from "./ReportsTab";
 
@@ -37,15 +42,20 @@ function ProjectDashboard() {
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
   const filters = [
-    { label: "unlabeled", value: "unlabeled", },
-    { label: "skipped", value: "skipped", },
-    { label: "accepted", value: "accepted", },
-    { label: "draft", value: "draft", },
+    { label: "unlabeled", value: "unlabeled" },
+    { label: "skipped", value: "skipped" },
+    { label: "accepted", value: "accepted" },
+    { label: "draft", value: "draft" },
   ];
 
   const [currentTab, setTab] = useState(pageState?.prevTab ? pageState.prevTab : "1");
   const DEFAULT_PAGE_SIZE = pageState?.prevPageSize ? pageState.prevPageSize : 10;
   const DEFAULT_PAGE_NUMBER = pageState?.prevPage ? pageState.prevPage : 1;
+
+  const [searchFilters, setSearchFilters] = useState({});
+  const searchInput = useRef(null);
+  const notSearchable = ["status", "actions"];
+  const [changePage, setChangePage] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
@@ -53,18 +63,17 @@ function ProjectDashboard() {
 
   function handleTableChange() {
     showLoader();
-    getTasks(project_id, pagination.current, pagination.pageSize, selectedFilter).then((res) => {
-      pagination.total = res.count;
-      setPagination(pagination);
-      setTasks(res.results);
-      hideLoader();
-    });
-  }
-
-  function handleFilterChange(selectedValue) {
-    showLoader();
     setFilter(selectedValue.target.value);
-    getTasks(project_id, 1, pagination.pageSize, selectedValue.target.value, Number(selectedAnnotator)).then((res) => {
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedValue.target.value,
+      Number(selectedAnnotator),
+      searchFilters
+    ).then((res) => {
+      if (res.count === 0)
+        message.info("No more tasks in this filter", [2]);
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -75,7 +84,35 @@ function ProjectDashboard() {
   function handleAnnotatorChange(selectedValue) {
     showLoader();
     setAnnotator(selectedValue);
-    getTasks(project_id, 1, pagination.pageSize, selectedFilter, Number(selectedValue)).then((res) => {
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedFilter,
+      Number(selectedValue),
+      searchFilters
+    ).then((res) => {
+      pagination.total = res.count;
+      setPagination(pagination);
+      setTasks(res.results);
+      hideLoader();
+    });
+  }
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    showLoader();
+    confirm();
+    let newSearchFilters = searchFilters;
+    searchFilters[dataIndex] = selectedKeys[0];
+    setSearchFilters(newSearchFilters);
+    getTasks(
+      project_id,
+      1,
+      pagination.pageSize,
+      selectedFilter,
+      Number(selectedAnnotator),
+      newSearchFilters
+    ).then((res) => {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
@@ -88,7 +125,14 @@ function ProjectDashboard() {
       getProject(project_id).then((res) => {
         setProject(res);
       });
-      getTasks(project_id, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, selectedFilter).then((res) => {
+      getTasks(
+        project_id,
+        DEFAULT_PAGE_NUMBER,
+        DEFAULT_PAGE_SIZE,
+        selectedFilter,
+        Number(selectedAnnotator),
+        searchFilters
+      ).then((res) => {
         setTasks(res.results);
         pagination.total = res.count;
         pagination.current = DEFAULT_PAGE_NUMBER;
@@ -124,6 +168,9 @@ function ProjectDashboard() {
       ).then((res) => {
         for (let i = 0; i < res.length; i++) {
           res[i].title = res[i].title.replaceAll("_", " ");
+          if (!notSearchable.includes(res[i].dataIndex)) {
+            res[i] = { ...res[i], ...getColumnSearchProps(res[i].dataIndex) };
+          }
         }
         setColumns(res);
         hideLoader();
@@ -131,11 +178,40 @@ function ProjectDashboard() {
     }
   }, [dataSource]);
 
+  useEffect(() => {
+    if (changePage) {
+      showLoader();
+      getTasks(
+        project_id,
+        pagination.current,
+        pagination.pageSize,
+        selectedFilter,
+        Number(selectedAnnotator),
+        searchFilters
+      ).then((res) => {
+        pagination.total = res.count;
+        setPagination(pagination);
+        setTasks(res.results);
+        hideLoader();
+      });
+      setChangePage(false);
+    }
+  }, [changePage])
+
   const labelAllTasks = async (project_id) => {
     try {
-      let response = await axiosInstance.post(`/projects/${project_id}/next/?task_status=${selectedFilter}`, {
-        id: project_id,
-      });
+      let urlString = `/projects/${project_id}/next/?task_status=${selectedFilter}`;
+      if(searchFilters) {
+        for (let key in searchFilters) {
+            urlString += "&search_"+key.toLowerCase()+"="+searchFilters[key];
+        }
+      }
+      let response = await axiosInstance.post(
+        urlString,
+        {
+          id: project_id,
+        }
+      );
       if (response.status === 204) {
         message.info("All tasks are labeled");
       } else {
@@ -176,89 +252,139 @@ function ProjectDashboard() {
               {project.is_published
                 ? "Published"
                 : project.is_archived
-                  ? "Archived"
-                  : "Draft"}
+                ? "Archived"
+                : "Draft"}
             </Paragraph>
             {userContext.user?.role !== 1 && (
               <Button type="primary">
                 <Link to="settings">Show Project Settings</Link>
               </Button>
             )}
-            <Tabs defaultActiveKey={currentTab} onChange={(key)=>setTab(key)}>
+            <Tabs defaultActiveKey={currentTab} onChange={(key) => setTab(key)}>
               <TabPane tab="Tasks" key="1">
-                <Row gutter={[16,16]}>
-                <Col span={9}>
-                {project.project_mode == "Annotation" ? (
-                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center" }}>
-                    Filter by Status:
-                    <Radio.Group
-                      value={selectedFilter}
-                      onChange={handleFilterChange}
-                    >
-                    {filters.map((filter, i) => (
-                      <Radio.Button key={i} value={filter.value}>{filter.label}</Radio.Button>
-                    ))}
-                    </Radio.Group>
-                  </div>
-                ) : (<div></div>)
-                }
-                </Col>
-                <Col span={9}>
-                {(userContext.user?.role === 2 || userContext.user?.role === 3) && project.project_mode == "Annotation" ? (
-                  <div style={{ display: "inline-flex", width: "100%", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
-                    Filter by Annotators:
-                    <Select
-                      showSearch
-                      value={selectedAnnotator}
-                      placeholder="Select an annotator"
-                      optionFilterProp="children"
-                      onChange={handleAnnotatorChange}
-                      style={{ flexGrow: 1, marginLeft: "5%", marginRight: "5%" }}
-                    >
-                      <Select.Option value="-1">All</Select.Option>
-                      {projectMembers.filter(member => member.role === 1).map((member, i) => (
-                        <Select.Option key={i} value={member.id}>
-                          {member.username}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (<div></div>)
-                }
-                </Col>
-                {userContext.user?.role == 1 && <Col span={6}>
-                {project.project_mode == "Annotation" ? (
-                  project.is_published ? (
-                    <div style={{ display: "inline-flex", width: "100%", marginBottom: "1%", marginRight: "1%", flexWrap: "wrap" }}>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          labelAllTasks(project_id);
+                <Row gutter={[16, 16]}>
+                  <Col span={9}>
+                    {project.project_mode == "Annotation" ? (
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          width: "100%",
+                          justifyContent: "space-evenly",
+                          alignItems: "center",
                         }}
-                        type="primary"
-                        style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
                       >
-                        Start Labelling Now
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      type="primary"
-                      style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}
-                    >
-                      Disabled
-                    </Button>
-                  )
-                ) : (
-                  <Button 
-                    type="primary" 
-                    style={{ width: "100%", marginBottom: "1%", marginRight: "1%" }}>
-                    <Link to={`/add-collection-data/${project.id}`}>
-                      Add New Item
-                    </Link>
-                  </Button>
-                )}
-                </Col>}
+                        Filter by Status:
+                        <Radio.Group
+                          value={selectedFilter}
+                          onChange={handleFilterChange}
+                        >
+                          {filters.map((filter, i) => (
+                            <Radio.Button key={i} value={filter.value}>
+                              {filter.label}
+                            </Radio.Button>
+                          ))}
+                        </Radio.Group>
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                  </Col>
+                  <Col span={9}>
+                    {(userContext.user?.role === 2 ||
+                      userContext.user?.role === 3) &&
+                    project.project_mode == "Annotation" ? (
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          width: "100%",
+                          justifyContent: "space-evenly",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        Filter by Annotators:
+                        <Select
+                          showSearch
+                          value={selectedAnnotator}
+                          placeholder="Select an annotator"
+                          optionFilterProp="children"
+                          onChange={handleAnnotatorChange}
+                          style={{
+                            flexGrow: 1,
+                            marginLeft: "5%",
+                            marginRight: "5%",
+                          }}
+                        >
+                          <Select.Option value="-1">All</Select.Option>
+                          {projectMembers
+                            .filter((member) => member.role === 1)
+                            .map((member, i) => (
+                              <Select.Option key={i} value={member.id}>
+                                {member.username}
+                              </Select.Option>
+                            ))}
+                        </Select>
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                  </Col>
+                  {userContext.user?.role == 1 && (
+                    <Col span={6}>
+                      {project.project_mode == "Annotation" ? (
+                        project.is_published ? (
+                          <div
+                            style={{
+                              display: "inline-flex",
+                              width: "100%",
+                              marginBottom: "1%",
+                              marginRight: "1%",
+                              flexWrap: "wrap",
+                            }}
+                          >
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                labelAllTasks(project_id);
+                              }}
+                              type="primary"
+                              style={{
+                                width: "100%",
+                                marginBottom: "1%",
+                                marginRight: "1%",
+                              }}
+                            >
+                              Start Labelling Now
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            type="primary"
+                            style={{
+                              width: "100%",
+                              marginBottom: "1%",
+                              marginRight: "1%",
+                            }}
+                          >
+                            Disabled
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          type="primary"
+                          style={{
+                            width: "100%",
+                            marginBottom: "1%",
+                            marginRight: "1%",
+                          }}
+                        >
+                          <Link to={`/add-collection-data/${project.id}`}>
+                            Add New Item
+                          </Link>
+                        </Button>
+                      )}
+                    </Col>
+                  )}
                 </Row>
                 <Table
                   pagination={{
@@ -268,9 +394,9 @@ function ProjectDashboard() {
                     onChange: (page, pageSize) => {
                       pagination.current = page;
                       pagination.pageSize = pageSize;
+                      setChangePage(true);
                     },
                   }}
-                  onChange={handleTableChange}
                   columns={columns}
                   dataSource={dataSource}
                 />
