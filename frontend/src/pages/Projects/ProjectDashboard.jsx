@@ -328,6 +328,21 @@ function ProjectDashboard() {
     }
   };
 
+  const fetchNewTasks = async (project_id) => {
+    try {
+      let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`);
+      if (response.data.message) {
+        message.info(response.data.message);
+      }
+    } catch (err) {
+      if (err.response.status === 404) {
+        message.info(err.response.data.message);
+      } else {
+        message.error(err.response.data.message);
+      }
+    }
+  }
+
   return (
     <>
       <Row style={{ width: "100%", height: "100%" }}>
@@ -364,7 +379,7 @@ function ProjectDashboard() {
             <Tabs defaultActiveKey={currentTab} onChange={(key) => setTab(key)}>
               <TabPane tab="Tasks" key="1">
                 <Row gutter={[16, 16]}>
-                  <Col span={9}>
+                  <Col md={8} sm={24}>
                     {project.project_mode == "Annotation" ? (
                       <div
                         style={{
@@ -390,7 +405,7 @@ function ProjectDashboard() {
                       <div></div>
                     )}
                   </Col>
-                  <Col span={9}>
+                  <Col md={8} sm={24}>
                     {(userContext.user?.role === 2 ||
                       userContext.user?.role === 3) &&
                     project.project_mode == "Annotation" ? (
@@ -431,7 +446,7 @@ function ProjectDashboard() {
                     )}
                   </Col>
                   {userContext.user?.role == 1 && (
-                    <Col span={6}>
+                    <Col md={8} sm={24}>
                       {project.project_mode == "Annotation" ? (
                         project.is_published ? (
                           <div
@@ -439,10 +454,22 @@ function ProjectDashboard() {
                               display: "inline-flex",
                               width: "100%",
                               marginBottom: "1%",
-                              marginRight: "1%",
                               flexWrap: "wrap",
                             }}
                           >
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                fetchNewTasks(project_id);
+                              }}
+                              type="primary"
+                              style={{
+                                width: "48%",
+                                margin: "1%",
+                              }}
+                            >
+                              Pull New Batch
+                            </Button>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -450,9 +477,8 @@ function ProjectDashboard() {
                               }}
                               type="primary"
                               style={{
-                                width: "100%",
-                                marginBottom: "1%",
-                                marginRight: "1%",
+                                width: "48%",
+                                margin: "1%",
                               }}
                             >
                               Start Labelling Now
