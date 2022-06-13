@@ -90,50 +90,50 @@ const memberColumns = [
 const reportResultsColumns = [
 	{
 		title: "Name",
-		dataIndex: "username",
-		key: "name",
+		dataIndex: "Name",
+		key: "Name",
     align: "center"
 	},
 	{
 		title: "Email",
-		dataIndex: "mail",
-		key: "email",
+		dataIndex: "Email",
+		key: "Email",
     align: "center"
 	},
   {
     title: "Assigned Tasks",
-    dataIndex: "total_assigned_tasks",
-    key: "total_assigned_tasks",
+    dataIndex: "Assigned Tasks",
+    key: "Assigned Tasks",
     align: "center"
   },
   {
     title: "Pending Tasks",
-    dataIndex: "total_pending_tasks",
-    key: "total_pending_tasks",
+    dataIndex: "Pending Tasks",
+    key: "Pending Tasks",
     align: "center"
   },
   {
     title: "Annotated Tasks",
-    dataIndex: "total_annoted_tasks",
-    key: "total_annoted_tasks",
+    dataIndex: "Annotated Tasks",
+    key: "Annotated Tasks",
     align: "center"
   },
   {
     title: "Average Annotation Time (in seconds)",
-    dataIndex: "avg_lead_time",
-    key: "avg_lead_time",
+    dataIndex: "Average Annotation Time",
+    key: "Average Annotation Time",
     align: "center"
   },
 	{
 		title: "Skipped Tasks",
-		dataIndex: "skipped_tasks",
-		key: "skipped_tasks",
+		dataIndex: "Skipped Tasks",
+		key: "Skipped Tasks",
     align: "center"
 	},
   {
       title: "Draft Tasks",
-      dataIndex: "total_draft_tasks",
-      key: "total_draft_tasks",
+      dataIndex: "Draft Tasks",
+      key: "Draft Tasks",
       align: "center"
   }
 ];
