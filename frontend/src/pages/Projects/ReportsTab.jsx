@@ -49,7 +49,7 @@ export function ReportsTab() {
 						strong={true}
 						style={{ marginRight: "2%" }}
 					>
-						Select From Date:
+						From Date:
 					</Typography.Text>
 					<DatePicker
 						value={fromDate}
@@ -62,7 +62,7 @@ export function ReportsTab() {
 						strong={true}
 						style={{ marginRight: "2%" }}
 					>
-						Select To Date:
+						To Date:
 					</Typography.Text>
 					<DatePicker
 						value={toDate}
