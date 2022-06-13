@@ -43,7 +43,7 @@ function GlobalRoutes() {
   }, [userContext.refresh]);
 
   return (
-    <Routes>
+    <Routes basename="Shoonya-Frontend/">
       <Route index element={<App />} />
       <Route path="login" element={<Login />} />
       <Route path="invite/:inviteCode" element={<SignUp />} />
