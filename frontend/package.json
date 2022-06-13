@@ -2,7 +2,6 @@
   "name": "shoonya-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://staging.shoonya.ai4bharat.org/",
   "dependencies": {
     "@babel/runtime": "^7.17.9",
     "@heartexlabs/label-studio": "^1.4.0",
