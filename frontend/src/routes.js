@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import App from "./App";
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { Login } from "./pages/Auth/Login";
 import { ForgetPassword } from "./pages/Auth/ForgetPassword";
 import { SignUp } from "./pages/Auth/SignUp";
@@ -43,125 +43,127 @@ function GlobalRoutes() {
   }, [userContext.refresh]);
 
   return (
-    <Routes>
-      <Route index element={<App />} />
-      <Route path="login" element={<Login />} />
-      <Route path="invite/:inviteCode" element={<SignUp />} />
-      <Route path="forget-password" element={<ForgetPassword />} />
-      <Route
-        path="forget-password/confirm/:key/:token"
-        element={<ConfirmForgetPassword />}
-      />
-      
-      <Route path="/" element={<DefinedLayout />}>
+    <Router basename="/">
+      <Routes>
+        <Route index element={<App />} />
+        <Route path="login" element={<Login />} />
+        <Route path="invite/:inviteCode" element={<SignUp />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
         <Route
-          path="profile/*"
-          element={
-            <RequireAuth>
-              <UserProfile />
-            </RequireAuth>
-          }
-        />
-
-        <Route
-          path="organization/:id"
-          element={
-            <RequireAuth>
-              <Organization />
-            </RequireAuth>
-          }
-        />
-
-        <Route
-          path="dashboard"
-          element={
-            <RequireAuth>
-              <Landing />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="projects/:project_id"
-          component={ProjectDashboard}
-          element={
-            <RequireAuth>
-              <ProjectDashboard />
-            </RequireAuth>
-          }
-        />
-
-        <Route 
-          path="projects/:project_id/task/:task_id" 
-          component={LSF}
-          element={
-            <RequireAuth>
-              <LSF />
-            </RequireAuth>
-          } 
+          path="forget-password/confirm/:key/:token"
+          element={<ConfirmForgetPassword />}
         />
         
-        <Route
-          path="projects/:id/settings"
-          element={
-            <RequireAuth>
-              <ProjectSettings />
-            </RequireAuth>
-          }
-        />
+        <Route path="/" element={<DefinedLayout />}>
+          <Route
+            path="profile/*"
+            element={
+              <RequireAuth>
+                <UserProfile />
+              </RequireAuth>
+            }
+          />
 
-        <Route
-          path="workspace/:id"
-          element={
-            <RequireAuth>
-              <Workspace />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="create-annotation-project/:id"
-          element={
-            <RequireAuth>
-              <CreateProject />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="create-collection-project/:id"
-          element={
-            <RequireAuth>
-              <CreateCollectionProject />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="add-collection-data/:id"
-          element={
-            <RequireAuth>
-              <AddCollectionData />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <Result
-              status={"404"}
-              title="404"
-              subTitle="Sorry, the page you visited does not exist."
-              extra={<Button type="primary">Back Home</Button>}
-            />
-          }
-        />
-        <Route
-          path="dataset/:dataset_id"
-          element={
-            <RequireAuth>
-              <DatasetDashboard />
-            </RequireAuth>
-          }
-        />
-      </Route>
-    </Routes>
+          <Route
+            path="organization/:id"
+            element={
+              <RequireAuth>
+                <Organization />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="dashboard"
+            element={
+              <RequireAuth>
+                <Landing />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="projects/:project_id"
+            component={ProjectDashboard}
+            element={
+              <RequireAuth>
+                <ProjectDashboard />
+              </RequireAuth>
+            }
+          />
+
+          <Route 
+            path="projects/:project_id/task/:task_id" 
+            component={LSF}
+            element={
+              <RequireAuth>
+                <LSF />
+              </RequireAuth>
+            } 
+          />
+          
+          <Route
+            path="projects/:id/settings"
+            element={
+              <RequireAuth>
+                <ProjectSettings />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="workspace/:id"
+            element={
+              <RequireAuth>
+                <Workspace />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="create-annotation-project/:id"
+            element={
+              <RequireAuth>
+                <CreateProject />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="create-collection-project/:id"
+            element={
+              <RequireAuth>
+                <CreateCollectionProject />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="add-collection-data/:id"
+            element={
+              <RequireAuth>
+                <AddCollectionData />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <Result
+                status={"404"}
+                title="404"
+                subTitle="Sorry, the page you visited does not exist."
+                extra={<Button type="primary">Back Home</Button>}
+              />
+            }
+          />
+          <Route
+            path="dataset/:dataset_id"
+            element={
+              <RequireAuth>
+                <DatasetDashboard />
+              </RequireAuth>
+            }
+          />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
