@@ -30,7 +30,7 @@ export function ReportsTab() {
 		if (results && Array.isArray(results)) {
 			const sanitizedResults = results.map((result) => ({
 				...result,
-				avg_lead_time: parseFloat(result.avg_lead_time).toFixed(2),
+				['Average Annotation Time']: parseFloat(result['Average Annotation Time']).toFixed(2),
 			}));
 			setReportResults(sanitizedResults);
 		}
