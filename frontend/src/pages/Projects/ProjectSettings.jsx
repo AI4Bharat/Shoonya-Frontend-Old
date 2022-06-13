@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Row, Card, Modal } from "antd";
+import { Button, Col, Form, Input, Row, Card, Modal, Typography, message } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
@@ -11,6 +11,7 @@ import {
   PullNewData,
   downloadProject,
   archiveProject,
+  removeUserFromProject
 } from "../../api/ProjectAPI";
 import { CSVDownload } from "react-csv";
 import { Select } from 'antd';
@@ -28,7 +29,7 @@ function ProjectSettings() {
   const [isArchived, setIsArchived] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
-  const [pulldata, setPulldata] = useState();
+  const [removeUser, setRemoveUser] = useState(null);
  
 
   const prefilBasicForm = () => {
@@ -127,6 +128,18 @@ function ProjectSettings() {
     navigate(`/projects/${id}`, { replace: true });
   };
 
+  const handleRemoveUserClick = async () => {
+    if(!removeUser) {
+      message.error("Please select a user for removal!")
+      return ;
+    }
+
+    const result = await removeUserFromProject(id, removeUser);
+    if(result) {
+      window.location.reload();
+    }
+  }
+
   prefilBasicForm();
 
 
@@ -221,6 +234,21 @@ function ProjectSettings() {
                   </CSVDownload> : exportData())
 
                   }
+            </div>
+            <div style={{ display: "flex", alignItems: "center", marginTop: '2%', marginBottom: '2%' }}>
+              <Typography.Text style={{ marginRight: "1%" }}>Remove User from Project</Typography.Text>
+              <Select
+                style={{width: '50%'}}
+                placeholder="Select One"
+                options={project?.users?.map((user) => ({
+                  label: `${user.username} (${user.email})`,
+                  value: user.email,
+                }))}
+                onSelect={(value)=>setRemoveUser(value)}
+              />
+              <Button style={{marginLeft:'2%'}} type="primary" danger onClick={handleRemoveUserClick}>
+                Remove
+              </Button>
             </div>
             <Title level={3}>Read-only Configurations</Title>
             {project && project.sampling_mode && (
