@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
-import { Input, message, Button, Tooltip } from "antd";
+import { Input, message, Button, Tooltip, Alert } from "antd";
 
 import {
   getProjectsandTasks,
@@ -150,6 +150,7 @@ const LabelStudioWrapper = ({notesRef}) => {
         },
 
         onSkipTask: function () {
+          message.warning('Notes will not be saved for skipped tasks!');
           showLoader();
           updateTask(taskData.id).then(() => {
             getNextProject(project_id, taskData.id).then((res) => {
@@ -337,6 +338,7 @@ export default function LSF() {
         </div>
       </div>
       <div className={styles.collapse} style={{height:collapseHeight}}>
+        <Alert message="Please do not add notes if you are going to skip the task!" type="warning" showIcon style={{marginBottom: '1%'}} />
         <Input.TextArea placeholder="Place your remarks here ..." value={notesValue} onChange={event=>setNotesValue(event.target.value)} />
       </div>
       <LabelStudioWrapper notesRef={notesRef}/>
