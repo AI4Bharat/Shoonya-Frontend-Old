@@ -1,24 +1,28 @@
+import PropTypes from 'prop-types'
 import React, { useContext, useState, useEffect, useRef } from "react";
 import LabelStudio from "@heartexlabs/label-studio";
 import "@heartexlabs/label-studio/build/static/css/main.css";
-import { message } from "antd";
+import { Input, message, Button, Tooltip, Alert } from "antd";
+
 import {
   getProjectsandTasks,
   postAnnotation,
   updateTask,
   getNextProject,
   patchAnnotation,
-  deleteAnnotation
+  deleteAnnotation,
+  fetchAnnotation
 } from "../../api/LSFAPI";
 import UserContext from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
-import { Button, Tooltip } from "antd";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
+
+import styles from './lsf.module.css'
 
 //used just in postAnnotation to support draft status update.
 let task_status = "accepted";
 
-const LabelStudioWrapper = () => {
+const LabelStudioWrapper = ({notesRef}) => {
   // we need a reference to a DOM node here so LSF knows where to render
   const rootRef = useRef();
   // this reference will be populated when LSF initialized and can be used somewhere else
@@ -37,14 +41,12 @@ const LabelStudioWrapper = () => {
     taskData,
     labelConfig,
     annotations,
-    predictions
+    predictions,
+    notesRef
   ) {
     let load_time;
     let interfaces = [];
     if (predictions == null) predictions = [];
-
-    // let annotationdata = annotations.length === 0? predictions: annotations
-    // if(annotations.length == 0) annotations = predictions;
 
     if (taskData.task_status == "freezed") {
       interfaces = [
@@ -130,7 +132,8 @@ const LabelStudioWrapper = () => {
               userContext.user.id,
               load_time,
               annotation.lead_time,
-              task_status
+              task_status,
+              notesRef.current
             )
           }
           else message.error("Task is freezed");
@@ -147,6 +150,7 @@ const LabelStudioWrapper = () => {
         },
 
         onSkipTask: function () {
+          message.warning('Notes will not be saved for skipped tasks!');
           showLoader();
           updateTask(taskData.id).then(() => {
             getNextProject(project_id, taskData.id).then((res) => {
@@ -173,7 +177,8 @@ const LabelStudioWrapper = () => {
                   annotations[i].id,
                   load_time,
                   annotations[i].lead_time,
-                  task_status
+                  task_status,
+                  notesRef.current
                   ).then(() => {
                     if (localStorage.getItem("labelAll"))
                       getNextProject(project_id, taskData.id).then((res) => {
@@ -228,15 +233,16 @@ const LabelStudioWrapper = () => {
             taskData,
             labelConfig.label_config,
             annotations,
-            predictions
+            predictions,
+            notesRef
           );
           hideLoader();
         }
       );
     }
-  }, [labelConfig, userContext]);
+  }, [labelConfig, userContext, notesRef]);
 
-  const onDraftAnnotation = async () => {
+  const handleDraftAnnotationClick = async () => {
     task_status = "draft";
     lsfRef.current.store.submitAnnotation();
   }
@@ -252,24 +258,13 @@ const LabelStudioWrapper = () => {
   return (
     <div>
       {!loader && <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "inline-flex" }}>
-          <Button
-            value="Back to Project"
-            onClick={() => {
-              localStorage.removeItem("labelAll");
-              var id = window.location.href.split("/")[4];
-              window.location.href = `/projects/${id}`;
-            }}
-          >
-            Back to Project
-          </Button>
-        </div>
+        <div/>
         <div>
           <Tooltip title="Save task for later">
             <Button
               value="Draft"
               type="default"
-              onClick={onDraftAnnotation}
+              onClick={handleDraftAnnotationClick}
               style={{minWidth: "160px", borderColor:"#e5e5e5", color: "#e80", fontWeight: "500"}}
             >
               Draft
@@ -297,12 +292,58 @@ const LabelStudioWrapper = () => {
   );
 };
 
-function LSF() {
+export default function LSF() {
+  const [collapseHeight, setCollapseHeight] = useState('0');
+  const notesRef = useRef('');
+  const {task_id} = useParams()
+  const [notesValue, setNotesValue] = useState('');
+  
+  const handleCollapseClick = () => {
+    if(collapseHeight === '0') {
+      setCollapseHeight('auto')
+    } else {
+      setCollapseHeight('0');
+    }
+  }
+
+  useEffect(()=>{
+    fetchAnnotation(task_id).then((data)=>{
+      if(data && Array.isArray(data) && data.length > 0) {
+        setNotesValue(data[0].notes);
+      }
+    })
+  }, [setNotesValue, task_id]);
+
+  useEffect(()=>{
+    notesRef.current = notesValue;
+  }, [notesValue])
+  
   return (
     <div style={{ maxHeight: "100%", maxWidth: "90%" }}>
-      <LabelStudioWrapper />
+      <div style={{ maxWidth: "100%", display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex" }}>
+          <Button
+            value="Back to Project"
+            onClick={() => {
+              localStorage.removeItem("labelAll");
+              var id = window.location.href.split("/")[4];
+              window.location.href = `/projects/${id}`;
+            }}
+          >
+            Back to Project
+          </Button>
+          <Button type="dashed" style={{marginLeft:'20%'}} onClick={handleCollapseClick}>
+            Notes
+          </Button>
+        </div>
+      </div>
+      <div className={styles.collapse} style={{height:collapseHeight}}>
+        <Alert message="Please do not add notes if you are going to skip the task!" type="warning" showIcon style={{marginBottom: '1%'}} />
+        <Input.TextArea placeholder="Place your remarks here ..." value={notesValue} onChange={event=>setNotesValue(event.target.value)} />
+      </div>
+      <LabelStudioWrapper notesRef={notesRef}/>
     </div>
   );
 }
 
-export default LSF;
+LabelStudioWrapper.propTypes = PropTypes.object;
