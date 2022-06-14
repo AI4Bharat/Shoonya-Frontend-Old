@@ -90,50 +90,56 @@ const memberColumns = [
 const reportResultsColumns = [
 	{
 		title: "Username",
-		dataIndex: "Username",
-		key: "Username",
+		dataIndex: "username",
+		key: "username",
     align: "center"
 	},
 	{
 		title: "Email",
-		dataIndex: "Email",
-		key: "Email",
+		dataIndex: "mail",
+		key: "mail",
     align: "center"
 	},
   {
     title: "Assigned Tasks",
-    dataIndex: "Assigned Tasks",
-    key: "Assigned Tasks",
+    dataIndex: "total_assigned_tasks",
+    key: "total_assigned_tasks",
     align: "center"
   },
   {
     title: "Pending Tasks",
-    dataIndex: "Pending Tasks",
-    key: "Pending Tasks",
+    dataIndex: "total_pending_tasks",
+    key: "total_pending_tasks",
     align: "center"
   },
   {
     title: "Annotated Tasks",
-    dataIndex: "Annotated Tasks",
-    key: "Annotated Tasks",
+    dataIndex: "total_annoted_tasks",
+    key: "total_annoted_tasks",
     align: "center"
   },
   {
     title: "Average Annotation Time (in seconds)",
-    dataIndex: "Average Annotation Time",
-    key: "Average Annotation Time",
+    dataIndex: "avg_lead_time",
+    key: "avg_lead_time",
+    align: "center"
+  },
+  {
+    title: "Average Word Count",
+    dataIndex: "word_count",
+    key: "word_count",
     align: "center"
   },
 	{
 		title: "Skipped Tasks",
-		dataIndex: "Skipped Tasks",
-		key: "Skipped Tasks",
+		dataIndex: "skipped_tasks",
+		key: "skipped_tasks",
     align: "center"
 	},
   {
       title: "Draft Tasks",
-      dataIndex: "Draft Tasks",
-      key: "Draft Tasks",
+      dataIndex: "draft_tasks",
+      key: "draft_tasks",
       align: "center"
   }
 ];
