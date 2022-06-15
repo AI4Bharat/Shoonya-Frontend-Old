@@ -4,7 +4,6 @@ import moment from "moment"; // present along with 'antd'
 import { useParams } from "react-router-dom";
 
 import { getReportsWithinRange } from "../../api/ProjectDashboardAPI";
-import { reportResultsColumns } from "./TasksTableContent";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 const DATE_FORMAT = "YYYY-MM-DD";
@@ -15,7 +14,7 @@ export function ReportsTab() {
 	const [toDate, setToDate] = useState(moment());
 	const [reportResults, setReportResults] = useState([]);
 	const [loader, showLoader, hideLoader] = useFullPageLoader();
-	const [columns, setColumns] = useState(reportResultsColumns);
+	const [columns, setColumns] = useState([]);
 
 	const handleFetchResults = async () => {
 		showLoader();
@@ -25,15 +24,15 @@ export function ReportsTab() {
 			toDate.format(DATE_FORMAT)
 		).then((results) => {
 			hideLoader();
-			if (results?.length && Object.keys(results[0]).includes("Word Count")) {
-				setColumns([...reportResultsColumns, 
-					{
-						title: "Average Word Count",
-						dataIndex: "Word Count",
-						key: "Word Count",
+			if (results?.length ) {
+				setColumns(Object.keys(results[0]).map((result) => {
+					return {
+						title: result,
+						dataIndex: result,
+						key: result,
 						align: "center"
 					}
-				]);
+				}));
 			}
 			return results;
 		});
