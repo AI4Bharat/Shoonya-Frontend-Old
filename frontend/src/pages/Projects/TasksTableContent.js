@@ -75,13 +75,17 @@ const memberColumns = [
   },
   {
     title: "Actions",
+    dataIndex: "removeAction",
     render: (item) => (
       <>
-        <a href={`/profile/${item.id}`}>
-          <Button type={"primary"} style={{ marginRight: "1%" }}>
+        <a href={`/profile/${item?.userId}`}>
+          <Button type={"primary"} size="small" style={{ marginRight: "1%" }}>
             View
           </Button>
         </a>
+        <Button onClick={item?.handleClick} danger size="small">
+          Remove
+        </Button>
       </>
     ),
   },

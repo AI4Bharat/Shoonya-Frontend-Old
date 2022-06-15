@@ -1,10 +1,10 @@
 import { Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import PropTypes from "prop-types";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import { addAnnotatorsToProject, getProject } from "../../api/ProjectAPI";
+import { addAnnotatorsToProject, getProject, removeUserFromProject } from "../../api/ProjectAPI";
 import { fetchUsersInWorkspace } from "../../api/WorkspaceAPI";
 import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
@@ -71,6 +71,30 @@ export function MembersTab({ projectMembers }) {
 		setSelectedUsers(userEmails);
 	};
 
+	const handleRemoveUserClick = async (email) => {
+		const result = await removeUserFromProject(projectId, email);
+		if(result) {
+			window.location.reload();
+		}
+	}
+
+	const tableDataUsers = useMemo(()=>{
+		if(!projectMembers || !Array.isArray(projectMembers)) {
+			return [];
+		}
+
+		return projectMembers.map(user=>({
+			id: user.id,
+			username: user.username,
+			email: user.email,
+			role: user.role,
+			removeAction: {
+				userId: user.id,
+				handleClick: ()=> handleRemoveUserClick(user.email)
+			}
+		}))
+	}, [projectMembers])
+
 	return (
 		<>
 			{(userContext.user?.role === 2 || userContext.user?.role === 3) && (
@@ -103,7 +127,7 @@ export function MembersTab({ projectMembers }) {
 					</Modal>
 				</>
 			)}
-			<Table columns={memberColumns} dataSource={projectMembers} />
+			<Table columns={memberColumns} dataSource={tableDataUsers} />
 			{loader}
 		</>
 	);
