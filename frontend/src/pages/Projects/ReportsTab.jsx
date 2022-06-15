@@ -15,6 +15,7 @@ export function ReportsTab() {
 	const [toDate, setToDate] = useState(moment());
 	const [reportResults, setReportResults] = useState([]);
 	const [loader, showLoader, hideLoader] = useFullPageLoader();
+	const [columns, setColumns] = useState(reportResultsColumns);
 
 	const handleFetchResults = async () => {
 		showLoader();
@@ -24,6 +25,16 @@ export function ReportsTab() {
 			toDate.format(DATE_FORMAT)
 		).then((results) => {
 			hideLoader();
+			if (results?.length && Object.keys(results[0]).includes("Word Count")) {
+				setColumns([...reportResultsColumns, 
+					{
+						title: "Average Word Count",
+						dataIndex: "Word Count",
+						key: "Word Count",
+						align: "center"
+					}
+				]);
+			}
 			return results;
 		});
 
@@ -72,7 +83,7 @@ export function ReportsTab() {
 			</div>
 			<Table
 				style={{ margin: "80px 10px 10px 10px" }}
-				columns={reportResultsColumns}
+				columns={columns}
 				dataSource={reportResults}
 			/>
 			{loader}

@@ -124,12 +124,6 @@ const reportResultsColumns = [
     key: "Average Annotation Time",
     align: "center"
   },
-  {
-    title: "Average Word Count",
-    dataIndex: "Word Count",
-    key: "Word Count",
-    align: "center"
-  },
 	{
 		title: "Skipped Tasks",
 		dataIndex: "Skipped Tasks",
