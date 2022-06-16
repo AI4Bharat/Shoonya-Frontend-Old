@@ -10,7 +10,11 @@ import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
-export function MembersTab({ projectMembers }) {
+export function MembersTab({ project }) {
+
+	const projectMembers = project?.users ?? [];
+	const frozenUsers = project?.frozen_users ?? [];
+
 	const [modalOpen, setModalOpen] = useState(false);
 	const { project_id: projectId } = useParams();
 	const userContext = useContext(UserContext);
@@ -65,7 +69,7 @@ export function MembersTab({ projectMembers }) {
 		};
 
 		populateAvailableUsers();
-	}, [projectId, setAvailableUsers, setSelectedUsers]);
+	}, [projectId, setAvailableUsers]);
 
 	const handleSelectChange = (userEmails) => {
 		setSelectedUsers(userEmails);
@@ -89,6 +93,7 @@ export function MembersTab({ projectMembers }) {
 			email: user.email,
 			role: user.role,
 			removeAction: {
+				isFrozen: frozenUsers.findIndex(frozen=>frozen.id === user.id) !== -1,
 				userId: user.id,
 				handleClick: ()=> handleRemoveUserClick(user.email)
 			}
@@ -134,5 +139,5 @@ export function MembersTab({ projectMembers }) {
 }
 
 MembersTab.propTypes = {
-	projectMembers: PropTypes.array,
+	project: PropTypes.object,
 };
