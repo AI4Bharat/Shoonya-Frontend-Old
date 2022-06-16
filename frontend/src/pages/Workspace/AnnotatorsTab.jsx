@@ -82,6 +82,8 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId, isArchi
           }))}
           style={{ width: "100%", marginTop: "5%" }}
           onChange={handleSelectChange}
+          showSearch
+          filterOption={(inputValue, option) => option.label.toLowerCase().includes(inputValue.toLowerCase())}
         />
       </Modal>
       <Table columns={getMemberColumns(workspaceId, isArchived)} dataSource={workspaceAnnotators} />
