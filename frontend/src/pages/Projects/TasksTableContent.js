@@ -84,9 +84,13 @@ const memberColumns = [
           </Button>
         </a>
         {
-          item?.isFrozen ? <Tag color="blue">Frozen</Tag> : <Button onClick={item?.handleClick} danger size="small">
-          Remove
-        </Button>
+          item?.isFrozen ? (
+            <Tag color="blue">Frozen</Tag>
+          ) : (
+            <Button onClick={item?.handleClick} danger size="small">
+              Remove
+            </Button>
+          )
         }
       </>
     ),

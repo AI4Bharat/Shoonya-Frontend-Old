@@ -4,14 +4,17 @@ import PropTypes from "prop-types";
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import { addAnnotatorsToProject, getProject, removeUserFromProject } from "../../api/ProjectAPI";
+import {
+	addAnnotatorsToProject,
+	getProject,
+	removeUserFromProject,
+} from "../../api/ProjectAPI";
 import { fetchUsersInWorkspace } from "../../api/WorkspaceAPI";
 import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
 export function MembersTab({ project }) {
-
 	const projectMembers = project?.users ?? [];
 	const frozenUsers = project?.frozen_users ?? [];
 
@@ -77,28 +80,30 @@ export function MembersTab({ project }) {
 
 	const handleRemoveUserClick = async (email) => {
 		const result = await removeUserFromProject(projectId, email);
-		if(result) {
+		if (result) {
 			window.location.reload();
 		}
-	}
+	};
 
-	const tableDataUsers = useMemo(()=>{
-		if(!projectMembers || !Array.isArray(projectMembers)) {
+	const tableDataUsers = useMemo(() => {
+		if (!projectMembers || !Array.isArray(projectMembers)) {
 			return [];
 		}
 
-		return projectMembers.map(user=>({
+		return projectMembers.map((user) => ({
 			id: user.id,
 			username: user.username,
 			email: user.email,
 			role: user.role,
 			removeAction: {
-				isFrozen: frozenUsers.findIndex(frozen=>frozen.id === user.id) !== -1,
+				isFrozen:
+					frozenUsers.findIndex((frozen) => frozen.id === user.id) !==
+					-1,
 				userId: user.id,
-				handleClick: ()=> handleRemoveUserClick(user.email)
-			}
-		}))
-	}, [projectMembers])
+				handleClick: () => handleRemoveUserClick(user.email),
+			},
+		}));
+	}, [projectMembers]);
 
 	return (
 		<>
