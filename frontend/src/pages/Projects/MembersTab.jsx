@@ -79,10 +79,14 @@ export function MembersTab({ project }) {
 	};
 
 	const handleRemoveUserClick = async (email) => {
-		const result = await removeUserFromProject(projectId, email);
-		if (result) {
-			window.location.reload();
-		}
+		showLoader();
+		removeUserFromProject(projectId, email).then(result=>{
+			if (result) {
+				window.location.reload();
+			} else {
+				hideLoader();
+			}
+		});
 	};
 
 	const tableDataUsers = useMemo(() => {
