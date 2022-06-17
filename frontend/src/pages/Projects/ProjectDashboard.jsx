@@ -331,15 +331,17 @@ function ProjectDashboard() {
   const fetchNewTasks = async (project_id) => {
     try {
       let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`);
-      if (response.data.message) {
+      if (response.status === 200) {
         message.info(response.data.message);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } 
+      else if (response.data.message) {
+        message.error(response.data.message);
       }
     } catch (err) {
-      if (err.response.status === 404) {
-        message.info(err.response.data.message);
-      } else {
-        message.error(err.response.data.message);
-      }
+      console.log(err)
     }
   }
 
