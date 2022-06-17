@@ -145,6 +145,22 @@ const downloadProject = async (id) => {
     }
 };
 
+const removeUserFromProject = async (projectId, email)=> {
+  return axiosInstance.post(`/projects/${projectId}/remove_user/`, {email: email}).then(response=>{
+    if(response.status >= 200 && response.status < 300) {
+      if(response.data?.message) {
+        message.success(response.data.message);
+      }
+      return true;
+    }
+
+    if(response.data?.message) {
+      message.error(response.data.message);
+    }
+    return false;
+  });
+}
+
 export {
   fetchProjects,
   getProject,
@@ -156,4 +172,5 @@ export {
   PullNewData,
   downloadProject,
   archiveProject,
+  removeUserFromProject
 };
