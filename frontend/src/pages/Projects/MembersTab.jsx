@@ -1,16 +1,23 @@
 import { Table, Button, Modal, Select } from "antd";
 import Title from "antd/lib/typography/Title";
 import PropTypes from "prop-types";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import { addAnnotatorsToProject, getProject } from "../../api/ProjectAPI";
+import {
+	addAnnotatorsToProject,
+	getProject,
+	removeUserFromProject,
+} from "../../api/ProjectAPI";
 import { fetchUsersInWorkspace } from "../../api/WorkspaceAPI";
 import UserContext from "../../context/User/UserContext";
 import { memberColumns } from "./TasksTableContent";
 import useFullPageLoader from "../../hooks/useFullPageLoader";
 
-export function MembersTab({ projectMembers }) {
+export function MembersTab({ project }) {
+	const projectMembers = project?.users ?? [];
+	const frozenUsers = project?.frozen_users ?? [];
+
 	const [modalOpen, setModalOpen] = useState(false);
 	const { project_id: projectId } = useParams();
 	const userContext = useContext(UserContext);
@@ -65,11 +72,42 @@ export function MembersTab({ projectMembers }) {
 		};
 
 		populateAvailableUsers();
-	}, [projectId, setAvailableUsers, setSelectedUsers]);
+	}, [projectId, setAvailableUsers]);
 
 	const handleSelectChange = (userEmails) => {
 		setSelectedUsers(userEmails);
 	};
+
+	const handleRemoveUserClick = async (email) => {
+		showLoader();
+		removeUserFromProject(projectId, email).then(result=>{
+			if (result) {
+				window.location.reload();
+			} else {
+				hideLoader();
+			}
+		});
+	};
+
+	const tableDataUsers = useMemo(() => {
+		if (!projectMembers || !Array.isArray(projectMembers)) {
+			return [];
+		}
+
+		return projectMembers.map((user) => ({
+			id: user.id,
+			username: user.username,
+			email: user.email,
+			role: user.role,
+			removeAction: {
+				isFrozen:
+					frozenUsers.findIndex((frozen) => frozen.id === user.id) !==
+					-1,
+				userId: user.id,
+				handleClick: () => handleRemoveUserClick(user.email),
+			},
+		}));
+	}, [projectMembers]);
 
 	return (
 		<>
@@ -103,12 +141,12 @@ export function MembersTab({ projectMembers }) {
 					</Modal>
 				</>
 			)}
-			<Table columns={memberColumns} dataSource={projectMembers} />
+			<Table columns={memberColumns} dataSource={tableDataUsers} />
 			{loader}
 		</>
 	);
 }
 
 MembersTab.propTypes = {
-	projectMembers: PropTypes.array,
+	project: PropTypes.object,
 };

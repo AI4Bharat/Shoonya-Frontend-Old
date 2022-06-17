@@ -73,6 +73,10 @@ function AssignManagersModal({ workspaceDetais }) {
 					}))}
 					style={{ width: "100%", marginTop: "1%" }}
 					onChange={(username) => setNewAssignedManager(username)}
+					showSearch
+					filterOption={(inputValue, option) =>
+						option.label.toLowerCase().includes(inputValue.toLowerCase())
+					}
 				/>
 			</Modal>
 		</>

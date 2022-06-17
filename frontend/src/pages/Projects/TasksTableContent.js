@@ -75,67 +75,26 @@ const memberColumns = [
   },
   {
     title: "Actions",
+    dataIndex: "removeAction",
     render: (item) => (
       <>
-        <a href={`/profile/${item.id}`}>
-          <Button type={"primary"} style={{ marginRight: "1%" }}>
+        <a href={`/profile/${item?.userId}`}>
+          <Button type={"primary"} size="small" style={{ marginRight: "2%" }}>
             View
           </Button>
         </a>
+        {
+          item?.isFrozen ? (
+            <Tag color="blue">Frozen</Tag>
+          ) : (
+            <Button onClick={item?.handleClick} danger size="small">
+              Remove
+            </Button>
+          )
+        }
       </>
     ),
   },
 ];
 
-const reportResultsColumns = [
-	{
-		title: "Username",
-		dataIndex: "Username",
-		key: "Username",
-    align: "center"
-	},
-	{
-		title: "Email",
-		dataIndex: "Email",
-		key: "Email",
-    align: "center"
-	},
-  {
-    title: "Assigned Tasks",
-    dataIndex: "Assigned Tasks",
-    key: "Assigned Tasks",
-    align: "center"
-  },
-  {
-    title: "Pending Tasks",
-    dataIndex: "Pending Tasks",
-    key: "Pending Tasks",
-    align: "center"
-  },
-  {
-    title: "Annotated Tasks",
-    dataIndex: "Annotated Tasks",
-    key: "Annotated Tasks",
-    align: "center"
-  },
-  {
-    title: "Average Annotation Time (in seconds)",
-    dataIndex: "Average Annotation Time",
-    key: "Average Annotation Time",
-    align: "center"
-  },
-	{
-		title: "Skipped Tasks",
-		dataIndex: "Skipped Tasks",
-		key: "Skipped Tasks",
-    align: "center"
-	},
-  {
-      title: "Draft Tasks",
-      dataIndex: "Draft Tasks",
-      key: "Draft Tasks",
-      align: "center"
-  }
-];
-
-export { getColumnNames, getDataSource, getVariableParams, memberColumns, reportResultsColumns };
+export { getColumnNames, getDataSource, getVariableParams, memberColumns };

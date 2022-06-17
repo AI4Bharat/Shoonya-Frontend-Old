@@ -531,7 +531,7 @@ function ProjectDashboard() {
                 />
               </TabPane>
               <TabPane tab="Members" key="2">
-                <MembersTab projectMembers={projectMembers} />
+                <MembersTab project={project} />
               </TabPane>
               <TabPane tab=" Reports" key="3">
                 <ReportsTab />
