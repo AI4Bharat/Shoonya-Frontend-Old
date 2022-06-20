@@ -58,6 +58,7 @@ function ProjectDashboard() {
   const searchInput = useRef(null);
   const notSearchable = ["status", "actions"];
   const [changePage, setChangePage] = useState(false);
+  const [pullSize, setPullSize] = useState("10");
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
@@ -225,6 +226,7 @@ function ProjectDashboard() {
     if (project_id) {
       getProject(project_id).then((res) => {
         setProject(res);
+        console.log(res)
       });
       getTasks(
         project_id,
@@ -330,7 +332,9 @@ function ProjectDashboard() {
 
   const fetchNewTasks = async (project_id) => {
     try {
-      let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`);
+      let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`, {
+        num_tasks: Number(pullSize),
+      });
       if (response.status === 200) {
         message.info(response.data.message);
         setTimeout(() => {
@@ -459,6 +463,21 @@ function ProjectDashboard() {
                               flexWrap: "wrap",
                             }}
                           >
+                           <Select
+                            value={pullSize}
+                              style={{
+                                width: "18%",
+                                margin: "1%",
+                              }}
+                              onChange={(value) => setPullSize(value)}
+                            >
+                              <Select.Option value="10">10</Select.Option>
+                              <Select.Option value="20">20</Select.Option>
+                              <Select.Option value="30">30</Select.Option>
+                              <Select.Option value="40">40</Select.Option>
+                              <Select.Option value="50">50</Select.Option>
+                              <Select.Option value="60">60</Select.Option>
+                            </Select>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -466,7 +485,7 @@ function ProjectDashboard() {
                               }}
                               type="primary"
                               style={{
-                                width: "48%",
+                                width: "38%",
                                 margin: "1%",
                               }}
                             >
@@ -479,7 +498,7 @@ function ProjectDashboard() {
                               }}
                               type="primary"
                               style={{
-                                width: "48%",
+                                width: "38%",
                                 margin: "1%",
                               }}
                             >
