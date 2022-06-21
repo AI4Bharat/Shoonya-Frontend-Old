@@ -43,6 +43,7 @@ function ProjectDashboard() {
   const [selectedFilter, setFilter] = useState(pageState?.prevFilter ? pageState.prevFilter : "unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
+  const [unlabeled, setUnlabeled] = useState(0);
   const filters = [
     { label: "unlabeled", value: "unlabeled" },
     { label: "skipped", value: "skipped" },
@@ -80,6 +81,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled") {
+        setUnlabeled(res.count);
+      }
       hideLoader();
     });
   }
@@ -99,6 +103,9 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      if (selectedFilter === "unlabeled") {
+        setUnlabeled(res.count);
+      }
     });
   }
 
@@ -119,6 +126,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled") {
+        setUnlabeled(res.count);
+      }
       hideLoader();
     });
   };
@@ -141,6 +151,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled") {
+        setUnlabeled(res.count);
+      }
       hideLoader();
     });
   };
@@ -241,6 +254,9 @@ function ProjectDashboard() {
         pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
+        if (selectedFilter === "unlabeled") {
+          setUnlabeled(res.count);
+        }
       });
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
@@ -295,6 +311,9 @@ function ProjectDashboard() {
         pagination.total = res.count;
         setPagination(pagination);
         setTasks(res.results);
+        if (selectedFilter === "unlabeled") {
+          setUnlabeled(res.count);
+        }
         hideLoader();
       });
       setChangePage(false);
@@ -470,6 +489,7 @@ function ProjectDashboard() {
                                 margin: "1%",
                               }}
                               onChange={(value) => setPullSize(value)}
+                              disabled={unlabeled>30}
                             >
                               <Select.Option value="10">10</Select.Option>
                               <Select.Option value="20">20</Select.Option>
@@ -488,6 +508,8 @@ function ProjectDashboard() {
                                 width: "38%",
                                 margin: "1%",
                               }}
+                              disabled={unlabeled>30}
+                              title={unlabeled>30 ? "You have too many unlabeled tasks" : ""}
                             >
                               Pull New Batch
                             </Button>
