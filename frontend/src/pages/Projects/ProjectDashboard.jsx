@@ -58,6 +58,8 @@ function ProjectDashboard() {
   const searchInput = useRef(null);
   const notSearchable = ["status", "actions"];
   const [changePage, setChangePage] = useState(false);
+  const [pullSize, setPullSize] = useState();
+  const [pullDisabled, setPullDisabled] = useState("");
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
@@ -79,6 +81,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
+      }
       hideLoader();
     });
   }
@@ -98,6 +103,9 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
+      }
     });
   }
 
@@ -118,6 +126,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
+      }
       hideLoader();
     });
   };
@@ -140,6 +151,9 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
+      }
       hideLoader();
     });
   };
@@ -225,6 +239,13 @@ function ProjectDashboard() {
     if (project_id) {
       getProject(project_id).then((res) => {
         setProject(res);
+        if (res.unassigned_task_count == 0)
+          setPullDisabled("No more unassigned tasks in this project")
+        res.frozen_users.forEach((user) => {
+          if (user.id == userContext.user?.id) 
+            setPullDisabled("You're no more a part of this project");
+        })
+        setPullSize(res.tasks_pull_count_per_batch/2)
       });
       getTasks(
         project_id,
@@ -239,6 +260,9 @@ function ProjectDashboard() {
         pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
+        if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+          setPullDisabled("You have too many unlabeled tasks")
+        }
       });
       getProjectMembers(project_id).then((res) => {
         setProjectMembers(res["users"]);
@@ -293,6 +317,9 @@ function ProjectDashboard() {
         pagination.total = res.count;
         setPagination(pagination);
         setTasks(res.results);
+        if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+          setPullDisabled("You have too many unlabeled tasks")
+        }
         hideLoader();
       });
       setChangePage(false);
@@ -327,6 +354,28 @@ function ProjectDashboard() {
       }
     }
   };
+
+  const fetchNewTasks = async (project_id) => {
+    try {
+      showLoader();
+      let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`, {
+        num_tasks: Number(pullSize),
+      });
+      if (response.status === 200) {
+        message.info(response.data.message);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } 
+      else if (response.data.message) {
+        message.error(response.data.message);
+      }
+      hideLoader();
+    } catch (err) {
+      console.log(err)
+      hideLoader();
+    }
+  }
 
   return (
     <>
@@ -364,7 +413,7 @@ function ProjectDashboard() {
             <Tabs defaultActiveKey={currentTab} onChange={(key) => setTab(key)}>
               <TabPane tab="Tasks" key="1">
                 <Row gutter={[16, 16]}>
-                  <Col span={9}>
+                  <Col md={8} sm={24}>
                     {project.project_mode == "Annotation" ? (
                       <div
                         style={{
@@ -390,7 +439,7 @@ function ProjectDashboard() {
                       <div></div>
                     )}
                   </Col>
-                  <Col span={9}>
+                  <Col md={8} sm={24}>
                     {(userContext.user?.role === 2 ||
                       userContext.user?.role === 3) &&
                     project.project_mode == "Annotation" ? (
@@ -431,7 +480,7 @@ function ProjectDashboard() {
                     )}
                   </Col>
                   {userContext.user?.role == 1 && (
-                    <Col span={6}>
+                    <Col md={8} sm={24}>
                       {project.project_mode == "Annotation" ? (
                         project.is_published ? (
                           <div
@@ -439,10 +488,37 @@ function ProjectDashboard() {
                               display: "inline-flex",
                               width: "100%",
                               marginBottom: "1%",
-                              marginRight: "1%",
                               flexWrap: "wrap",
                             }}
                           >
+                           <Select
+                            value={pullSize}
+                              style={{
+                                width: "18%",
+                                margin: "1%",
+                              }}
+                              onChange={(value) => setPullSize(value)}
+                              disabled={pullDisabled}
+                            >
+                              <Select.Option value={project?.tasks_pull_count_per_batch*0.5}>{project?.tasks_pull_count_per_batch*0.5}</Select.Option>
+                              <Select.Option value={project?.tasks_pull_count_per_batch}>{project?.tasks_pull_count_per_batch}</Select.Option>
+                              <Select.Option value={project?.tasks_pull_count_per_batch*1.5}>{project?.tasks_pull_count_per_batch*1.5}</Select.Option>
+                            </Select>
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                fetchNewTasks(project_id);
+                              }}
+                              type="primary"
+                              style={{
+                                width: "38%",
+                                margin: "1%",
+                              }}
+                              disabled={pullDisabled}
+                              title={pullDisabled}
+                            >
+                              Pull New Batch
+                            </Button>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -450,9 +526,8 @@ function ProjectDashboard() {
                               }}
                               type="primary"
                               style={{
-                                width: "100%",
-                                marginBottom: "1%",
-                                marginRight: "1%",
+                                width: "38%",
+                                margin: "1%",
                               }}
                             >
                               Start Labelling Now
