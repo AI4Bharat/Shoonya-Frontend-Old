@@ -43,7 +43,6 @@ function ProjectDashboard() {
   const [selectedFilter, setFilter] = useState(pageState?.prevFilter ? pageState.prevFilter : "unlabeled");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [selectedAnnotator, setAnnotator] = useState("-1");
-  const [unlabeled, setUnlabeled] = useState(0);
   const filters = [
     { label: "unlabeled", value: "unlabeled" },
     { label: "skipped", value: "skipped" },
@@ -60,6 +59,7 @@ function ProjectDashboard() {
   const notSearchable = ["status", "actions"];
   const [changePage, setChangePage] = useState(false);
   const [pullSize, setPullSize] = useState("10");
+  const [pullDisabled, setPullDisabled] = useState("");
 
   useEffect(() => {
     localStorage.setItem('labellingMode', selectedFilter);
@@ -81,8 +81,8 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
-      if (selectedFilter === "unlabeled") {
-        setUnlabeled(res.count);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
       }
       hideLoader();
     });
@@ -103,8 +103,8 @@ function ProjectDashboard() {
       setPagination(pagination);
       setTasks(res.results);
       hideLoader();
-      if (selectedFilter === "unlabeled") {
-        setUnlabeled(res.count);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
       }
     });
   }
@@ -126,8 +126,8 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
-      if (selectedFilter === "unlabeled") {
-        setUnlabeled(res.count);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
       }
       hideLoader();
     });
@@ -151,8 +151,8 @@ function ProjectDashboard() {
       pagination.total = res.count;
       setPagination(pagination);
       setTasks(res.results);
-      if (selectedFilter === "unlabeled") {
-        setUnlabeled(res.count);
+      if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+        setPullDisabled("You have too many unlabeled tasks")
       }
       hideLoader();
     });
@@ -239,7 +239,12 @@ function ProjectDashboard() {
     if (project_id) {
       getProject(project_id).then((res) => {
         setProject(res);
-        console.log(res)
+        if (res.unassigned_task_count == 0)
+          setPullDisabled("No more unassigned tasks in this project")
+        res.frozen_users.forEach((user) => {
+          if (user.id == userContext.user?.id) 
+            setPullDisabled("You're no more a part of this project");
+        })
       });
       getTasks(
         project_id,
@@ -254,8 +259,8 @@ function ProjectDashboard() {
         pagination.current = DEFAULT_PAGE_NUMBER;
         pagination.pageSize = DEFAULT_PAGE_SIZE;
         setPagination(pagination);
-        if (selectedFilter === "unlabeled") {
-          setUnlabeled(res.count);
+        if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+          setPullDisabled("You have too many unlabeled tasks")
         }
       });
       getProjectMembers(project_id).then((res) => {
@@ -311,8 +316,8 @@ function ProjectDashboard() {
         pagination.total = res.count;
         setPagination(pagination);
         setTasks(res.results);
-        if (selectedFilter === "unlabeled") {
-          setUnlabeled(res.count);
+        if (selectedFilter === "unlabeled" && res.count >=project?.max_pending_tasks_per_user) {
+          setPullDisabled("You have too many unlabeled tasks")
         }
         hideLoader();
       });
@@ -492,7 +497,7 @@ function ProjectDashboard() {
                                 margin: "1%",
                               }}
                               onChange={(value) => setPullSize(value)}
-                              disabled={unlabeled>=project?.max_pending_tasks_per_user}
+                              disabled={pullDisabled}
                             >
                               <Select.Option value="10">10</Select.Option>
                               <Select.Option value="20">20</Select.Option>
@@ -511,8 +516,8 @@ function ProjectDashboard() {
                                 width: "38%",
                                 margin: "1%",
                               }}
-                              disabled={unlabeled>=project?.max_pending_tasks_per_user}
-                              title={unlabeled>=project?.max_pending_tasks_per_user ? "You have too many unlabeled tasks" : ""}
+                              disabled={pullDisabled}
+                              title={pullDisabled}
                             >
                               Pull New Batch
                             </Button>
