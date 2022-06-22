@@ -351,6 +351,7 @@ function ProjectDashboard() {
 
   const fetchNewTasks = async (project_id) => {
     try {
+      showLoader();
       let response = await axiosInstance.post(`projects/${project_id}/assign_new_tasks/`, {
         num_tasks: Number(pullSize),
       });
@@ -363,8 +364,10 @@ function ProjectDashboard() {
       else if (response.data.message) {
         message.error(response.data.message);
       }
+      hideLoader();
     } catch (err) {
       console.log(err)
+      hideLoader();
     }
   }
 
