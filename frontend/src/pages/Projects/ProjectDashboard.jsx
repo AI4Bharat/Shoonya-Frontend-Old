@@ -58,7 +58,7 @@ function ProjectDashboard() {
   const searchInput = useRef(null);
   const notSearchable = ["status", "actions"];
   const [changePage, setChangePage] = useState(false);
-  const [pullSize, setPullSize] = useState("10");
+  const [pullSize, setPullSize] = useState();
   const [pullDisabled, setPullDisabled] = useState("");
 
   useEffect(() => {
@@ -245,6 +245,7 @@ function ProjectDashboard() {
           if (user.id == userContext.user?.id) 
             setPullDisabled("You're no more a part of this project");
         })
+        setPullSize(res.tasks_pull_count_per_batch/2)
       });
       getTasks(
         project_id,
@@ -499,12 +500,9 @@ function ProjectDashboard() {
                               onChange={(value) => setPullSize(value)}
                               disabled={pullDisabled}
                             >
-                              <Select.Option value="10">10</Select.Option>
-                              <Select.Option value="20">20</Select.Option>
-                              <Select.Option value="30">30</Select.Option>
-                              <Select.Option value="40">40</Select.Option>
-                              <Select.Option value="50">50</Select.Option>
-                              <Select.Option value="60">60</Select.Option>
+                              <Select.Option value={project?.tasks_pull_count_per_batch*0.5}>{project?.tasks_pull_count_per_batch*0.5}</Select.Option>
+                              <Select.Option value={project?.tasks_pull_count_per_batch}>{project?.tasks_pull_count_per_batch}</Select.Option>
+                              <Select.Option value={project?.tasks_pull_count_per_batch*1.5}>{project?.tasks_pull_count_per_batch*1.5}</Select.Option>
                             </Select>
                             <Button
                               onClick={(e) => {
