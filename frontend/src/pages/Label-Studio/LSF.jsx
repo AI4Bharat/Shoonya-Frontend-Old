@@ -150,7 +150,7 @@ const LabelStudioWrapper = ({notesRef}) => {
         },
 
         onSkipTask: function () {
-          message.warning('Notes will not be saved for skipped tasks!');
+          // message.warning('Notes will not be saved for skipped tasks!');
           showLoader();
           updateTask(taskData.id).then(() => {
             getNextProject(project_id, taskData.id).then((res) => {
