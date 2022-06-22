@@ -489,7 +489,7 @@ function ProjectDashboard() {
                                 margin: "1%",
                               }}
                               onChange={(value) => setPullSize(value)}
-                              disabled={unlabeled>30}
+                              disabled={unlabeled>=project?.max_pending_tasks_per_user}
                             >
                               <Select.Option value="10">10</Select.Option>
                               <Select.Option value="20">20</Select.Option>
@@ -508,8 +508,8 @@ function ProjectDashboard() {
                                 width: "38%",
                                 margin: "1%",
                               }}
-                              disabled={unlabeled>30}
-                              title={unlabeled>30 ? "You have too many unlabeled tasks" : ""}
+                              disabled={unlabeled>=project?.max_pending_tasks_per_user}
+                              title={unlabeled>=project?.max_pending_tasks_per_user ? "You have too many unlabeled tasks" : ""}
                             >
                               Pull New Batch
                             </Button>
