@@ -93,6 +93,8 @@ function ProjectSettings() {
     const { project_mode, project_type, users } = project;
     await updateProject(project.id, {
       ...values,
+      src_language: values.src_language ?? null,
+      tgt_language: values.tgt_language ?? null,
       project_mode,
       project_type,
       users,
@@ -121,6 +123,8 @@ function ProjectSettings() {
 		basicSettingsForm.setFieldsValue({
 			title: project.title ?? "",
 			description: project.description ?? "",
+      src_language: project.src_language,
+      tgt_language: project.tgt_language,
 		});
 	}, [project]);
 
