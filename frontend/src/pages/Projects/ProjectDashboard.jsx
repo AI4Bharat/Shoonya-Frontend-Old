@@ -56,7 +56,7 @@ function ProjectDashboard() {
 
   const [searchFilters, setSearchFilters] = useState({});
   const searchInput = useRef(null);
-  const notSearchable = ["status", "actions"];
+  const notSearchable = ["status", "actions", "output_text"];
   const [changePage, setChangePage] = useState(false);
   const [pullSize, setPullSize] = useState();
   const [pullDisabled, setPullDisabled] = useState("");
