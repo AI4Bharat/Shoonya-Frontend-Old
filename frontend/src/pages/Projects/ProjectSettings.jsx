@@ -11,6 +11,7 @@ import {
   PullNewData,
   downloadProject,
   archiveProject,
+  getLanguageChoices
 } from "../../api/ProjectAPI";
 import { CSVDownload } from "react-csv";
 import { Select } from 'antd';
@@ -28,24 +29,7 @@ function ProjectSettings() {
   const [isArchived, setIsArchived] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [options, setOptions] = useState("CSV");
-  const [pulldata, setPulldata] = useState();
- 
-
-  const prefilBasicForm = () => {
-    basicSettingsForm.setFieldsValue({
-      title: project.title,
-      description: project.description,
-    });
-  };
-
-  useEffect(() => {
-    showLoader();
-    getProject(id).then((res) => {
-      setProject(res);
-      setIsArchived(res.is_archived);
-      hideLoader();
-    });
-  }, []);
+  const [languageChoices, setLanguageChoices] = useState([]);
 
   const onExport = async (id) => {
     showLoader();
@@ -76,7 +60,6 @@ function ProjectSettings() {
     hideLoader();
   };
 
-
   const onDownload = async (id) => {
     showLoader();
     let download = await downloadProject(id)
@@ -85,7 +68,6 @@ function ProjectSettings() {
     }
     hideLoader();
   }
-
 
   const exportData = () => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
@@ -109,9 +91,10 @@ function ProjectSettings() {
   const onEditProjectForm = async (values) => {
     showLoader();
     const { project_mode, project_type, users } = project;
-
     await updateProject(project.id, {
       ...values,
+      src_language: values.src_language ?? null,
+      tgt_language: values.tgt_language ?? null,
       project_mode,
       project_type,
       users,
@@ -127,8 +110,34 @@ function ProjectSettings() {
     navigate(`/projects/${id}`, { replace: true });
   };
 
-  prefilBasicForm();
+  useEffect(() => {
+		showLoader();
+		getProject(id).then((res) => {
+			setProject(res);
+			setIsArchived(res.is_archived);
+			hideLoader();
+		});
+	}, [setProject, setIsArchived]);
 
+	useEffect(() => {
+		basicSettingsForm.setFieldsValue({
+			title: project.title ?? "",
+			description: project.description ?? "",
+      src_language: project.src_language,
+      tgt_language: project.tgt_language,
+		});
+	}, [project]);
+
+	useEffect(() => {
+		getLanguageChoices().then((choices) => {
+			setLanguageChoices(
+				choices.map((choice) => ({
+					value: choice[0],
+					label: choice[1],
+				}))
+			);
+		});
+	}, [setLanguageChoices]);
 
   return (
     <>
@@ -176,6 +185,28 @@ function ProjectSettings() {
               >
                 <Input />
               </Form.Item>
+
+              <Form.Item
+								label="Source Language"
+								name="src_language"
+							>
+								<Select
+									options={languageChoices}
+									placeholder="Select a language"
+									allowClear={true}
+								/>
+							</Form.Item>
+
+							<Form.Item
+								label="Target Language"
+								name="tgt_language"
+							>
+								<Select
+									options={languageChoices}
+									placeholder="Select a language"
+									allowClear={true}
+								/>
+							</Form.Item>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit">

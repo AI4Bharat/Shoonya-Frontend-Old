@@ -161,6 +161,16 @@ const removeUserFromProject = async (projectId, email)=> {
   });
 }
 
+const getLanguageChoices = async () => {
+	return axiosInstance.get(`/projects/language_choices`).then((response) => {
+		if (Array.isArray(response.data)) {
+			return response.data;
+		}
+		message.error("Could not get language choices");
+		return [];
+	});
+};
+
 export {
   fetchProjects,
   getProject,
@@ -172,5 +182,6 @@ export {
   PullNewData,
   downloadProject,
   archiveProject,
-  removeUserFromProject
+  removeUserFromProject,
+  getLanguageChoices
 };
