@@ -1,3 +1,3 @@
 export const apiData = {
-    url: "http://localhost:8000",
+    url: "http://dev.backend.shoonya.ai4bharat.org/",
 }
