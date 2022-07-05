@@ -74,8 +74,8 @@ export function MembersTab({ project }) {
 		populateAvailableUsers();
 	}, [projectId, setAvailableUsers]);
 
-	const handleSelectChange = (userEmails) => {
-		setSelectedUsers(userEmails);
+	const handleSelectChange = (userIds) => {
+		setSelectedUsers(userIds);
 	};
 
 	const handleRemoveUserClick = async (email) => {
@@ -133,7 +133,7 @@ export function MembersTab({ project }) {
 							placeholder="Select users to add"
 							options={availableUsers.map((user) => ({
 								label: user.username,
-								value: user.email,
+								value: user.id,
 							}))}
 							style={{ width: "100%", marginTop: "5%" }}
 							onChange={handleSelectChange}
