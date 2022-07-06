@@ -16,7 +16,7 @@ import axiosInstance from "../utils/apiInstance";
 const addAnnotatorsToWorkspace = async (workspaceID, users) => {
   try {
     let response = await axiosInstance.post(
-      `workspaces/${workspaceID}/addannotators/`,
+      `workspaces/${workspaceID}/addmembers/`,
       { user_id: users?.join() }
     );
     return response.data;
@@ -28,7 +28,7 @@ const addAnnotatorsToWorkspace = async (workspaceID, users) => {
 const removeAnnotatorsFromWorkspace = async (workspaceID, users) => {
   try {
     let response = await axiosInstance.post(
-      `workspaces/${workspaceID}/removeannotators/`,
+      `workspaces/${workspaceID}/removemembers/`,
       { user_id: users?.join() }
     );
     return response.data;
@@ -39,7 +39,7 @@ const removeAnnotatorsFromWorkspace = async (workspaceID, users) => {
 
 const fetchUsersInWorkspace = async (workspaceID) => {
   try {
-    let response = await axiosInstance.get(`workspaces/${workspaceID}/users/`);
+    let response = await axiosInstance.get(`workspaces/${workspaceID}/members/`);
     return response.data;
   } catch {
     message.error("Error fetching users");

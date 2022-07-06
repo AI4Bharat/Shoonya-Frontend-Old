@@ -62,7 +62,7 @@ export function AnnotatorsTab({ workspaceAnnotators, orgId, workspaceId, isArchi
         type="primary"
         disabled={isArchived}
       >
-        Add Annotators to Workspace
+        Add Members to Workspace
       </Button>
       <Modal
         visible={modalOpen}
