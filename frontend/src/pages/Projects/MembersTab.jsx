@@ -118,14 +118,14 @@ export function MembersTab({ project }) {
 						type="primary"
 						onClick={() => setModalOpen(true)}
 					>
-						Add Users to Project
+						Add Members to Project
 					</Button>
 					<Modal
 						visible={modalOpen}
 						onCancel={() => setModalOpen(false)}
 						onOk={() => addNewUsers()}
 					>
-						<Title level={5}>Enter the emails to be added</Title>
+						<Title level={5}>Enter the users to be added</Title>
 						<Select
 							mode="multiple"
 							allowClear
