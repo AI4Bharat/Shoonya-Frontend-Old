@@ -74,8 +74,8 @@ export function MembersTab({ project }) {
 		populateAvailableUsers();
 	}, [projectId, setAvailableUsers]);
 
-	const handleSelectChange = (userEmails) => {
-		setSelectedUsers(userEmails);
+	const handleSelectChange = (userIds) => {
+		setSelectedUsers(userIds);
 	};
 
 	const handleRemoveUserClick = async (email) => {
@@ -118,14 +118,14 @@ export function MembersTab({ project }) {
 						type="primary"
 						onClick={() => setModalOpen(true)}
 					>
-						Add Users to Project
+						Add Members to Project
 					</Button>
 					<Modal
 						visible={modalOpen}
 						onCancel={() => setModalOpen(false)}
 						onOk={() => addNewUsers()}
 					>
-						<Title level={5}>Enter the emails to be added</Title>
+						<Title level={5}>Enter the users to be added</Title>
 						<Select
 							mode="multiple"
 							allowClear
@@ -133,7 +133,7 @@ export function MembersTab({ project }) {
 							placeholder="Select users to add"
 							options={availableUsers.map((user) => ({
 								label: user.username,
-								value: user.email,
+								value: user.id,
 							}))}
 							style={{ width: "100%", marginTop: "5%" }}
 							onChange={handleSelectChange}
