@@ -97,7 +97,7 @@ function Workspace() {
                       dataSource={project.projects}
                     />
                   </TabPane>
-                  <TabPane tab="Annotators" key="2">
+                  <TabPane tab="Members" key="2">
                   <AnnotatorsTab
                     workspaceAnnotators={users}
                     orgId={workspace?.organization}
